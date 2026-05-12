@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenAI API Validator - Check Keys, Models, Chat, and Streaming</title>
+    <meta
+      name="description"
+      content="Validate an OpenAI or OpenAI-compatible API key, base URL, models endpoint, chat completions endpoint, and streaming support."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="canonical" href="https://apilatencytest.com/openai-api-validator" />
+  </head>
+  <body>
+    <main class="site-shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark"></span><span>AI API Latency Test</span></div>
+        <nav class="nav">
+          <a href="/">Tool</a>
+          <a class="active" href="/openai-api-validator">OpenAI API Validator</a>
+          <a href="/openai-compatible-api-checker">Compatible API Checker</a>
+        </nav>
+      </header>
+      <section class="tool-map" aria-label="Tool types">
+        <a class="tool-map-item" href="/">
+          <strong>Latency Test</strong>
+          <span>Checks if it feels fast.</span>
+        </a>
+        <a class="tool-map-item is-active" href="/openai-api-validator">
+          <strong>API Validator</strong>
+          <span>Checks if it works.</span>
+        </a>
+        <a class="tool-map-item" href="/openai-compatible-api-checker">
+          <strong>Compatible Checker</strong>
+          <span>Checks if it looks like OpenAI.</span>
+        </a>
+      </section>
+      <section class="page-band">
+        <h2>OpenAI API Validator</h2>
+        <p>
+          Use this page when you want to confirm that an OpenAI API key, relay key, or compatible endpoint can make the
+          basic requests a real application needs. The goal is simple: find out whether the endpoint works before you
+          spend time debugging your own app.
+        </p>
+        <div class="page-cta">
+          <a class="btn btn-primary" href="/#test-tool">Run the API test</a>
+        </div>
+      </section>
+      <section class="page-band">
+        <h2>What It Validates</h2>
+        <p>
+          The validator checks authorization, GET /v1/models, POST /v1/chat/completions, streaming chat completions,
+          and whether the responses look like normal OpenAI-style payloads.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>Who Should Use It</h2>
+        <p>
+          It is useful for developers testing a new key, users trying an AI relay, and teams checking whether an API
+          gateway is ready to connect to a chat app, agent workflow, or internal tool.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>Validator vs Latency Test</h2>
+        <p>
+          An API validator answers "does it work?" A latency test answers "does it feel fast?" A key can validate
+          successfully while the endpoint still feels slow, so both checks matter before trusting a provider.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>FAQ</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Why did my API validation fail?</summary>
+            <p>The most common causes are a wrong base URL, an invalid key, an unsupported model, or a relay that does not fully match OpenAI's API shape.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Does this validate billing or account status?</summary>
+            <p>No. It only sends test requests. Billing limits, account status, and provider-specific rules must still be checked in the provider dashboard.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can it validate proxy endpoints?</summary>
+            <p>Yes, as long as the proxy exposes OpenAI-style /v1/models and /v1/chat/completions endpoints.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is my API key stored?</summary>
+            <p>No. The tool uses the key for the live request and does not save it.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

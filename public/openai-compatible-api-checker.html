@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenAI Compatible API Checker - Test Models, Chat, and Streaming</title>
+    <meta
+      name="description"
+      content="Check whether an API endpoint behaves like an OpenAI-compatible API by testing models, chat completions, and streaming chunks."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="canonical" href="https://apilatencytest.com/openai-compatible-api-checker" />
+  </head>
+  <body>
+    <main class="site-shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark"></span><span>AI API Latency Test</span></div>
+        <nav class="nav">
+          <a href="/">Tool</a>
+          <a href="/openai-api-validator">OpenAI API Validator</a>
+          <a class="active" href="/openai-compatible-api-checker">Compatible API Checker</a>
+        </nav>
+      </header>
+      <section class="tool-map" aria-label="Tool types">
+        <a class="tool-map-item" href="/">
+          <strong>Latency Test</strong>
+          <span>Checks if it feels fast.</span>
+        </a>
+        <a class="tool-map-item" href="/openai-api-validator">
+          <strong>API Validator</strong>
+          <span>Checks if it works.</span>
+        </a>
+        <a class="tool-map-item is-active" href="/openai-compatible-api-checker">
+          <strong>Compatible Checker</strong>
+          <span>Checks if it looks like OpenAI.</span>
+        </a>
+      </section>
+      <section class="page-band">
+        <h2>OpenAI Compatible API Checker</h2>
+        <p>
+          Use this checker when an endpoint claims to be OpenAI-compatible and you want to verify the practical parts:
+          model listing, chat completions, response shape, and streaming behavior.
+        </p>
+        <div class="page-cta">
+          <a class="btn btn-primary" href="/#test-tool">Run the API test</a>
+        </div>
+      </section>
+      <section class="page-band">
+        <h2>What Compatibility Means</h2>
+        <p>
+          Compatibility means the endpoint accepts OpenAI-style request payloads, returns choices in a familiar shape,
+          supports /v1/models, and can stream server-sent events when stream is set to true.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>Who Should Use It</h2>
+        <p>
+          This page is useful for AI relay users, proxy buyers, API gateway builders, and developers who want to switch
+          providers without rewriting their OpenAI client code.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>Compatibility vs Speed</h2>
+        <p>
+          A compatible endpoint is not always a good endpoint. It can pass the format test and still have slow TTFT,
+          unstable streaming, or long total response time. That is why the main tool checks latency alongside
+          compatibility.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>FAQ</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>What is an OpenAI-compatible API?</summary>
+            <p>It is an API that follows common OpenAI endpoint paths and payload shapes, so OpenAI client libraries can often connect to it.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Does compatible mean official OpenAI?</summary>
+            <p>No. Many relays, proxies, and gateways are compatible with the OpenAI API shape but are not official OpenAI services.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Why does chat work but streaming fail?</summary>
+            <p>Some providers implement normal chat completions but do not correctly support SSE streaming chunks.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can compatibility pass while latency is slow?</summary>
+            <p>Yes. Compatibility checks the API shape. Latency checks the user experience.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
