@@ -6,6 +6,7 @@ const resetFlowBtn = document.querySelector("[data-reset-flow]");
 const modelStep = document.querySelector("[data-model-step]");
 const modelPicker = document.querySelector("[data-model-picker]");
 const modelSearchInput = document.querySelector("[data-model-search]");
+const modelFilterBtns = document.querySelectorAll("[data-model-filter]");
 const modelStatus = document.querySelector("[data-model-status]");
 const toggleKeyBtn = document.querySelector("[data-toggle-key]");
 const scoreEl = document.querySelector("[data-score]");
@@ -80,6 +81,7 @@ const text = {
 };
 
 const t = text[locale];
+let activeModelFilter = "";
 
 function fmtMs(ms) {
   if (ms === null || ms === undefined) return "-";
@@ -207,6 +209,17 @@ function setFlowModelsLoaded() {
   if (resetFlowBtn) resetFlowBtn.hidden = false;
 }
 
+function resetResults() {
+  if (resultWrap) resultWrap.hidden = true;
+  if (resultLoadingEl) resultLoadingEl.hidden = false;
+  if (resultDetailsEl) resultDetailsEl.hidden = true;
+  if (checksEl) checksEl.innerHTML = "";
+  if (notesEl) notesEl.innerHTML = "";
+  if (scoreEl) scoreEl.textContent = "-";
+  if (statusEl) statusEl.textContent = "-";
+  if (testedTargetEl) testedTargetEl.textContent = "-";
+}
+
 function resetFlow() {
   allModels.length = 0;
   if (form?.model) form.model.value = "";
@@ -216,9 +229,9 @@ function resetFlow() {
   if (fetchModelsBtn) fetchModelsBtn.hidden = false;
   if (runTestBtn) runTestBtn.hidden = true;
   if (resetFlowBtn) resetFlowBtn.hidden = true;
-  if (resultWrap) resultWrap.hidden = true;
-  if (resultLoadingEl) resultLoadingEl.hidden = false;
-  if (resultDetailsEl) resultDetailsEl.hidden = true;
+  activeModelFilter = "";
+  modelFilterBtns.forEach((button) => button.classList.toggle("is-active", button.dataset.modelFilter === ""));
+  resetResults();
   setModelStatus(locale === "zh" ? "不需要注册。API Key 只用于本次实时检测。" : "No account. API keys are used only for this live test.");
 }
 
@@ -262,8 +275,12 @@ function renderModelPicker(models, selectedModel = form?.model?.value) {
 
 function filteredModels() {
   const keyword = String(modelSearchInput?.value || "").trim().toLowerCase();
-  if (!keyword) return [...allModels];
-  return allModels.filter((model) => model.toLowerCase().includes(keyword));
+  return allModels.filter((model) => {
+    const value = model.toLowerCase();
+    const matchesKeyword = !keyword || value.includes(keyword);
+    const matchesFilter = !activeModelFilter || value.includes(activeModelFilter);
+    return matchesKeyword && matchesFilter;
+  });
 }
 
 function refreshModelPicker() {
@@ -286,9 +303,22 @@ modelSearchInput?.addEventListener("input", () => {
   }
 });
 
+modelFilterBtns.forEach((button) => {
+  button.addEventListener("click", () => {
+    activeModelFilter = button.dataset.modelFilter || "";
+    modelFilterBtns.forEach((item) => item.classList.toggle("is-active", item === button));
+    const visibleCount = filteredModels().length;
+    refreshModelPicker();
+    if (allModels.length) {
+      setModelStatus(t.showingModels(visibleCount, allModels.length), visibleCount ? "pass" : "partial");
+    }
+  });
+});
+
 resetFlowBtn?.addEventListener("click", resetFlow);
 
 fetchModelsBtn?.addEventListener("click", async () => {
+  resetResults();
   setModelStatus(t.fetchingModels, "partial");
   if (modelStep) modelStep.hidden = false;
   if (modelPicker) modelPicker.innerHTML = `<span class="hint">${t.loadingModels}</span>`;
@@ -308,7 +338,9 @@ fetchModelsBtn?.addEventListener("click", async () => {
     allModels.length = 0;
     allModels.push(...data.models);
     if (modelSearchInput) modelSearchInput.value = "";
-    renderModelPicker(allModels, data.models[0]);
+    activeModelFilter = "";
+    modelFilterBtns.forEach((button) => button.classList.toggle("is-active", button.dataset.modelFilter === ""));
+    renderModelPicker(filteredModels(), data.models[0]);
     setFlowModelsLoaded();
     setModelStatus(`${t.loadedModels(data.models.length, data.timings.totalMs)} ${t.selectModel}`, "pass");
   } catch (error) {

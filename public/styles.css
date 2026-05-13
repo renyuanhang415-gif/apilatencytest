@@ -275,6 +275,31 @@ h1 {
   margin-top: 4px;
 }
 
+.model-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.filter-chip {
+  appearance: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.filter-chip:hover,
+.filter-chip.is-active {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+  background: #f4f0ff;
+}
+
 .model-search {
   margin-bottom: 12px;
 }
