@@ -48,6 +48,7 @@ const text = {
     showingModels: (visible, total) => `Showing ${visible} of ${total} models.`,
     running: "Testing...",
     runningHtml: '<span class="loading-spinner" aria-hidden="true"></span>Testing...',
+    supplementing: "Core result is ready. Running supplemental streaming checks...",
     tested: (baseUrl, model) => `${baseUrl} · ${model}`,
     pass: "Pass",
     partial: "Warning",
@@ -87,6 +88,7 @@ const text = {
     showingModels: (visible, total) => `当前显示 ${visible} / ${total} 个模型。`,
     running: "检测中...",
     runningHtml: '<span class="loading-spinner" aria-hidden="true"></span>检测中...',
+    supplementing: "核心结论已返回，正在补充流式与速度指标...",
     tested: (baseUrl, model) => `${baseUrl} · ${model}`,
     pass: "通过",
     partial: "注意",
@@ -203,6 +205,27 @@ function renderModelScore(data) {
     badge.textContent = item;
     modelScoreFactorsEl.appendChild(badge);
   });
+}
+
+function renderTestResult(data) {
+  const kind = data.compatibility === "pass" ? "pass" : data.compatibility === "partial" ? "partial" : "fail";
+  if (resultLoadingEl) resultLoadingEl.hidden = true;
+  if (resultDetailsEl) resultDetailsEl.hidden = false;
+  scoreEl.textContent = `${data.score}%`;
+  statusEl.textContent = statusText(kind);
+  statusEl.className = `status-pill status-${kind}`;
+  verdictTitleEl.textContent = locale === "zh" ? data.verdict.titleZh : data.verdict.title;
+  verdictTextEl.textContent = locale === "zh" ? data.verdict.textZh : data.verdict.text;
+  testedTargetEl.textContent = t.tested(data.input.baseUrl, data.input.model);
+
+  renderChecks(data.checks || []);
+  renderModelScore(data);
+  latencyChatEl.textContent = fmtMs(data.summary.latencyMs.chat);
+  latencyStreamEl.textContent = fmtMs(data.summary.latencyMs.streamingFirstToken);
+  streamTotalEl.textContent = fmtMs(data.summary.latencyMs.streamingTotal);
+  tokensSpeedEl.textContent = fmtValue(data.summary.tokens?.perSecond);
+  inputTokensEl.textContent = fmtValue(data.summary.tokens?.input);
+  outputTokensEl.textContent = fmtValue(data.summary.tokens?.output);
 }
 
 function setFlowModelsLoaded() {
@@ -377,32 +400,27 @@ form?.addEventListener("submit", async (event) => {
   };
 
   try {
-    const res = await fetch("/api/test", {
+    const quickRes = await fetch("/api/test?phase=quick", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || t.requestFailed);
+    const quickData = await quickRes.json();
+    if (!quickRes.ok) throw new Error(quickData.error || t.requestFailed);
 
-    const kind = data.compatibility === "pass" ? "pass" : data.compatibility === "partial" ? "partial" : "fail";
-    if (resultLoadingEl) resultLoadingEl.hidden = true;
-    if (resultDetailsEl) resultDetailsEl.hidden = false;
-    scoreEl.textContent = `${data.score}%`;
-    statusEl.textContent = statusText(kind);
-    statusEl.className = `status-pill status-${kind}`;
-    verdictTitleEl.textContent = locale === "zh" ? data.verdict.titleZh : data.verdict.title;
-    verdictTextEl.textContent = locale === "zh" ? data.verdict.textZh : data.verdict.text;
-    testedTargetEl.textContent = t.tested(data.input.baseUrl, data.input.model);
+    renderTestResult(quickData);
 
-    renderChecks(data.checks || []);
-    renderModelScore(data);
-    latencyChatEl.textContent = fmtMs(data.summary.latencyMs.chat);
-    latencyStreamEl.textContent = fmtMs(data.summary.latencyMs.streamingFirstToken);
-    streamTotalEl.textContent = fmtMs(data.summary.latencyMs.streamingTotal);
-    tokensSpeedEl.textContent = fmtValue(data.summary.tokens?.perSecond);
-    inputTokensEl.textContent = fmtValue(data.summary.tokens?.input);
-    outputTokensEl.textContent = fmtValue(data.summary.tokens?.output);
+    if (quickData.pendingSupplement) {
+      statusEl.textContent = t.partial;
+      verdictTextEl.textContent = locale === "zh" ? t.supplementing : t.supplementing;
+      const supplementRes = await fetch("/api/test?phase=supplement", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const supplementData = await supplementRes.json();
+      if (supplementRes.ok) renderTestResult(supplementData);
+    }
 
   } catch (error) {
     if (resultLoadingEl) resultLoadingEl.hidden = true;

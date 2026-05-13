@@ -3,7 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildModelsResult, buildTestResult } from "./lib/api-core.js";
+import { buildModelsResult, buildQuickTestResult, buildSupplementTestResult, buildTestResult } from "./lib/api-core.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -101,7 +101,13 @@ async function handleApiTest(req, res) {
     return sendJson(res, 400, { error: "Invalid JSON body." });
   }
 
-  const result = await buildTestResult(payload, req.headers.host);
+  const phase = String(new URL(req.url, `http://${req.headers.host}`).searchParams.get("phase") || payload.phase || "").toLowerCase();
+  const result =
+    phase === "quick"
+      ? await buildQuickTestResult(payload, req.headers.host)
+      : phase === "supplement"
+        ? await buildSupplementTestResult(payload, req.headers.host)
+        : await buildTestResult(payload, req.headers.host);
   return sendJson(res, result.status, result.body);
 }
 
