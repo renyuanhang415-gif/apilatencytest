@@ -520,6 +520,7 @@ h1 {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 12px;
+  margin: 22px 0;
 }
 
 .metric {

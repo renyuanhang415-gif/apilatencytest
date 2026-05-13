@@ -56,7 +56,7 @@ const text = {
     requestFailed: "Request failed.",
     rawNoStream: "No stream response body.",
     modelScoreFactors: (qa, latency, protocol) => [
-      `Knowledge QA ${qa.passed}/${qa.total}`,
+      `Knowledge QA ${qa.rate}%`,
       `Latency ${latency}`,
       protocol ? "Protocol OK" : "Protocol warning",
     ],
@@ -95,7 +95,7 @@ const text = {
     requestFailed: "请求失败。",
     rawNoStream: "没有流式响应正文。",
     modelScoreFactors: (qa, latency, protocol) => [
-      `知识问答 ${qa.passed}/${qa.total}`,
+      `知识问答通过率 ${qa.rate}%`,
       `延迟 ${latency}`,
       protocol ? "协议正常" : "协议需注意",
     ],
@@ -188,7 +188,7 @@ function modelGrade(score) {
 
 function renderModelScore(data) {
   const grade = modelGrade(data.score || 0);
-  const qa = data.summary?.qa || { passed: 0, total: 0 };
+  const qa = data.summary?.qa || { passed: 0, total: 0, rate: 0 };
   const latency = fmtMs(data.summary?.latencyMs?.chat);
   const protocolOk = data.checks?.every((item) => item.key !== "protocol" || item.status === "pass");
 
@@ -412,6 +412,6 @@ form?.addEventListener("submit", async (event) => {
     statusEl.className = "status-pill status-fail";
     verdictTitleEl.textContent = t.unavailable;
     verdictTextEl.textContent = error.message;
-    renderModelScore({ score: 0, summary: { qa: { passed: 0, total: 5 }, latencyMs: {} }, checks: [] });
+    renderModelScore({ score: 0, summary: { qa: { passed: 0, total: 5, rate: 0 }, latencyMs: {} }, checks: [] });
   }
 });
