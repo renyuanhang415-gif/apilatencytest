@@ -197,6 +197,19 @@ function modelGrade(score) {
   return "poor";
 }
 
+function qaLatencyCap(qa) {
+  const latencies = (qa?.results || [])
+    .map((item) => item.latencyMs)
+    .filter((value) => Number.isFinite(value));
+  if (!latencies.length) return 10;
+
+  const max = Math.max(...latencies);
+  const avg = latencies.reduce((sum, value) => sum + value, 0) / latencies.length;
+  if (max >= 11000 || avg >= 7000) return 0;
+  if (max >= 8000 || avg >= 5000) return 5;
+  return 10;
+}
+
 function renderModelScore(data) {
   const grade = modelGrade(data.score || 0);
   const qa = data.summary?.qa || { passed: 0, total: 0, rate: 0 };
@@ -314,12 +327,13 @@ function mergeSupplementResult(baseData, supplementData) {
   const failedChecks = merged.checks.filter((item) => item.status === "fail").length;
   const partialChecks = merged.checks.filter((item) => item.status === "partial").length;
   const streamScore = streamOk ? 10 : 0;
-  const latencyScore =
+  const responseLatencyScore =
     merged.summary.latencyMs.chat <= 2500 && (merged.summary.latencyMs.streamingFirstToken ?? 99999) <= 2500
       ? 10
       : merged.summary.latencyMs.chat <= 6000 && (merged.summary.latencyMs.streamingFirstToken ?? 99999) <= 6000
         ? 5
         : 0;
+  const latencyScore = Math.min(responseLatencyScore, qaLatencyCap(merged.summary.qa));
   const previousStreamPendingScore = 0;
   merged.score = Math.min(100, merged.score + streamScore + latencyScore - previousStreamPendingScore);
   merged.compatibility = failedChecks === 0 && partialChecks === 0 ? "pass" : failedChecks <= 1 ? "partial" : "fail";
