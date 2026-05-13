@@ -287,6 +287,45 @@ function renderTestResult(data, options = {}) {
   outputTokensEl.textContent = fmtValue(data.summary.tokens?.output);
 }
 
+function mergeSupplementResult(baseData, supplementData) {
+  const merged = structuredClone(baseData);
+  const stream = supplementData.stream || {};
+  const chat = supplementData.chat || {};
+  const streamOk = Boolean(stream.ok && String(stream.text || "").includes("data:"));
+  const streamCheck = merged.checks?.find((item) => item.key === "stream");
+  if (streamCheck) {
+    streamCheck.pending = false;
+    streamCheck.status = streamOk ? "pass" : "fail";
+    streamCheck.detail = streamOk ? "Streaming returned event-style chunks." : "Streaming did not return normal event chunks.";
+    streamCheck.detailZh = streamOk ? "流式接口返回了事件格式分片。" : "流式接口没有返回正常事件分片。";
+  }
+
+  merged.phase = "supplement";
+  merged.pendingSupplement = false;
+  merged.summary.latencyMs.streamingFirstToken = stream.timings?.firstByteMs ?? null;
+  merged.summary.latencyMs.streamingTotal = stream.timings?.totalMs ?? null;
+  merged.summary.supported.streaming = Boolean(stream.ok);
+
+  const outputTokens = chat.usage?.output ?? (chat.outputText ? Math.max(1, Math.round(String(chat.outputText).length / 4)) : null);
+  merged.summary.tokens.output = outputTokens;
+  merged.summary.tokens.perSecond =
+    outputTokens && chat.timings?.totalMs ? Math.round((outputTokens / (chat.timings.totalMs / 1000)) * 10) / 10 : null;
+
+  const failedChecks = merged.checks.filter((item) => item.status === "fail").length;
+  const partialChecks = merged.checks.filter((item) => item.status === "partial").length;
+  const streamScore = streamOk ? 10 : 0;
+  const latencyScore =
+    merged.summary.latencyMs.chat <= 2500 && (merged.summary.latencyMs.streamingFirstToken ?? 99999) <= 2500
+      ? 10
+      : merged.summary.latencyMs.chat <= 6000 && (merged.summary.latencyMs.streamingFirstToken ?? 99999) <= 6000
+        ? 5
+        : 0;
+  const previousStreamPendingScore = 0;
+  merged.score = Math.min(100, merged.score + streamScore + latencyScore - previousStreamPendingScore);
+  merged.compatibility = failedChecks === 0 && partialChecks === 0 ? "pass" : failedChecks <= 1 ? "partial" : "fail";
+  return merged;
+}
+
 function setFlowModelsLoaded() {
   if (modelStep) modelStep.hidden = false;
   if (fetchModelsBtn) fetchModelsBtn.hidden = true;
@@ -481,7 +520,7 @@ form?.addEventListener("submit", async (event) => {
         });
         const supplementData = await supplementRes.json();
         if (supplementRes.ok) {
-          renderTestResult(supplementData);
+          renderTestResult(mergeSupplementResult(quickData, supplementData));
         } else {
           renderSupplementFailed();
         }
