@@ -14,7 +14,10 @@ export default async function handler(req, res) {
 
   await new Promise((resolve) => setTimeout(resolve, 180));
   const prompt = JSON.stringify(payload?.messages || "").toLowerCase();
-  const answer = prompt.includes("capital of france") ? "Paris" : "Hello from the demo endpoint.";
+  let answer = "Hello from the demo endpoint.";
+  if (prompt.includes("capital of france")) answer = "Paris";
+  if (prompt.includes("17 + 28")) answer = "45";
+  if (prompt.includes("reply purple")) answer = "PURPLE";
 
   if (payload.stream) {
     res.statusCode = 200;

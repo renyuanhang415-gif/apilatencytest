@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AI API 中转站质量检测 - 延迟、TTFT、兼容性风险</title>
+    <title>AI API Relay Quality Test - Latency, TTFT, Compatibility</title>
     <meta
       name="description"
-      content="检测 OpenAI 兼容接口、中转站、网关和代理的延迟、首 Token 时间、流式输出、模型列表和兼容性风险。"
+      content="Test OpenAI-compatible relays, gateways, and proxy endpoints for latency, TTFT, streaming behavior, model listing, and compatibility risk."
     />
     <link rel="stylesheet" href="/styles.css" />
-    <link rel="canonical" href="https://apilatencytest.com/" />
+    <link rel="canonical" href="https://apilatencytest.com/en" />
     <link rel="alternate" hreflang="en" href="https://apilatencytest.com/en" />
     <link rel="alternate" hreflang="zh-CN" href="https://apilatencytest.com/" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
@@ -20,51 +20,51 @@
       gtag('config', 'G-WJSZRPQLHE');
     </script>
   </head>
-  <body data-locale="zh">
+  <body data-locale="en">
     <main class="site-shell">
       <header class="topbar">
         <a class="brand" href="/"><span class="brand-mark"></span><span>API Latency Test</span></a>
         <div class="header-actions">
           <nav class="nav">
-            <a class="active" href="/">质量检测</a>
+            <a class="active" href="/en">Quality Test</a>
           </nav>
           <div class="lang-switch" aria-label="Language switch">
-            <a href="/en">EN</a>
-            <a class="active" href="/">中文</a>
+            <a class="active" href="/en">EN</a>
+            <a href="/">中文</a>
           </div>
         </div>
       </header>
 
       <section class="tester-hero">
         <div class="hero-copy">
-          <p class="eyebrow">OpenAI 兼容接口质量检测</p>
-          <h1>AI API 中转站质量体检</h1>
-          <p class="lede">输入接口地址和 API Key，先获取模型，选中目标模型后开始检测。</p>
+          <p class="eyebrow">OpenAI-compatible relay checker</p>
+          <h1>AI API Relay Health Check</h1>
+          <p class="lede">Enter a Base URL and API key. Fetch models, choose one, then run a focused quality test.</p>
         </div>
 
-        <section class="test-card" id="test-tool" aria-label="AI API 中转站质量检测">
+        <section class="test-card" id="test-tool" aria-label="AI API quality test">
           <form data-test-form>
             <div class="config-grid">
               <div class="field">
-                <label for="baseUrl">API 接口地址</label>
+                <label for="baseUrl">API Base URL</label>
                 <input id="baseUrl" name="baseUrl" placeholder="https://example.com" value="https://api.openai.com" />
               </div>
               <div class="field">
                 <label for="apiKey">API Key</label>
                 <div class="secret-field">
                   <input id="apiKey" name="apiKey" type="password" placeholder="sk-..." autocomplete="off" />
-                  <button class="icon-btn" type="button" data-toggle-key aria-label="显示 API Key" title="显示 API Key">
-                    显示
+                  <button class="icon-btn" type="button" data-toggle-key aria-label="Show API key" title="Show API key">
+                    Show
                   </button>
                 </div>
               </div>
             </div>
 
             <div class="model-step" hidden data-model-step>
-              <label>目标模型</label>
-              <input class="model-search" data-model-search placeholder="搜索模型..." />
+              <label>Target model</label>
+              <input class="model-search" data-model-search placeholder="Search models..." />
               <div class="model-picker" data-model-picker>
-                <span class="hint">先获取模型列表。</span>
+                <span class="hint">Fetch models first.</span>
               </div>
             </div>
 
@@ -72,11 +72,11 @@
             <input id="prompt" name="prompt" type="hidden" value="What is the capital of France? Answer with one word." />
 
             <div class="action-row">
-              <button class="btn btn-primary btn-large" type="button" data-fetch-models>获取模型</button>
-              <button class="btn btn-primary btn-large" type="submit" hidden data-run-test>开始检测</button>
-              <button class="btn btn-secondary btn-small" type="button" data-reset-flow hidden>更换接口</button>
+              <button class="btn btn-primary btn-large" type="button" data-fetch-models>Fetch models</button>
+              <button class="btn btn-primary btn-large" type="submit" hidden data-run-test>Start test</button>
+              <button class="btn btn-secondary btn-small" type="button" data-reset-flow hidden>Change endpoint</button>
             </div>
-            <div class="hint" data-model-status>不需要注册。API Key 只用于本次实时检测。</div>
+            <div class="hint" data-model-status>No account. API keys are used only for this live test.</div>
           </form>
         </section>
       </section>
@@ -85,12 +85,12 @@
         <div class="result-summary">
           <div class="score-card">
             <span data-score>-</span>
-            <small>质量评分</small>
+            <small>quality score</small>
           </div>
           <div class="verdict">
-            <div class="label">检测结论</div>
-            <h2 data-verdict-title>检测中...</h2>
-            <p data-verdict-text>正在检查兼容性、延迟、流式输出和响应结构。</p>
+            <div class="label">Result</div>
+            <h2 data-verdict-title>Running...</h2>
+            <p data-verdict-text>Checking compatibility, latency, streaming, and response shape.</p>
           </div>
           <div class="tested-meta">
             <span data-status>-</span>
@@ -102,41 +102,41 @@
 
         <div class="metric-strip">
           <div class="metric">
-            <div class="label">延迟</div>
+            <div class="label">Latency</div>
             <div class="value" data-chat-latency>-</div>
           </div>
           <div class="metric">
-            <div class="label">首 Token</div>
+            <div class="label">TTFT</div>
             <div class="value" data-stream-latency>-</div>
           </div>
           <div class="metric">
-            <div class="label">流式总耗时</div>
+            <div class="label">Streaming total</div>
             <div class="value" data-stream-total>-</div>
           </div>
           <div class="metric">
-            <div class="label">Tokens/秒</div>
+            <div class="label">Tokens/sec</div>
             <div class="value" data-tokens-speed>-</div>
           </div>
           <div class="metric">
-            <div class="label">输入 Tokens</div>
+            <div class="label">Input tokens</div>
             <div class="value" data-input-tokens>-</div>
           </div>
           <div class="metric">
-            <div class="label">输出 Tokens</div>
+            <div class="label">Output tokens</div>
             <div class="value" data-output-tokens>-</div>
           </div>
         </div>
 
         <div class="result-panel">
-          <h3>检测备注</h3>
+          <h3>Notes</h3>
           <ul data-notes></ul>
         </div>
 
         <details class="result-panel advanced-results">
-          <summary>高级原始响应</summary>
+          <summary>Advanced raw responses</summary>
           <div class="advanced-stack">
             <div>
-              <h3>请求载荷</h3>
+              <h3>Request payload</h3>
               <pre class="code" data-payload>{}</pre>
             </div>
             <div>
@@ -156,17 +156,17 @@
       </section>
 
       <section class="page-band compact-copy">
-        <h2>检测什么</h2>
-        <p>模型列表、目标模型、知识问答、协议一致性、响应结构、流式质量、延迟、首 Token 和 Tokens/秒。</p>
+        <h2>What it checks</h2>
+        <p>Model listing, selected model availability, control-question answer, OpenAI-style response shape, streaming quality, latency, TTFT, and rough token speed.</p>
       </section>
 
       <section class="page-band compact-copy">
-        <h2>不能证明什么</h2>
-        <p>它不是绝对审计，不能百分百鉴定“掺水”。它更适合作为购买前、长期使用前的低成本质量筛查。</p>
+        <h2>What it cannot prove</h2>
+        <p>This is a practical quality signal, not an absolute audit. Slow, broken, or inconsistent behavior is a warning before you buy or rely on a relay.</p>
       </section>
 
       <footer class="footer">
-        第一阶段：不做账号，不做榜单，不保存私钥，只做垂直检测工具。
+        Focused MVP: no account, no ranking, no stored private keys.
       </footer>
     </main>
 

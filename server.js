@@ -13,6 +13,7 @@ const port = Number(process.env.PORT || 3000);
 const pages = {
   "/": "index.html",
   "/zh": "zh.html",
+  "/en": "en.html",
   "/openai-api-validator": "openai-api-validator.html",
   "/openai-compatible-api-checker": "openai-compatible-api-checker.html",
 };
@@ -56,7 +57,10 @@ function contentTypeFor(filePath) {
 
 function demoAnswer(payload) {
   const prompt = JSON.stringify(payload?.messages || "").toLowerCase();
-  return prompt.includes("capital of france") ? "Paris" : "Hello from the demo endpoint.";
+  if (prompt.includes("capital of france")) return "Paris";
+  if (prompt.includes("17 + 28")) return "45";
+  if (prompt.includes("reply purple")) return "PURPLE";
+  return "Hello from the demo endpoint.";
 }
 
 async function fileExists(filePath) {

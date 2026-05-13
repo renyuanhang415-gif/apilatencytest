@@ -42,6 +42,7 @@ const text = {
     loadedModels: (count, ms) => `Loaded ${count} models in ${ms} ms.`,
     showingModels: (visible, total) => `Showing ${visible} of ${total} models.`,
     running: "Testing...",
+    runningHtml: '<span class="loading-spinner" aria-hidden="true"></span>Testing...',
     tested: (baseUrl, model) => `${baseUrl} · ${model}`,
     pass: "Pass",
     partial: "Warning",
@@ -64,6 +65,7 @@ const text = {
     loadedModels: (count, ms) => `已获取 ${count} 个模型，用时 ${ms} ms。`,
     showingModels: (visible, total) => `当前显示 ${visible} / ${total} 个模型。`,
     running: "检测中...",
+    runningHtml: '<span class="loading-spinner" aria-hidden="true"></span>检测中...',
     tested: (baseUrl, model) => `${baseUrl} · ${model}`,
     pass: "通过",
     partial: "注意",
@@ -319,7 +321,7 @@ form?.addEventListener("submit", async (event) => {
   scoreEl.textContent = "...";
   statusEl.textContent = t.running;
   statusEl.className = "status-pill status-partial";
-  verdictTitleEl.textContent = t.running;
+  verdictTitleEl.innerHTML = t.runningHtml;
   verdictTextEl.textContent = locale === "zh" ? "正在检查兼容性、延迟、流式输出和响应结构。" : "Checking compatibility, latency, streaming, and response shape.";
   checksEl.innerHTML = "";
   notesEl.innerHTML = "";

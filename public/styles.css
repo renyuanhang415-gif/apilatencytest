@@ -6,8 +6,8 @@
   --line: #e2e5e9;
   --text: #09090b;
   --muted: #667085;
-  --accent: #10c768;
-  --accent-dark: #07984d;
+  --accent: #7c3aed;
+  --accent-dark: #5b21b6;
   --warning: #b7791f;
   --danger: #d92d20;
   --shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
@@ -61,7 +61,7 @@ a {
   height: 12px;
   border-radius: 999px;
   background: var(--accent);
-  box-shadow: 0 0 0 6px rgba(16, 199, 104, 0.12);
+  box-shadow: 0 0 0 6px rgba(124, 58, 237, 0.12);
 }
 
 .header-actions,
@@ -248,7 +248,7 @@ h1 {
 .model-search:focus {
   border-color: var(--accent);
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(16, 199, 104, 0.12);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
 }
 
 .secret-field {
@@ -373,22 +373,25 @@ h1 {
   padding: 28px;
 }
 
-.score-ring {
+.score-card {
   display: grid;
-  place-items: center;
-  width: 168px;
-  height: 168px;
-  border: 14px solid var(--accent);
-  border-radius: 999px;
+  align-content: center;
+  width: 190px;
+  min-height: 142px;
+  border: 1px solid rgba(124, 58, 237, 0.24);
+  border-radius: 24px;
+  padding: 22px;
+  background: linear-gradient(180deg, #f4f0ff, #ffffff);
 }
 
-.score-ring span {
+.score-card span {
   font-size: 38px;
   font-weight: 900;
   line-height: 1;
 }
 
-.score-ring small {
+.score-card small {
+  margin-top: 8px;
   color: var(--muted);
   font-size: 13px;
 }
@@ -425,6 +428,24 @@ h1 {
   border-radius: 999px;
   background: var(--soft);
   font-weight: 900;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  border: 3px solid rgba(124, 58, 237, 0.18);
+  border-top-color: var(--accent);
+  border-radius: 999px;
+  vertical-align: -4px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .check-list {
@@ -614,10 +635,8 @@ h1 {
     justify-items: start;
   }
 
-  .score-ring {
-    width: 142px;
-    height: 142px;
-    border-width: 12px;
+  .score-card {
+    width: 100%;
   }
 
   .action-row {
