@@ -382,6 +382,12 @@ h1 {
   font-size: 14px;
 }
 
+.field-note {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
 [hidden] {
   display: none !important;
 }
@@ -633,7 +639,8 @@ h1 {
 
 .faq-list {
   display: grid;
-  gap: 10px;
+  gap: 0;
+  border-top: 1px solid var(--line);
 }
 
 .faq-item summary,
@@ -642,10 +649,19 @@ h1 {
   font-weight: 900;
 }
 
+.faq-item {
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+}
+
 .faq-item p,
 .explain-grid p {
   margin: 8px 0 0;
   color: var(--muted);
+}
+
+.faq-item p {
+  max-width: 980px;
 }
 
 .page-cta {
