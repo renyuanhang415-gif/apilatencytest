@@ -82,7 +82,7 @@
       </section>
 
       <section class="results" hidden data-results>
-        <div class="result-summary">
+        <div class="result-summary" data-result-loading>
           <div class="score-card">
             <span data-score>-</span>
             <small>质量评分</small>
@@ -98,61 +98,63 @@
           </div>
         </div>
 
-        <div class="check-list" data-checks></div>
+        <div hidden data-result-details>
+          <div class="check-list" data-checks></div>
 
-        <div class="metric-strip">
-          <div class="metric">
-            <div class="label">延迟</div>
-            <div class="value" data-chat-latency>-</div>
+          <div class="metric-strip">
+            <div class="metric">
+              <div class="label">延迟</div>
+              <div class="value" data-chat-latency>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">首 Token</div>
+              <div class="value" data-stream-latency>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">流式总耗时</div>
+              <div class="value" data-stream-total>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">Tokens/秒</div>
+              <div class="value" data-tokens-speed>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">输入 Tokens</div>
+              <div class="value" data-input-tokens>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">输出 Tokens</div>
+              <div class="value" data-output-tokens>-</div>
+            </div>
           </div>
-          <div class="metric">
-            <div class="label">首 Token</div>
-            <div class="value" data-stream-latency>-</div>
+
+          <div class="result-panel">
+            <h3>检测备注</h3>
+            <ul data-notes></ul>
           </div>
-          <div class="metric">
-            <div class="label">流式总耗时</div>
-            <div class="value" data-stream-total>-</div>
-          </div>
-          <div class="metric">
-            <div class="label">Tokens/秒</div>
-            <div class="value" data-tokens-speed>-</div>
-          </div>
-          <div class="metric">
-            <div class="label">输入 Tokens</div>
-            <div class="value" data-input-tokens>-</div>
-          </div>
-          <div class="metric">
-            <div class="label">输出 Tokens</div>
-            <div class="value" data-output-tokens>-</div>
-          </div>
+
+          <details class="result-panel advanced-results">
+            <summary>高级原始响应</summary>
+            <div class="advanced-stack">
+              <div>
+                <h3>请求载荷</h3>
+                <pre class="code" data-payload>{}</pre>
+              </div>
+              <div>
+                <h3>/v1/models</h3>
+                <pre class="code" data-models-json>{}</pre>
+              </div>
+              <div>
+                <h3>/v1/chat/completions</h3>
+                <pre class="code" data-chat-json>{}</pre>
+              </div>
+              <div>
+                <h3>/v1/chat/completions (stream)</h3>
+                <pre class="code" data-stream-json>{}</pre>
+              </div>
+            </div>
+          </details>
         </div>
-
-        <div class="result-panel">
-          <h3>检测备注</h3>
-          <ul data-notes></ul>
-        </div>
-
-        <details class="result-panel advanced-results">
-          <summary>高级原始响应</summary>
-          <div class="advanced-stack">
-            <div>
-              <h3>请求载荷</h3>
-              <pre class="code" data-payload>{}</pre>
-            </div>
-            <div>
-              <h3>/v1/models</h3>
-              <pre class="code" data-models-json>{}</pre>
-            </div>
-            <div>
-              <h3>/v1/chat/completions</h3>
-              <pre class="code" data-chat-json>{}</pre>
-            </div>
-            <div>
-              <h3>/v1/chat/completions (stream)</h3>
-              <pre class="code" data-stream-json>{}</pre>
-            </div>
-          </div>
-        </details>
       </section>
 
       <section class="page-band compact-copy">

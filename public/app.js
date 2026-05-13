@@ -13,6 +13,8 @@ const statusEl = document.querySelector("[data-status]");
 const verdictTitleEl = document.querySelector("[data-verdict-title]");
 const verdictTextEl = document.querySelector("[data-verdict-text]");
 const testedTargetEl = document.querySelector("[data-tested-target]");
+const resultLoadingEl = document.querySelector("[data-result-loading]");
+const resultDetailsEl = document.querySelector("[data-result-details]");
 const checksEl = document.querySelector("[data-checks]");
 const latencyChatEl = document.querySelector("[data-chat-latency]");
 const latencyStreamEl = document.querySelector("[data-stream-latency]");
@@ -215,6 +217,8 @@ function resetFlow() {
   if (runTestBtn) runTestBtn.hidden = true;
   if (resetFlowBtn) resetFlowBtn.hidden = true;
   if (resultWrap) resultWrap.hidden = true;
+  if (resultLoadingEl) resultLoadingEl.hidden = false;
+  if (resultDetailsEl) resultDetailsEl.hidden = true;
   setModelStatus(locale === "zh" ? "不需要注册。API Key 只用于本次实时检测。" : "No account. API keys are used only for this live test.");
 }
 
@@ -318,6 +322,8 @@ form?.addEventListener("submit", async (event) => {
   if (!form.model.value && allModels[0]) form.model.value = allModels[0];
 
   resultWrap.hidden = false;
+  if (resultLoadingEl) resultLoadingEl.hidden = false;
+  if (resultDetailsEl) resultDetailsEl.hidden = true;
   scoreEl.textContent = "...";
   statusEl.textContent = t.running;
   statusEl.className = "status-pill status-partial";
@@ -345,6 +351,8 @@ form?.addEventListener("submit", async (event) => {
     if (!res.ok) throw new Error(data.error || t.requestFailed);
 
     const kind = data.compatibility === "pass" ? "pass" : data.compatibility === "partial" ? "partial" : "fail";
+    if (resultLoadingEl) resultLoadingEl.hidden = true;
+    if (resultDetailsEl) resultDetailsEl.hidden = false;
     scoreEl.textContent = `${data.score}%`;
     statusEl.textContent = statusText(kind);
     statusEl.className = `status-pill status-${kind}`;
@@ -365,6 +373,8 @@ form?.addEventListener("submit", async (event) => {
     document.querySelector("[data-chat-json]").textContent = JSON.stringify(data.results.chat.json, null, 2);
     document.querySelector("[data-stream-json]").textContent = renderStreamResult(data.results.streaming);
   } catch (error) {
+    if (resultLoadingEl) resultLoadingEl.hidden = true;
+    if (resultDetailsEl) resultDetailsEl.hidden = false;
     scoreEl.textContent = "0%";
     statusEl.textContent = t.fail;
     statusEl.className = "status-pill status-fail";
