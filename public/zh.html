@@ -111,12 +111,6 @@
         <div hidden data-result-details>
           <div class="check-list" data-checks></div>
 
-          <details class="result-panel qa-panel" open>
-            <summary>题库匹配与每题结果</summary>
-            <p class="qa-bank-note" data-qa-bank></p>
-            <div class="qa-results" data-qa-results></div>
-          </details>
-
           <div class="metric-strip">
             <div class="metric">
               <div class="label">延迟</div>
@@ -144,32 +138,18 @@
             </div>
           </div>
 
-          <div class="result-panel">
-            <h3>检测备注</h3>
-            <ul data-notes></ul>
+          <div class="result-panel model-score-panel">
+            <div class="model-score-head">
+              <div>
+                <div class="label">模型整体评分</div>
+                <h3 data-model-grade>-</h3>
+              </div>
+              <strong data-model-score>-</strong>
+            </div>
+            <p data-model-score-note></p>
+            <div class="score-factors" data-model-score-factors></div>
           </div>
 
-          <details class="result-panel advanced-results">
-            <summary>高级原始响应</summary>
-            <div class="advanced-stack">
-              <div>
-                <h3>请求载荷</h3>
-                <pre class="code" data-payload>{}</pre>
-              </div>
-              <div>
-                <h3>/v1/models</h3>
-                <pre class="code" data-models-json>{}</pre>
-              </div>
-              <div>
-                <h3>/v1/chat/completions</h3>
-                <pre class="code" data-chat-json>{}</pre>
-              </div>
-              <div>
-                <h3>/v1/chat/completions (stream)</h3>
-                <pre class="code" data-stream-json>{}</pre>
-              </div>
-            </div>
-          </details>
         </div>
       </section>
 

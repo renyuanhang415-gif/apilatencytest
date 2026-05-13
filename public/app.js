@@ -17,16 +17,16 @@ const testedTargetEl = document.querySelector("[data-tested-target]");
 const resultLoadingEl = document.querySelector("[data-result-loading]");
 const resultDetailsEl = document.querySelector("[data-result-details]");
 const checksEl = document.querySelector("[data-checks]");
-const qaBankEl = document.querySelector("[data-qa-bank]");
-const qaResultsEl = document.querySelector("[data-qa-results]");
+const modelGradeEl = document.querySelector("[data-model-grade]");
+const modelScoreEl = document.querySelector("[data-model-score]");
+const modelScoreNoteEl = document.querySelector("[data-model-score-note]");
+const modelScoreFactorsEl = document.querySelector("[data-model-score-factors]");
 const latencyChatEl = document.querySelector("[data-chat-latency]");
 const latencyStreamEl = document.querySelector("[data-stream-latency]");
 const streamTotalEl = document.querySelector("[data-stream-total]");
 const tokensSpeedEl = document.querySelector("[data-tokens-speed]");
 const inputTokensEl = document.querySelector("[data-input-tokens]");
 const outputTokensEl = document.querySelector("[data-output-tokens]");
-const notesEl = document.querySelector("[data-notes]");
-const payloadEl = document.querySelector("[data-payload]");
 const allModels = [];
 
 const locale = (document.body.dataset.locale || document.documentElement.lang || "en").toLowerCase().startsWith("zh")
@@ -53,13 +53,25 @@ const text = {
     partial: "Warning",
     fail: "Fail",
     unavailable: "Unavailable",
-    cleanNote: "No major compatibility issue found in this single test.",
     requestFailed: "Request failed.",
     rawNoStream: "No stream response body.",
-    qaMatched: (bank, passed, total) => `Matched ${bank} question bank. Knowledge QA: ${passed}/${total}.`,
-    qaSignal: "This is a quality signal, not an absolute audit.",
-    expected: "Expected",
-    answer: "Answer",
+    modelScoreFactors: (qa, latency, protocol) => [
+      `Knowledge QA ${qa.passed}/${qa.total}`,
+      `Latency ${latency}`,
+      protocol ? "Protocol OK" : "Protocol warning",
+    ],
+    scoreNotes: {
+      excellent: "The endpoint looks stable in this run: answers, compatibility, streaming, and latency are all strong.",
+      good: "The endpoint is usable. A few signals are not perfect, so compare it with another provider before heavy use.",
+      watch: "This endpoint has visible risk. Use it for testing only until repeated checks look better.",
+      poor: "This endpoint is not reliable enough in this run. Avoid using it as a main production relay.",
+    },
+    scoreGrades: {
+      excellent: "Excellent",
+      good: "Good",
+      watch: "Watch",
+      poor: "High risk",
+    },
   },
   zh: {
     show: "显示",
@@ -80,13 +92,25 @@ const text = {
     partial: "注意",
     fail: "失败",
     unavailable: "不可用",
-    cleanNote: "本次检测没有发现明显兼容性问题。",
     requestFailed: "请求失败。",
     rawNoStream: "没有流式响应正文。",
-    qaMatched: (bank, passed, total) => `已匹配 ${bank} 题库。知识问答：${passed}/${total}。`,
-    qaSignal: "结果代表质量信号，不代表绝对鉴定。",
-    expected: "预期",
-    answer: "回答",
+    modelScoreFactors: (qa, latency, protocol) => [
+      `知识问答 ${qa.passed}/${qa.total}`,
+      `延迟 ${latency}`,
+      protocol ? "协议正常" : "协议需注意",
+    ],
+    scoreNotes: {
+      excellent: "本次检测质量信号较好：答题、兼容性、流式输出和延迟都比较稳定，可以作为候选接口继续观察。",
+      good: "本次检测整体可用，但仍有少量信号不够完美。建议和其它中转站再对比几次，不要只看单次结果。",
+      watch: "本次检测存在明显风险信号，更适合先做测试，不建议直接作为长期主力接口。",
+      poor: "本次检测质量较差，知识问答、兼容性或延迟至少有一项拖后腿，建议谨慎购买或使用。",
+    },
+    scoreGrades: {
+      excellent: "优秀",
+      good: "良好",
+      watch: "需观察",
+      poor: "高风险",
+    },
   },
 };
 
@@ -122,52 +146,6 @@ function renderJson(el, data) {
   el.textContent = JSON.stringify(data, null, 2);
 }
 
-function renderStreamResult(result) {
-  if (result?.json) return JSON.stringify(result.json, null, 2);
-  if (!result?.text) return t.rawNoStream;
-
-  const lines = result.text
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean);
-  const preview = [];
-
-  for (const line of lines) {
-    if (line === "data: [DONE]") {
-      preview.push("[DONE]");
-      continue;
-    }
-    if (!line.startsWith("data: ")) {
-      preview.push(line.slice(0, 160));
-      continue;
-    }
-
-    const payloadText = line.slice(6).trim();
-    try {
-      const payload = JSON.parse(payloadText);
-      const choice = payload.choices?.[0];
-      if (choice?.delta?.content) {
-        preview.push(`content: ${choice.delta.content}`);
-      } else if (choice?.delta?.role) {
-        preview.push(`role: ${choice.delta.role}`);
-      } else if (choice?.finish_reason) {
-        preview.push(`finish: ${choice.finish_reason}`);
-      } else if (payload.usage) {
-        preview.push(`usage: prompt=${payload.usage.prompt_tokens ?? 0}, completion=${payload.usage.completion_tokens ?? 0}`);
-      } else {
-        preview.push(payload.object || "data");
-      }
-    } catch {
-      preview.push(payloadText.slice(0, 160));
-    }
-
-    if (preview.length >= 8) break;
-  }
-
-  if (lines.length > preview.length) preview.push(`... ${lines.length - preview.length} more lines omitted`);
-  return preview.join("\n");
-}
-
 function statusText(status) {
   if (status === "pass") return t.pass;
   if (status === "partial" || status === "warning") return t.partial;
@@ -201,45 +179,29 @@ function renderChecks(checks) {
   });
 }
 
-function renderQaResults(qa) {
-  if (qaBankEl) {
-    qaBankEl.textContent = qa ? `${t.qaMatched(qa.bankLabel, qa.passed, qa.total)} ${t.qaSignal}` : "";
-  }
-  if (!qaResultsEl) return;
-  qaResultsEl.innerHTML = "";
-  if (!qa?.results?.length) return;
-
-  qa.results.forEach((item) => {
-    const row = document.createElement("div");
-    row.className = `qa-row status-${item.ok ? "pass" : "fail"}`;
-
-    const top = document.createElement("div");
-    top.className = "qa-row-top";
-
-    const title = document.createElement("strong");
-    title.textContent = `${item.id} · ${locale === "zh" ? item.dimensionZh : item.dimension}`;
-
-    const status = document.createElement("span");
-    status.className = "check-status";
-    status.textContent = item.ok ? t.pass : t.fail;
-
-    const detail = document.createElement("p");
-    detail.textContent = `${t.expected}: ${item.expected} · ${t.answer}: ${item.answer || item.error || "-"}`;
-
-    top.append(title, status);
-    row.append(top, detail);
-    qaResultsEl.appendChild(row);
-  });
+function modelGrade(score) {
+  if (score >= 90) return "excellent";
+  if (score >= 75) return "good";
+  if (score >= 60) return "watch";
+  return "poor";
 }
 
-function renderNotes(notes) {
-  if (!notesEl) return;
-  notesEl.innerHTML = "";
-  const values = notes?.length ? notes : [t.cleanNote];
-  values.forEach((note) => {
-    const li = document.createElement("li");
-    li.textContent = note;
-    notesEl.appendChild(li);
+function renderModelScore(data) {
+  const grade = modelGrade(data.score || 0);
+  const qa = data.summary?.qa || { passed: 0, total: 0 };
+  const latency = fmtMs(data.summary?.latencyMs?.chat);
+  const protocolOk = data.checks?.every((item) => item.key !== "protocol" || item.status === "pass");
+
+  if (modelGradeEl) modelGradeEl.textContent = t.scoreGrades[grade];
+  if (modelScoreEl) modelScoreEl.textContent = `${data.score}%`;
+  if (modelScoreNoteEl) modelScoreNoteEl.textContent = t.scoreNotes[grade];
+  if (!modelScoreFactorsEl) return;
+
+  modelScoreFactorsEl.innerHTML = "";
+  t.modelScoreFactors(qa, latency, protocolOk).forEach((item) => {
+    const badge = document.createElement("span");
+    badge.textContent = item;
+    modelScoreFactorsEl.appendChild(badge);
   });
 }
 
@@ -255,9 +217,10 @@ function resetResults() {
   if (resultLoadingEl) resultLoadingEl.hidden = false;
   if (resultDetailsEl) resultDetailsEl.hidden = true;
   if (checksEl) checksEl.innerHTML = "";
-  if (qaBankEl) qaBankEl.textContent = "";
-  if (qaResultsEl) qaResultsEl.innerHTML = "";
-  if (notesEl) notesEl.innerHTML = "";
+  if (modelGradeEl) modelGradeEl.textContent = "-";
+  if (modelScoreEl) modelScoreEl.textContent = "-";
+  if (modelScoreNoteEl) modelScoreNoteEl.textContent = "";
+  if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
   if (scoreEl) scoreEl.textContent = "-";
   if (statusEl) statusEl.textContent = "-";
   if (testedTargetEl) testedTargetEl.textContent = "-";
@@ -405,7 +368,6 @@ form?.addEventListener("submit", async (event) => {
   verdictTitleEl.innerHTML = t.runningHtml;
   verdictTextEl.textContent = locale === "zh" ? "正在检查兼容性、延迟、流式输出和响应结构。" : "Checking compatibility, latency, streaming, and response shape.";
   checksEl.innerHTML = "";
-  notesEl.innerHTML = "";
 
   const payload = {
     baseUrl: form.baseUrl.value,
@@ -413,8 +375,6 @@ form?.addEventListener("submit", async (event) => {
     model: form.model.value,
     prompt: form.prompt.value,
   };
-
-  renderJson(payloadEl, displayPayload(payload));
 
   try {
     const res = await fetch("/api/test", {
@@ -436,18 +396,14 @@ form?.addEventListener("submit", async (event) => {
     testedTargetEl.textContent = t.tested(data.input.baseUrl, data.input.model);
 
     renderChecks(data.checks || []);
-    renderQaResults(data.summary.qa);
+    renderModelScore(data);
     latencyChatEl.textContent = fmtMs(data.summary.latencyMs.chat);
     latencyStreamEl.textContent = fmtMs(data.summary.latencyMs.streamingFirstToken);
     streamTotalEl.textContent = fmtMs(data.summary.latencyMs.streamingTotal);
     tokensSpeedEl.textContent = fmtValue(data.summary.tokens?.perSecond);
     inputTokensEl.textContent = fmtValue(data.summary.tokens?.input);
     outputTokensEl.textContent = fmtValue(data.summary.tokens?.output);
-    renderNotes(data.notes);
 
-    document.querySelector("[data-models-json]").textContent = JSON.stringify(data.results.models.json, null, 2);
-    document.querySelector("[data-chat-json]").textContent = JSON.stringify(data.results.chat.json, null, 2);
-    document.querySelector("[data-stream-json]").textContent = renderStreamResult(data.results.streaming);
   } catch (error) {
     if (resultLoadingEl) resultLoadingEl.hidden = true;
     if (resultDetailsEl) resultDetailsEl.hidden = false;
@@ -456,6 +412,6 @@ form?.addEventListener("submit", async (event) => {
     statusEl.className = "status-pill status-fail";
     verdictTitleEl.textContent = t.unavailable;
     verdictTextEl.textContent = error.message;
-    renderNotes([error.message]);
+    renderModelScore({ score: 0, summary: { qa: { passed: 0, total: 5 }, latencyMs: {} }, checks: [] });
   }
 });

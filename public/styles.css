@@ -552,41 +552,51 @@ h1 {
   color: var(--muted);
 }
 
-.qa-panel {
+.model-score-panel {
   display: grid;
-  gap: 12px;
+  gap: 14px;
+  border-color: rgba(124, 58, 237, 0.24);
+  background: linear-gradient(180deg, #faf8ff, #ffffff);
 }
 
-.qa-bank-note {
-  margin: 12px 0 0;
-  color: var(--muted);
-}
-
-.qa-results {
-  display: grid;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.qa-row {
-  min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px;
-  background: var(--soft);
-}
-
-.qa-row-top {
+.model-score-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 18px;
 }
 
-.qa-row p {
-  margin: 6px 0 0;
+.model-score-head h3 {
+  margin: 4px 0 0;
+  font-size: 28px;
+}
+
+.model-score-head strong {
+  color: var(--accent-dark);
+  font-size: 42px;
+  line-height: 1;
+}
+
+.model-score-panel p {
+  max-width: 820px;
+  margin: 0;
   color: var(--muted);
-  overflow-wrap: anywhere;
+}
+
+.score-factors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.score-factors span {
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: #fff;
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .code {
