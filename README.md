@@ -12,6 +12,7 @@ Website: https://apilatencytest.com
 - Check OpenAI-compatible response shapes
 - Fetch available models from a base URL
 - No account and no stored API keys
+- Works on both a Node server and Vercel Functions
 
 ## Pages
 

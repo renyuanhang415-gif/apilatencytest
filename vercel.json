@@ -1,0 +1,24 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "public",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/v1/models",
+      "destination": "/api/demo-models"
+    },
+    {
+      "source": "/v1/chat/completions",
+      "destination": "/api/demo-chat"
+    }
+  ],
+  "functions": {
+    "api/models.js": {
+      "maxDuration": 30
+    },
+    "api/test.js": {
+      "maxDuration": 60
+    }
+  }
+}
