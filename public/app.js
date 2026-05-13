@@ -228,6 +228,7 @@ function renderDebug(data) {
         id: item.id,
         status: item.status,
         ok: item.ok,
+        source: item.source,
         latencyMs: item.latencyMs,
         prompt: item.prompt,
         expected: item.expected,
