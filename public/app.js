@@ -27,7 +27,10 @@ const streamTotalEl = document.querySelector("[data-stream-total]");
 const tokensSpeedEl = document.querySelector("[data-tokens-speed]");
 const inputTokensEl = document.querySelector("[data-input-tokens]");
 const outputTokensEl = document.querySelector("[data-output-tokens]");
+const debugPanelEl = document.querySelector("[data-debug-panel]");
+const debugOutputEl = document.querySelector("[data-debug-output]");
 const allModels = [];
+const debugMode = new URLSearchParams(window.location.search).get("debug") === "1";
 
 const locale = (document.body.dataset.locale || document.documentElement.lang || "en").toLowerCase().startsWith("zh")
   ? "zh"
@@ -211,6 +214,33 @@ function renderModelScore(data) {
   });
 }
 
+function renderDebug(data) {
+  if (!debugMode || !debugPanelEl || !debugOutputEl) return;
+  debugPanelEl.hidden = false;
+  const qa = data.summary?.qa || {};
+  debugOutputEl.textContent = JSON.stringify(
+    {
+      phase: data.phase,
+      model: data.input?.model,
+      score: data.score,
+      qaRate: qa.rate,
+      qaResults: (qa.results || []).map((item) => ({
+        id: item.id,
+        status: item.status,
+        ok: item.ok,
+        latencyMs: item.latencyMs,
+        prompt: item.prompt,
+        expected: item.expected,
+        answer: item.answer,
+        error: item.error,
+        rawPreview: item.rawPreview,
+      })),
+    },
+    null,
+    2
+  );
+}
+
 function renderModelScorePending() {
   if (modelGradeEl) {
     modelGradeEl.innerHTML = `<span class="loading-spinner" aria-hidden="true"></span>${t.scorePending}`;
@@ -238,6 +268,7 @@ function renderTestResult(data, options = {}) {
   } else {
     renderModelScorePending();
   }
+  renderDebug(data);
   latencyChatEl.textContent = fmtMs(data.summary.latencyMs.chat);
   latencyStreamEl.textContent = fmtMs(data.summary.latencyMs.streamingFirstToken);
   streamTotalEl.textContent = fmtMs(data.summary.latencyMs.streamingTotal);
@@ -262,6 +293,8 @@ function resetResults() {
   if (modelScoreEl) modelScoreEl.textContent = "-";
   if (modelScoreNoteEl) modelScoreNoteEl.textContent = "";
   if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
+  if (debugPanelEl) debugPanelEl.hidden = true;
+  if (debugOutputEl) debugOutputEl.textContent = "{}";
   if (scoreEl) scoreEl.textContent = "-";
   if (statusEl) statusEl.textContent = "-";
   if (testedTargetEl) testedTargetEl.textContent = "-";
