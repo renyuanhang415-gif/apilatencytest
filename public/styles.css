@@ -552,6 +552,43 @@ h1 {
   color: var(--muted);
 }
 
+.qa-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.qa-bank-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+}
+
+.qa-results {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.qa-row {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  background: var(--soft);
+}
+
+.qa-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.qa-row p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
 .code {
   overflow: auto;
   max-width: 100%;

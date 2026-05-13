@@ -15,9 +15,18 @@ export default async function handler(req, res) {
   await new Promise((resolve) => setTimeout(resolve, 180));
   const prompt = JSON.stringify(payload?.messages || "").toLowerCase();
   let answer = "Hello from the demo endpoint.";
+  if (prompt.includes("purple")) answer = "PURPLE";
   if (prompt.includes("capital of france")) answer = "Paris";
+  if (prompt.includes("法国首都")) answer = "Paris";
   if (prompt.includes("17 + 28")) answer = "45";
-  if (prompt.includes("reply purple")) answer = "PURPLE";
+  if (prompt.includes("ok") && prompt.includes("true")) answer = '{"ok":true}';
+  if (prompt.includes("join")) answer = "a-b-c";
+  if (prompt.includes("第一行 ok") || prompt.includes("second line 2026")) answer = "OK\n2026";
+  if (prompt.includes("苹果")) answer = "10";
+  if (prompt.includes("model_family")) answer = '{"model_family":"claude"}';
+  if (prompt.includes("紫色")) answer = "purple";
+  if (prompt.includes("第三个词")) answer = "stone";
+  if (prompt.includes("金的化学符号")) answer = "Au";
 
   if (payload.stream) {
     res.statusCode = 200;

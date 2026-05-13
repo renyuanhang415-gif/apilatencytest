@@ -11,6 +11,9 @@ export default async function handler(req, res) {
     data: [
       { id: "gpt-4o-mini", object: "model", owned_by: "openai" },
       { id: "gpt-4.1-mini", object: "model", owned_by: "openai" },
+      { id: "claude-3-5-sonnet", object: "model", owned_by: "anthropic" },
+      { id: "gemini-1.5-pro", object: "model", owned_by: "google" },
+      { id: "deepseek-chat", object: "model", owned_by: "deepseek" },
     ],
   });
 }

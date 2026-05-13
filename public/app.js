@@ -17,6 +17,8 @@ const testedTargetEl = document.querySelector("[data-tested-target]");
 const resultLoadingEl = document.querySelector("[data-result-loading]");
 const resultDetailsEl = document.querySelector("[data-result-details]");
 const checksEl = document.querySelector("[data-checks]");
+const qaBankEl = document.querySelector("[data-qa-bank]");
+const qaResultsEl = document.querySelector("[data-qa-results]");
 const latencyChatEl = document.querySelector("[data-chat-latency]");
 const latencyStreamEl = document.querySelector("[data-stream-latency]");
 const streamTotalEl = document.querySelector("[data-stream-total]");
@@ -54,6 +56,10 @@ const text = {
     cleanNote: "No major compatibility issue found in this single test.",
     requestFailed: "Request failed.",
     rawNoStream: "No stream response body.",
+    qaMatched: (bank, passed, total) => `Matched ${bank} question bank. Knowledge QA: ${passed}/${total}.`,
+    qaSignal: "This is a quality signal, not an absolute audit.",
+    expected: "Expected",
+    answer: "Answer",
   },
   zh: {
     show: "显示",
@@ -77,6 +83,10 @@ const text = {
     cleanNote: "本次检测没有发现明显兼容性问题。",
     requestFailed: "请求失败。",
     rawNoStream: "没有流式响应正文。",
+    qaMatched: (bank, passed, total) => `已匹配 ${bank} 题库。知识问答：${passed}/${total}。`,
+    qaSignal: "结果代表质量信号，不代表绝对鉴定。",
+    expected: "预期",
+    answer: "回答",
   },
 };
 
@@ -191,6 +201,37 @@ function renderChecks(checks) {
   });
 }
 
+function renderQaResults(qa) {
+  if (qaBankEl) {
+    qaBankEl.textContent = qa ? `${t.qaMatched(qa.bankLabel, qa.passed, qa.total)} ${t.qaSignal}` : "";
+  }
+  if (!qaResultsEl) return;
+  qaResultsEl.innerHTML = "";
+  if (!qa?.results?.length) return;
+
+  qa.results.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = `qa-row status-${item.ok ? "pass" : "fail"}`;
+
+    const top = document.createElement("div");
+    top.className = "qa-row-top";
+
+    const title = document.createElement("strong");
+    title.textContent = `${item.id} · ${locale === "zh" ? item.dimensionZh : item.dimension}`;
+
+    const status = document.createElement("span");
+    status.className = "check-status";
+    status.textContent = item.ok ? t.pass : t.fail;
+
+    const detail = document.createElement("p");
+    detail.textContent = `${t.expected}: ${item.expected} · ${t.answer}: ${item.answer || item.error || "-"}`;
+
+    top.append(title, status);
+    row.append(top, detail);
+    qaResultsEl.appendChild(row);
+  });
+}
+
 function renderNotes(notes) {
   if (!notesEl) return;
   notesEl.innerHTML = "";
@@ -214,6 +255,8 @@ function resetResults() {
   if (resultLoadingEl) resultLoadingEl.hidden = false;
   if (resultDetailsEl) resultDetailsEl.hidden = true;
   if (checksEl) checksEl.innerHTML = "";
+  if (qaBankEl) qaBankEl.textContent = "";
+  if (qaResultsEl) qaResultsEl.innerHTML = "";
   if (notesEl) notesEl.innerHTML = "";
   if (scoreEl) scoreEl.textContent = "-";
   if (statusEl) statusEl.textContent = "-";
@@ -393,6 +436,7 @@ form?.addEventListener("submit", async (event) => {
     testedTargetEl.textContent = t.tested(data.input.baseUrl, data.input.model);
 
     renderChecks(data.checks || []);
+    renderQaResults(data.summary.qa);
     latencyChatEl.textContent = fmtMs(data.summary.latencyMs.chat);
     latencyStreamEl.textContent = fmtMs(data.summary.latencyMs.streamingFirstToken);
     streamTotalEl.textContent = fmtMs(data.summary.latencyMs.streamingTotal);

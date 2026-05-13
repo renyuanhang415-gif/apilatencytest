@@ -57,9 +57,18 @@ function contentTypeFor(filePath) {
 
 function demoAnswer(payload) {
   const prompt = JSON.stringify(payload?.messages || "").toLowerCase();
+  if (prompt.includes("purple")) return "PURPLE";
   if (prompt.includes("capital of france")) return "Paris";
+  if (prompt.includes("法国首都")) return "Paris";
   if (prompt.includes("17 + 28")) return "45";
-  if (prompt.includes("reply purple")) return "PURPLE";
+  if (prompt.includes("ok") && prompt.includes("true")) return '{"ok":true}';
+  if (prompt.includes("join")) return "a-b-c";
+  if (prompt.includes("第一行 ok") || prompt.includes("second line 2026")) return "OK\n2026";
+  if (prompt.includes("苹果")) return "10";
+  if (prompt.includes("model_family")) return '{"model_family":"claude"}';
+  if (prompt.includes("紫色")) return "purple";
+  if (prompt.includes("第三个词")) return "stone";
+  if (prompt.includes("金的化学符号")) return "Au";
   return "Hello from the demo endpoint.";
 }
 
@@ -133,6 +142,9 @@ async function handleRequest(req, res) {
         data: [
           { id: "gpt-4o-mini", object: "model", owned_by: "openai" },
           { id: "gpt-4.1-mini", object: "model", owned_by: "openai" },
+          { id: "claude-3-5-sonnet", object: "model", owned_by: "anthropic" },
+          { id: "gemini-1.5-pro", object: "model", owned_by: "google" },
+          { id: "deepseek-chat", object: "model", owned_by: "deepseek" },
         ],
       });
     }
