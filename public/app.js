@@ -414,7 +414,6 @@ form?.addEventListener("submit", async (event) => {
     baseUrl: form.baseUrl.value,
     apiKey: form.apiKey.value,
     model: form.model.value,
-    prompt: form.prompt.value,
   };
 
   try {
