@@ -13,13 +13,19 @@ export default async function handler(req, res) {
   }
 
   await new Promise((resolve) => setTimeout(resolve, 180));
+  const prompt = JSON.stringify(payload?.messages || "").toLowerCase();
+  const answer = prompt.includes("capital of france") ? "Paris" : "Hello from the demo endpoint.";
 
   if (payload.stream) {
     res.statusCode = 200;
     res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
     res.setHeader("Cache-Control", "no-cache, no-transform");
     res.write(
-      'data: {"id":"chatcmpl-demo","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"Hello"},"finish_reason":null}]}\n\n'
+      `data: ${JSON.stringify({
+        id: "chatcmpl-demo",
+        object: "chat.completion.chunk",
+        choices: [{ index: 0, delta: { content: answer }, finish_reason: null }],
+      })}\n\n`
     );
     await new Promise((resolve) => setTimeout(resolve, 150));
     res.write(
@@ -36,9 +42,14 @@ export default async function handler(req, res) {
     choices: [
       {
         index: 0,
-        message: { role: "assistant", content: "Hello from the demo endpoint." },
+        message: { role: "assistant", content: answer },
         finish_reason: "stop",
       },
     ],
+    usage: {
+      prompt_tokens: 9,
+      completion_tokens: answer === "Paris" ? 1 : 6,
+      total_tokens: answer === "Paris" ? 10 : 15,
+    },
   });
 }

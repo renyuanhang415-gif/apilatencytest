@@ -54,6 +54,11 @@ function contentTypeFor(filePath) {
   return contentTypes[path.extname(filePath).toLowerCase()] || "application/octet-stream";
 }
 
+function demoAnswer(payload) {
+  const prompt = JSON.stringify(payload?.messages || "").toLowerCase();
+  return prompt.includes("capital of france") ? "Paris" : "Hello from the demo endpoint.";
+}
+
 async function fileExists(filePath) {
   try {
     const info = await stat(filePath);
@@ -140,6 +145,8 @@ async function handleRequest(req, res) {
 
       await new Promise((resolve) => setTimeout(resolve, delayMs));
 
+      const answer = demoAnswer(parsed);
+
       if (parsed.stream) {
         res.writeHead(200, {
           "Content-Type": "text/event-stream; charset=utf-8",
@@ -147,7 +154,11 @@ async function handleRequest(req, res) {
           Connection: "keep-alive",
         });
         res.write(
-          'data: {"id":"chatcmpl-demo","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"Hello"},"finish_reason":null}]}\n\n'
+          `data: ${JSON.stringify({
+            id: "chatcmpl-demo",
+            object: "chat.completion.chunk",
+            choices: [{ index: 0, delta: { content: answer }, finish_reason: null }],
+          })}\n\n`
         );
         setTimeout(() => {
           res.write(
@@ -165,10 +176,15 @@ async function handleRequest(req, res) {
         choices: [
           {
             index: 0,
-            message: { role: "assistant", content: "Hello from the demo endpoint." },
+            message: { role: "assistant", content: answer },
             finish_reason: "stop",
           },
         ],
+        usage: {
+          prompt_tokens: 9,
+          completion_tokens: answer === "Paris" ? 1 : 6,
+          total_tokens: answer === "Paris" ? 10 : 15,
+        },
       });
     }
   }

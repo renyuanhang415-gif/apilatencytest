@@ -19,64 +19,16 @@
       gtag('js', new Date());
       gtag('config', 'G-WJSZRPQLHE');
     </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is an AI API relay quality test?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "It checks latency, first token time, streaming behavior, model listing, and OpenAI-compatible API behavior for relays, gateways, and proxy endpoints."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is TTFT?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "TTFT means time to first token. It is the delay between sending a prompt and seeing the first streamed token."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does PASS mean the API is fast?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. PASS only means the tested endpoints behaved like an OpenAI-style API. The endpoint can still be slow."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can this prove a relay is watered down or dishonest?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. It can reveal quality risk signals such as slow, broken, or incompatible behavior, but it is not a full audit or absolute proof."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Do you store my API key?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. The key is only used for the live request and is not stored in the app."
-            }
-          }
-        ]
-      }
-    </script>
   </head>
   <body data-locale="en">
     <main class="site-shell">
       <header class="topbar">
-        <div class="brand"><span class="brand-mark"></span><span>API Latency Test</span></div>
+        <a class="brand" href="/"><span class="brand-mark"></span><span>API Latency Test</span></a>
         <div class="header-actions">
           <nav class="nav">
             <a class="active" href="/">Quality Test</a>
-            <a href="/openai-api-validator">OpenAI API Validator</a>
-            <a href="/openai-compatible-api-checker">Compatible API Checker</a>
+            <a href="/openai-api-validator">API Validator</a>
+            <a href="/openai-compatible-api-checker">Compatible Checker</a>
           </nav>
           <div class="lang-switch" aria-label="Language switch">
             <a class="active" href="/">EN</a>
@@ -85,116 +37,95 @@
         </div>
       </header>
 
-      <section class="tool-map" aria-label="Tool types">
-        <a class="tool-map-item is-active" href="/">
-          <strong>Relay Quality Test</strong>
-          <span>Checks if it feels fast, stable, and compatible.</span>
-        </a>
-        <a class="tool-map-item" href="/openai-api-validator">
-          <strong>API Validator</strong>
-          <span>Checks if it works.</span>
-        </a>
-        <a class="tool-map-item" href="/openai-compatible-api-checker">
-          <strong>Compatible Checker</strong>
-          <span>Checks if it looks like OpenAI.</span>
-        </a>
-      </section>
+      <section class="tester-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">OpenAI-compatible relay checker</p>
+          <h1>Test an AI API relay before you trust it.</h1>
+          <p class="lede">Enter a Base URL and API key. Fetch models, choose one, then run a focused quality test.</p>
+        </div>
 
-      <section class="hero">
-        <div class="hero-grid">
-          <div>
-            <div class="eyebrow">Small tool, practical relay signals</div>
-            <h1>AI API Relay Quality Test</h1>
-            <p class="lede">
-              Check OpenAI-compatible relays, gateways, and proxy endpoints for latency, TTFT, streaming behavior,
-              model listing, and compatibility risk before you trust them in production.
-            </p>
-            <div class="callouts">
-              <div class="callout"><strong>Latency + TTFT</strong><span>Measure chat response time and first token delay.</span></div>
-              <div class="callout"><strong>Streaming</strong><span>Check if event stream output works in practice.</span></div>
-              <div class="callout"><strong>Relay risk</strong><span>Probe /v1/models and /v1/chat/completions behavior.</span></div>
-            </div>
-          </div>
-          <aside class="tool" id="test-tool">
-            <h2>Run a quality test</h2>
-            <form data-test-form>
+        <section class="test-card" id="test-tool" aria-label="AI API quality test">
+          <form data-test-form>
+            <div class="config-grid">
               <div class="field">
-                <label for="baseUrl">Base URL</label>
+                <label for="baseUrl">API Base URL</label>
                 <input id="baseUrl" name="baseUrl" placeholder="https://example.com" value="https://api.openai.com" />
               </div>
-              <div class="row">
-                <div class="field">
-                  <label for="apiKey">API Key</label>
-                  <div class="secret-field">
-                    <input id="apiKey" name="apiKey" type="password" placeholder="sk-..." autocomplete="off" />
-                    <button class="icon-btn" type="button" data-toggle-key aria-label="Show API key" title="Show API key">
-                      Show
-                    </button>
-                  </div>
-                </div>
-                <div class="field">
-                  <label for="model">Model</label>
-                  <input id="model" name="model" value="gpt-4o-mini" />
-                </div>
-              </div>
               <div class="field">
-                <label>Available models</label>
-                <input class="model-search" data-model-search placeholder="Search models..." />
-                <div class="model-picker" data-model-picker>
-                  <span class="hint">Fetch models first, then click one to use it.</span>
+                <label for="apiKey">API Key</label>
+                <div class="secret-field">
+                  <input id="apiKey" name="apiKey" type="password" placeholder="sk-..." autocomplete="off" />
+                  <button class="icon-btn" type="button" data-toggle-key aria-label="Show API key" title="Show API key">
+                    Show
+                  </button>
                 </div>
               </div>
-              <div class="field">
-                <label for="prompt">Prompt</label>
-                <textarea id="prompt" name="prompt">Say hello in one short sentence.</textarea>
+            </div>
+
+            <div class="model-step" hidden data-model-step>
+              <label>Target model</label>
+              <input class="model-search" data-model-search placeholder="Search models..." />
+              <div class="model-picker" data-model-picker>
+                <span class="hint">Fetch models first.</span>
               </div>
-              <div class="actions">
-                <button class="btn btn-ghost" type="button" data-fetch-models>Fetch models</button>
-                <button class="btn btn-primary" type="submit">Test API</button>
-                <button class="btn btn-secondary" type="button" data-load-demo>Load demo endpoint</button>
-              </div>
-              <div class="hint" data-model-status>Fetch models first if you are not sure which model ID to test.</div>
-              <div class="hint">No account, no stored key. Tests run server-side and are not saved.</div>
-            </form>
-          </aside>
-        </div>
+            </div>
+
+            <input id="model" name="model" type="hidden" value="" />
+            <input id="prompt" name="prompt" type="hidden" value="What is the capital of France? Answer with one word." />
+
+            <div class="action-row">
+              <button class="btn btn-primary btn-large" type="button" data-fetch-models>Fetch models</button>
+              <button class="btn btn-primary btn-large" type="submit" hidden data-run-test>Start test</button>
+              <button class="btn btn-secondary btn-small" type="button" data-reset-flow hidden>Change endpoint</button>
+            </div>
+            <div class="hint" data-model-status>No account. API keys are used only for this live test.</div>
+          </form>
+        </section>
       </section>
 
       <section class="results" hidden data-results>
-        <div class="result-panel">
-          <div class="result-grid">
-            <div class="metric">
-              <div class="label">Compatibility</div>
-              <div class="value" data-status>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">Compatibility Score</div>
-              <div class="value" data-score>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">Performance</div>
-              <div class="value" data-performance>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">Models latency</div>
-              <div class="value" data-models-latency>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">Chat latency</div>
-              <div class="value" data-chat-latency>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">Streaming TTFT</div>
-              <div class="value" data-stream-latency>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">Streaming total</div>
-              <div class="value" data-stream-total>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">Streaming</div>
-              <div class="value" data-stream-status>-</div>
-            </div>
+        <div class="result-summary">
+          <div class="score-ring">
+            <span data-score>-</span>
+            <small>quality score</small>
+          </div>
+          <div class="verdict">
+            <div class="label">Result</div>
+            <h2 data-verdict-title>Running...</h2>
+            <p data-verdict-text>Checking compatibility, latency, streaming, and response shape.</p>
+          </div>
+          <div class="tested-meta">
+            <span data-status>-</span>
+            <small data-tested-target>-</small>
+          </div>
+        </div>
+
+        <div class="check-list" data-checks></div>
+
+        <div class="metric-strip">
+          <div class="metric">
+            <div class="label">Latency</div>
+            <div class="value" data-chat-latency>-</div>
+          </div>
+          <div class="metric">
+            <div class="label">TTFT</div>
+            <div class="value" data-stream-latency>-</div>
+          </div>
+          <div class="metric">
+            <div class="label">Streaming total</div>
+            <div class="value" data-stream-total>-</div>
+          </div>
+          <div class="metric">
+            <div class="label">Tokens/sec</div>
+            <div class="value" data-tokens-speed>-</div>
+          </div>
+          <div class="metric">
+            <div class="label">Input tokens</div>
+            <div class="value" data-input-tokens>-</div>
+          </div>
+          <div class="metric">
+            <div class="label">Output tokens</div>
+            <div class="value" data-output-tokens>-</div>
           </div>
         </div>
 
@@ -210,17 +141,14 @@
               <h3>Request payload</h3>
               <pre class="code" data-payload>{}</pre>
             </div>
-
             <div>
               <h3>/v1/models</h3>
               <pre class="code" data-models-json>{}</pre>
             </div>
-
             <div>
               <h3>/v1/chat/completions</h3>
               <pre class="code" data-chat-json>{}</pre>
             </div>
-
             <div>
               <h3>/v1/chat/completions (stream)</h3>
               <pre class="code" data-stream-json>{}</pre>
@@ -229,82 +157,18 @@
         </details>
       </section>
 
-      <section class="page-band">
-        <h2>What this test checks</h2>
-        <p>
-          1) Send a GET request to /v1/models. 2) Send a non-stream chat completion. 3) Send a stream request and
-          measure TTFT. Together these checks give a practical view of compatibility and relay quality risk.
-        </p>
+      <section class="page-band compact-copy">
+        <h2>What it checks</h2>
+        <p>Model listing, selected model availability, control-question answer, OpenAI-style response shape, streaming quality, latency, TTFT, and rough token speed.</p>
       </section>
 
-      <section class="page-band">
-        <h2>When to use it</h2>
-        <p>
-          Use this page when you have an OpenAI-compatible endpoint, a relay, or a proxy and want to know if it is
-          actually fast enough for real chat usage. Compatibility alone is not enough. A slow or unstable relay can
-          still pass the API shape test, so the latency and streaming metrics matter just as much as the status label.
-        </p>
-      </section>
-
-      <section class="page-band">
-        <h2>How to read the result</h2>
-        <div class="explain-grid">
-          <div>
-            <strong>Compatibility</strong>
-            <p>PASS means the tested calls follow the expected OpenAI-style API shape.</p>
-          </div>
-          <div>
-            <strong>Performance</strong>
-            <p>Fast, Usable, Slow, or Very slow is based on chat latency, TTFT, and streaming total time.</p>
-          </div>
-          <div>
-            <strong>TTFT</strong>
-            <p>Time to first token matters most for chat UX. Under 2 seconds is good, 2-6 seconds is usable.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="page-band">
-        <h2>What it does not prove</h2>
-        <p>
-          This tool does not absolutely prove whether a relay is watered down or dishonest. It provides technical
-          signals: speed, streaming behavior, model listing, and compatibility. Use it as a low-cost pre-check before
-          buying or relying on an endpoint.
-        </p>
-      </section>
-
-      <section class="page-band">
-        <h2>FAQ</h2>
-        <div class="faq-list">
-          <details class="faq-item">
-            <summary>What is an AI API relay quality test?</summary>
-            <p>It checks how quickly an AI endpoint answers, how fast the first token appears, whether streaming is supported, and whether core OpenAI-compatible calls work.</p>
-          </details>
-          <details class="faq-item">
-            <summary>What does TTFT mean?</summary>
-            <p>TTFT is time to first token. It is the first streaming delay users feel in chat-like interfaces.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Does PASS mean the API is fast?</summary>
-            <p>No. PASS means the tested API calls worked in an OpenAI-style way. The endpoint can still be slow.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Why do latency results change?</summary>
-            <p>Network path, endpoint load, model choice, and relay quality can all change the numbers from one test to the next.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Can this detect a watered-down or bad relay?</summary>
-            <p>It can reveal slow, broken, or incompatible behavior, which is often enough to spot quality risk. It is a practical test, not a full audit.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Do you store my API key?</summary>
-            <p>No. The key is only used for the live request and is not saved in the app.</p>
-          </details>
-        </div>
+      <section class="page-band compact-copy">
+        <h2>What it cannot prove</h2>
+        <p>This is a practical quality signal, not an absolute audit. Slow, broken, or inconsistent behavior is a warning before you buy or rely on a relay.</p>
       </section>
 
       <footer class="footer">
-        Made as a focused tool site: one relay quality test, a few long-tail pages, and no private key storage.
+        Focused MVP: no account, no ranking, no stored private keys.
       </footer>
     </main>
 
