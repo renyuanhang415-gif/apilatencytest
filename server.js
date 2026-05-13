@@ -12,6 +12,7 @@ const port = Number(process.env.PORT || 3000);
 
 const pages = {
   "/": "index.html",
+  "/zh": "zh.html",
   "/openai-api-validator": "openai-api-validator.html",
   "/openai-compatible-api-checker": "openai-compatible-api-checker.html",
 };

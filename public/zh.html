@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI API 中转站质量检测 - 延迟、TTFT、兼容性风险</title>
+    <meta
+      name="description"
+      content="检测 OpenAI 兼容接口、中转站、网关和代理的延迟、首 Token 时间、流式输出、模型列表和兼容性风险。"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="canonical" href="https://apilatencytest.com/zh" />
+    <link rel="alternate" hreflang="en" href="https://apilatencytest.com/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://apilatencytest.com/zh" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WJSZRPQLHE');
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "什么是 AI API 中转站质量检测？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "它会检测 AI 接口的响应速度、首个 Token 延迟、流式输出是否正常，以及接口是否符合 OpenAI 兼容格式。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "什么是 TTFT？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "TTFT 是 Time to First Token，表示发送请求后，用户看到第一个流式 Token 的时间。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "检测通过就代表中转站一定靠谱吗？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "不一定。通过只说明本次测试里接口格式和基础行为正常，不能绝对证明服务质量、稳定性和来源。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "这个工具能不能判断掺水？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "它更适合作为质量风险筛查工具，可以发现慢、坏、兼容性差的中转接口，但不构成绝对鉴定。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "会不会保存我的 API Key？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "不会。API Key 只用于当前测试请求，站点不做账户系统，也不保存私钥。"
+            }
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body data-locale="zh">
+    <main class="site-shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark"></span><span>API Latency Test</span></div>
+        <div class="header-actions">
+          <nav class="nav">
+            <a class="active" href="/zh">质量检测</a>
+            <a href="/openai-api-validator">API 验证</a>
+            <a href="/openai-compatible-api-checker">兼容性检查</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switch">
+            <a href="/">EN</a>
+            <a class="active" href="/zh">中文</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="tool-map" aria-label="Tool types">
+        <a class="tool-map-item is-active" href="/zh">
+          <strong>质量检测</strong>
+          <span>看它是否真的够快、够稳、够像 OpenAI。</span>
+        </a>
+        <a class="tool-map-item" href="/openai-api-validator">
+          <strong>API 验证</strong>
+          <span>看它能不能正常调用。</span>
+        </a>
+        <a class="tool-map-item" href="/openai-compatible-api-checker">
+          <strong>兼容性检查</strong>
+          <span>看它是否符合 OpenAI 接口形状。</span>
+        </a>
+      </section>
+
+      <section class="hero">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">面向中转站、网关、代理接口的低成本筛查</div>
+            <h1>AI API 中转站质量检测</h1>
+            <p class="lede">
+              输入 Base URL 和 API Key，快速检测模型列表、聊天接口、流式响应、首 Token 延迟和 OpenAI
+              兼容性风险。适合在购买前、长期使用前，先做一次技术验证。
+            </p>
+            <div class="callouts">
+              <div class="callout"><strong>延迟与 TTFT</strong><span>看首个 Token 和整体响应是不是发木。</span></div>
+              <div class="callout"><strong>流式输出</strong><span>检查流式返回是否正常、是否容易掉链子。</span></div>
+              <div class="callout"><strong>兼容性风险</strong><span>探测 /v1/models 和 /v1/chat/completions。</span></div>
+            </div>
+          </div>
+          <aside class="tool" id="test-tool">
+            <h2>开始检测</h2>
+            <form data-test-form>
+              <div class="field">
+                <label for="baseUrl">Base URL</label>
+                <input id="baseUrl" name="baseUrl" placeholder="https://example.com" value="https://api.openai.com" />
+              </div>
+              <div class="row">
+                <div class="field">
+                  <label for="apiKey">API Key</label>
+                  <div class="secret-field">
+                    <input id="apiKey" name="apiKey" type="password" placeholder="sk-..." autocomplete="off" />
+                    <button class="icon-btn" type="button" data-toggle-key aria-label="显示 API Key" title="显示 API Key">
+                      显示
+                    </button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="model">模型</label>
+                  <input id="model" name="model" value="gpt-4o-mini" />
+                </div>
+              </div>
+              <div class="field">
+                <label>可选模型</label>
+                <input class="model-search" data-model-search placeholder="搜索模型..." />
+                <div class="model-picker" data-model-picker>
+                  <span class="hint">先获取模型列表，再点击模型填入测试。</span>
+                </div>
+              </div>
+              <div class="field">
+                <label for="prompt">测试提示词</label>
+                <textarea id="prompt" name="prompt">请用一句简短的话打个招呼。</textarea>
+              </div>
+              <div class="actions">
+                <button class="btn btn-ghost" type="button" data-fetch-models>获取模型</button>
+                <button class="btn btn-primary" type="submit">开始检测</button>
+                <button class="btn btn-secondary" type="button" data-load-demo>载入演示接口</button>
+              </div>
+              <div class="hint" data-model-status>如果不确定模型 ID，先点“获取模型”。</div>
+              <div class="hint">无账号系统，不保存 Key。测试在服务端执行，但不做长期存储。</div>
+            </form>
+          </aside>
+        </div>
+      </section>
+
+      <section class="results" hidden data-results>
+        <div class="result-panel">
+          <div class="result-grid">
+            <div class="metric">
+              <div class="label">兼容性</div>
+              <div class="value" data-status>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">兼容性评分</div>
+              <div class="value" data-score>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">整体体验</div>
+              <div class="value" data-performance>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">模型列表延迟</div>
+              <div class="value" data-models-latency>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">聊天延迟</div>
+              <div class="value" data-chat-latency>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">流式 TTFT</div>
+              <div class="value" data-stream-latency>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">流式总耗时</div>
+              <div class="value" data-stream-total>-</div>
+            </div>
+            <div class="metric">
+              <div class="label">流式支持</div>
+              <div class="value" data-stream-status>-</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-panel">
+          <h3>检测信号与备注</h3>
+          <ul data-notes></ul>
+        </div>
+
+        <details class="result-panel advanced-results">
+          <summary>高级原始响应</summary>
+          <div class="advanced-stack">
+            <div>
+              <h3>请求载荷</h3>
+              <pre class="code" data-payload>{}</pre>
+            </div>
+
+            <div>
+              <h3>/v1/models</h3>
+              <pre class="code" data-models-json>{}</pre>
+            </div>
+
+            <div>
+              <h3>/v1/chat/completions</h3>
+              <pre class="code" data-chat-json>{}</pre>
+            </div>
+
+            <div>
+              <h3>/v1/chat/completions (stream)</h3>
+              <pre class="code" data-stream-json>{}</pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="page-band">
+        <h2>这个工具在检查什么</h2>
+        <p>
+          1）请求 /v1/models 看模型列表能不能正常返回。2）发送一次非流式聊天补全。3）发送一次流式请求，测首个 Token
+          延迟和总耗时。
+        </p>
+      </section>
+
+      <section class="page-band">
+        <h2>适合什么场景</h2>
+        <p>
+          当你拿到一个声称“OpenAI 兼容”的中转站、网关或代理接口时，这个页面可以帮助你判断它是不是至少在技术层面够用。只有兼容性还不够，
+          一个很慢的接口即使形式上通过，也会让真实聊天体验很差。
+        </p>
+      </section>
+
+      <section class="page-band">
+        <h2>如何理解结果</h2>
+        <div class="explain-grid">
+          <div>
+            <strong>兼容性</strong>
+            <p>通过表示这几个核心调用符合 OpenAI 风格接口形状。</p>
+          </div>
+          <div>
+            <strong>整体体验</strong>
+            <p>快、可用、慢、很慢，综合聊天延迟、TTFT 和流式总耗时得出。</p>
+          </div>
+          <div>
+            <strong>TTFT</strong>
+            <p>首个 Token 延迟最影响聊天体感。2 秒内通常不错，2 到 6 秒基本可用。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-band">
+        <h2>这个工具不能绝对证明什么</h2>
+        <p>
+          它不能绝对鉴定“掺水”或服务来源，只能提供质量信号和疑似风险。你可以把它当作购买前、使用前的低成本技术筛查，而不是完整审计。
+        </p>
+      </section>
+
+      <section class="page-band">
+        <h2>FAQ</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>什么是 AI API 中转站质量检测？</summary>
+            <p>它会检查 AI 接口响应有多快、首个 Token 多久出来，以及流式输出是否正常。</p>
+          </details>
+          <details class="faq-item">
+            <summary>什么是 TTFT？</summary>
+            <p>TTFT 就是 Time to First Token，代表用户在聊天界面里感受到的第一次等待时间。</p>
+          </details>
+          <details class="faq-item">
+            <summary>通过就代表这个中转站一定靠谱吗？</summary>
+            <p>不是。通过只说明这次测试里它能跑通，而且接口格式看起来兼容，不代表长期稳定、价格合理或来源真实。</p>
+          </details>
+          <details class="faq-item">
+            <summary>这个工具能判断掺水吗？</summary>
+            <p>它更像风险筛查工具，能发现慢、坏、兼容性差的问题，但不构成绝对鉴定。</p>
+          </details>
+          <details class="faq-item">
+            <summary>为什么每次测出来的延迟会变化？</summary>
+            <p>网络路径、节点负载、模型选择和中转质量都会影响结果，所以建议多测几次再下结论。</p>
+          </details>
+          <details class="faq-item">
+            <summary>会不会保存我的 API Key？</summary>
+            <p>不会。Key 只用于当前测试请求，不做账号系统，也不做私钥存储。</p>
+          </details>
+        </div>
+      </section>
+
+      <footer class="footer">
+        第一阶段先做成一个垂直小工具：一个检测页，几个长尾支持页，不做账号，不做榜单，不存私钥。
+      </footer>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

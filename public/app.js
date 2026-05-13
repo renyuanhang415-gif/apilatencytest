@@ -17,6 +17,84 @@ const notesEl = document.querySelector("[data-notes]");
 const payloadEl = document.querySelector("[data-payload]");
 const demoBtn = document.querySelector("[data-load-demo]");
 const allModels = [];
+const locale = (document.body.dataset.locale || document.documentElement.lang || "en").toLowerCase().startsWith("zh")
+  ? "zh"
+  : "en";
+
+const messages = {
+  en: {
+    noData: "No data",
+    fast: "Fast",
+    ok: "OK",
+    slow: "Slow",
+    verySlow: "Very slow",
+    usable: "Usable",
+    supported: "Supported",
+    failed: "Failed",
+    unavailable: "Unavailable",
+    running: "Running...",
+    show: "Show",
+    hide: "Hide",
+    showKey: "Show API key",
+    hideKey: "Hide API key",
+    noMatchingModels: "No matching models.",
+    loadingModels: "Loading model list...",
+    selectedModel: (model) => `Selected ${model}. Now click Test API.`,
+    showingModels: (visible, total) => `Showing ${visible} of ${total} models.`,
+    loadedDemo: "Loaded demo models. Click one or run the test directly.",
+    fetchingModels: "Fetching models...",
+    loadedModels: (count, ms) => `Loaded ${count} models from /v1/models in ${ms} ms.`,
+    compatibilityText: {
+      pass: "PASS",
+      partial: "PARTIAL",
+      fail: "FAIL",
+    },
+    compatibleNote: "Endpoint looks OpenAI-compatible for the tested calls.",
+    ttftVerySlow: "Compatibility passed, but streaming first token is very slow. For chat UX, this endpoint will feel delayed.",
+    ttftSlow: "Compatibility passed, but streaming first token is slow. Use this as a relay quality warning.",
+    ttftOkay: "Streaming first token time is acceptable for a first MVP test.",
+    chatVerySlow: "Non-stream chat latency is very slow. Test again later or compare another endpoint before trusting this route.",
+    chatSlow: "Non-stream chat latency is slow, even though the API shape may be compatible.",
+    requestFailed: "Request failed.",
+  },
+  zh: {
+    noData: "无数据",
+    fast: "快",
+    ok: "一般",
+    slow: "慢",
+    verySlow: "很慢",
+    usable: "可用",
+    supported: "支持",
+    failed: "失败",
+    unavailable: "不可用",
+    running: "检测中...",
+    show: "显示",
+    hide: "隐藏",
+    showKey: "显示 API Key",
+    hideKey: "隐藏 API Key",
+    noMatchingModels: "没有匹配的模型。",
+    loadingModels: "正在加载模型列表...",
+    selectedModel: (model) => `已选择 ${model}，现在可以点击开始检测。`,
+    showingModels: (visible, total) => `当前显示 ${visible} / ${total} 个模型。`,
+    loadedDemo: "已加载演示模型。可以直接点击模型，或直接开始检测。",
+    fetchingModels: "正在获取模型...",
+    loadedModels: (count, ms) => `已从 /v1/models 获取 ${count} 个模型，用时 ${ms} ms。`,
+    compatibilityText: {
+      pass: "通过",
+      partial: "部分通过",
+      fail: "失败",
+    },
+    compatibleNote: "本次检测的几个核心调用看起来符合 OpenAI 兼容接口格式。",
+    ttftVerySlow: "兼容性虽然通过，但首个 Token 延迟很高。对聊天体验来说，这个接口会明显发木。",
+    ttftSlow: "兼容性虽然通过，但首个 Token 偏慢，可以把它当作中转质量风险信号。",
+    ttftOkay: "首个 Token 延迟处于这个 MVP 工具可接受的范围内。",
+    chatVerySlow: "非流式聊天延迟很高。建议稍后重测，或和别的接口对比后再决定是否长期使用。",
+    chatSlow: "非流式聊天延迟偏慢，即使接口格式本身是兼容的。",
+    requestFailed: "请求失败。",
+  },
+};
+
+const t = messages[locale];
 
 function fmt(ms) {
   if (ms === null || ms === undefined) return "-";
@@ -25,12 +103,12 @@ function fmt(ms) {
 
 function latencyRating(ms) {
   if (ms === null || ms === undefined) {
-    return { label: "No data", kind: "partial" };
+    return { label: t.noData, kind: "partial" };
   }
-  if (ms < 2000) return { label: "Fast", kind: "pass" };
-  if (ms < 6000) return { label: "OK", kind: "partial" };
-  if (ms < 12000) return { label: "Slow", kind: "warning" };
-  return { label: "Very slow", kind: "fail" };
+  if (ms < 2000) return { label: t.fast, kind: "pass" };
+  if (ms < 6000) return { label: t.ok, kind: "partial" };
+  if (ms < 12000) return { label: t.slow, kind: "warning" };
+  return { label: t.verySlow, kind: "fail" };
 }
 
 function setMetric(el, ms) {
@@ -45,10 +123,10 @@ function performanceRating(summary) {
     latencyRating(summary.streamingFirstToken),
     latencyRating(summary.streamingTotal),
   ];
-  if (ratings.some((item) => item.kind === "fail")) return { label: "Very slow", kind: "fail" };
-  if (ratings.some((item) => item.kind === "warning")) return { label: "Slow", kind: "warning" };
-  if (ratings.some((item) => item.kind === "partial")) return { label: "Usable", kind: "partial" };
-  return { label: "Fast", kind: "pass" };
+  if (ratings.some((item) => item.kind === "fail")) return { label: t.verySlow, kind: "fail" };
+  if (ratings.some((item) => item.kind === "warning")) return { label: t.slow, kind: "warning" };
+  if (ratings.some((item) => item.kind === "partial")) return { label: t.usable, kind: "partial" };
+  return { label: t.fast, kind: "pass" };
 }
 
 function setPerformance(summary) {
@@ -64,7 +142,7 @@ function setStatus(kind, text) {
 
 function setStreamStatus(isSupported) {
   streamStatusEl.className = `value status-${isSupported ? "pass" : "fail"}`;
-  streamStatusEl.textContent = isSupported ? "Supported" : "Failed";
+  streamStatusEl.textContent = isSupported ? t.supported : t.failed;
 }
 
 function renderJson(el, data) {
@@ -146,7 +224,7 @@ function renderModelPicker(models, selectedModel = form.model.value) {
   modelPicker.innerHTML = "";
 
   if (!models.length) {
-    modelPicker.innerHTML = '<span class="hint">No matching models.</span>';
+    modelPicker.innerHTML = `<span class="hint">${t.noMatchingModels}</span>`;
     return;
   }
 
@@ -166,7 +244,7 @@ function renderModelPicker(models, selectedModel = form.model.value) {
       });
       button.classList.add("is-active");
       button.setAttribute("aria-pressed", "true");
-      setModelStatus(`Selected ${model}. Now click Test API.`, "pass");
+      setModelStatus(t.selectedModel(model), "pass");
     });
 
     if (model === selectedModel || (!selectedModel && index === 0)) {
@@ -191,16 +269,16 @@ function refreshModelPicker() {
 toggleKeyBtn?.addEventListener("click", () => {
   const isHidden = form.apiKey.type === "password";
   form.apiKey.type = isHidden ? "text" : "password";
-  toggleKeyBtn.textContent = isHidden ? "Hide" : "Show";
-  toggleKeyBtn.setAttribute("aria-label", isHidden ? "Hide API key" : "Show API key");
-  toggleKeyBtn.title = isHidden ? "Hide API key" : "Show API key";
+  toggleKeyBtn.textContent = isHidden ? t.hide : t.show;
+  toggleKeyBtn.setAttribute("aria-label", isHidden ? t.hideKey : t.showKey);
+  toggleKeyBtn.title = isHidden ? t.hideKey : t.showKey;
 });
 
 modelSearchInput?.addEventListener("input", () => {
   const visibleCount = filteredModels().length;
   refreshModelPicker();
   if (allModels.length) {
-    setModelStatus(`Showing ${visibleCount} of ${allModels.length} models.`, visibleCount ? "pass" : "partial");
+    setModelStatus(t.showingModels(visibleCount, allModels.length), visibleCount ? "pass" : "partial");
   }
 });
 
@@ -214,12 +292,12 @@ demoBtn?.addEventListener("click", () => {
   allModels.push("gpt-4o-mini", "gpt-4.1-mini");
   if (modelSearchInput) modelSearchInput.value = "";
   refreshModelPicker();
-  setModelStatus("Loaded demo models. Click one or run the test directly.", "pass");
+  setModelStatus(t.loadedDemo, "pass");
 });
 
 fetchModelsBtn?.addEventListener("click", async () => {
-  setModelStatus("Fetching models...", "partial");
-  if (modelPicker) modelPicker.innerHTML = '<span class="hint">Loading model list...</span>';
+  setModelStatus(t.fetchingModels, "partial");
+  if (modelPicker) modelPicker.innerHTML = `<span class="hint">${t.loadingModels}</span>`;
 
   try {
     const res = await fetch("/api/models", {
@@ -241,7 +319,7 @@ fetchModelsBtn?.addEventListener("click", async () => {
     if (modelSearchInput) modelSearchInput.value = "";
     refreshModelPicker();
 
-    setModelStatus(`Loaded ${data.models.length} models from /v1/models in ${data.timings.totalMs} ms.`, "pass");
+    setModelStatus(t.loadedModels(data.models.length, data.timings.totalMs), "pass");
   } catch (error) {
     setModelStatus(error.message, "fail");
   }
@@ -249,7 +327,7 @@ fetchModelsBtn?.addEventListener("click", async () => {
 
 form?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  setStatus("partial", "Running...");
+  setStatus("partial", t.running);
   statusEl.style.display = "inline";
   resultWrap.hidden = false;
   scoreEl.textContent = "...";
@@ -274,10 +352,10 @@ form?.addEventListener("submit", async (event) => {
     });
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Request failed.");
+    if (!res.ok) throw new Error(data.error || t.requestFailed);
 
     const kind = data.compatibility === "pass" ? "pass" : data.compatibility === "partial" ? "partial" : "fail";
-    setStatus(kind, data.compatibility.toUpperCase());
+    setStatus(kind, t.compatibilityText[data.compatibility] || t.compatibilityText.fail);
     scoreEl.textContent = String(data.score);
     scoreEl.className = `value status-${kind}`;
     setPerformance(data.summary.latencyMs);
@@ -288,7 +366,7 @@ form?.addEventListener("submit", async (event) => {
     setStreamStatus(data.summary.supported.streaming);
     notesEl.innerHTML = "";
     if (data.notes.length === 0) {
-      addNote("Endpoint looks OpenAI-compatible for the tested calls.");
+      addNote(t.compatibleNote);
     } else {
       data.notes.forEach(addNote);
     }
@@ -296,29 +374,29 @@ form?.addEventListener("submit", async (event) => {
     const ttft = data.summary.latencyMs.streamingFirstToken;
     const chatLatency = data.summary.latencyMs.chat;
     if (ttft >= 12000) {
-      addNote("Compatibility passed, but streaming first token is very slow. For chat UX, this endpoint will feel delayed.");
+      addNote(t.ttftVerySlow);
     } else if (ttft >= 6000) {
-      addNote("Compatibility passed, but streaming first token is slow. Use this as a relay quality warning.");
+      addNote(t.ttftSlow);
     } else if (ttft !== null && ttft !== undefined) {
-      addNote("Streaming first token time is acceptable for a first MVP test.");
+      addNote(t.ttftOkay);
     }
 
     if (chatLatency >= 12000) {
-      addNote("Non-stream chat latency is very slow. Test again later or compare another endpoint before trusting this route.");
+      addNote(t.chatVerySlow);
     } else if (chatLatency >= 6000) {
-      addNote("Non-stream chat latency is slow, even though the API shape may be compatible.");
+      addNote(t.chatSlow);
     }
 
     document.querySelector("[data-models-json]").textContent = JSON.stringify(data.results.models.json, null, 2);
     document.querySelector("[data-chat-json]").textContent = JSON.stringify(data.results.chat.json, null, 2);
     document.querySelector("[data-stream-json]").textContent = renderStreamResult(data.results.streaming);
   } catch (error) {
-    setStatus("fail", "FAILED");
+    setStatus("fail", t.compatibilityText.fail);
     scoreEl.textContent = "0";
     scoreEl.className = "value status-fail";
-    performanceEl.textContent = "Unavailable";
+    performanceEl.textContent = t.unavailable;
     performanceEl.className = "value status-fail";
-    streamStatusEl.textContent = "Unavailable";
+    streamStatusEl.textContent = t.unavailable;
     streamStatusEl.className = "value status-fail";
     notesEl.innerHTML = `<li>${error.message}</li>`;
   }

@@ -54,6 +54,14 @@ a:hover {
   padding: 18px 0 10px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -84,6 +92,29 @@ a:hover {
 }
 
 .nav a.active {
+  color: var(--text);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.lang-switch a {
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.lang-switch a.active {
   color: var(--text);
   background: rgba(37, 99, 235, 0.08);
 }
@@ -506,6 +537,12 @@ h1 {
 }
 
 @media (max-width: 920px) {
+  .topbar,
+  .header-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .tool-map,
   .hero-grid,
   .result-grid,

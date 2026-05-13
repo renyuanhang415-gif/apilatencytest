@@ -3,13 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AI API Latency Test - OpenAI Compatible API Checker</title>
+    <title>AI API Relay Quality Test - Latency, TTFT, Compatibility</title>
     <meta
       name="description"
-      content="Test AI API latency, first token time, streaming behavior, and OpenAI-compatible endpoints in one lightweight tool."
+      content="Test OpenAI-compatible relays, gateways, and proxy endpoints for latency, TTFT, streaming behavior, model listing, and compatibility risk."
     />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="canonical" href="https://apilatencytest.com/" />
+    <link rel="alternate" hreflang="en" href="https://apilatencytest.com/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://apilatencytest.com/zh" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -24,10 +26,10 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "What is an AI API latency test?",
+            "name": "What is an AI API relay quality test?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "It measures how fast an AI endpoint responds, how long it takes to produce the first token, and whether streaming works."
+              "text": "It checks latency, first token time, streaming behavior, model listing, and OpenAI-compatible API behavior for relays, gateways, and proxy endpoints."
             }
           },
           {
@@ -48,10 +50,10 @@
           },
           {
             "@type": "Question",
-            "name": "Can this detect a bad relay or proxy?",
+            "name": "Can this prove a relay is watered down or dishonest?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "It can catch slow, broken, or incompatible relays and proxies, but it cannot prove every endpoint is honest."
+              "text": "No. It can reveal quality risk signals such as slow, broken, or incompatible behavior, but it is not a full audit or absolute proof."
             }
           },
           {
@@ -66,21 +68,27 @@
       }
     </script>
   </head>
-  <body>
+  <body data-locale="en">
     <main class="site-shell">
       <header class="topbar">
-        <div class="brand"><span class="brand-mark"></span><span>AI API Latency Test</span></div>
-        <nav class="nav">
-          <a class="active" href="/">Tool</a>
-          <a href="/openai-api-validator">OpenAI API Validator</a>
-          <a href="/openai-compatible-api-checker">Compatible API Checker</a>
-        </nav>
+        <div class="brand"><span class="brand-mark"></span><span>API Latency Test</span></div>
+        <div class="header-actions">
+          <nav class="nav">
+            <a class="active" href="/">Quality Test</a>
+            <a href="/openai-api-validator">OpenAI API Validator</a>
+            <a href="/openai-compatible-api-checker">Compatible API Checker</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switch">
+            <a class="active" href="/">EN</a>
+            <a href="/zh">中文</a>
+          </div>
+        </div>
       </header>
 
       <section class="tool-map" aria-label="Tool types">
         <a class="tool-map-item is-active" href="/">
-          <strong>Latency Test</strong>
-          <span>Checks if it feels fast.</span>
+          <strong>Relay Quality Test</strong>
+          <span>Checks if it feels fast, stable, and compatible.</span>
         </a>
         <a class="tool-map-item" href="/openai-api-validator">
           <strong>API Validator</strong>
@@ -95,20 +103,20 @@
       <section class="hero">
         <div class="hero-grid">
           <div>
-            <div class="eyebrow">Small tool, real signal</div>
-            <h1>AI API Latency Test</h1>
+            <div class="eyebrow">Small tool, practical relay signals</div>
+            <h1>AI API Relay Quality Test</h1>
             <p class="lede">
-              Measure model response time, first token latency, streaming behavior, and OpenAI-style compatibility.
-              Built for relays, gateways, and compatible endpoints.
+              Check OpenAI-compatible relays, gateways, and proxy endpoints for latency, TTFT, streaming behavior,
+              model listing, and compatibility risk before you trust them in production.
             </p>
             <div class="callouts">
-              <div class="callout"><strong>Latency</strong><span>Measure first-byte and response times.</span></div>
-              <div class="callout"><strong>Streaming</strong><span>Check TTFT and event stream support.</span></div>
-              <div class="callout"><strong>Compatibility</strong><span>Probe /v1/models and /v1/chat/completions.</span></div>
+              <div class="callout"><strong>Latency + TTFT</strong><span>Measure chat response time and first token delay.</span></div>
+              <div class="callout"><strong>Streaming</strong><span>Check if event stream output works in practice.</span></div>
+              <div class="callout"><strong>Relay risk</strong><span>Probe /v1/models and /v1/chat/completions behavior.</span></div>
             </div>
           </div>
           <aside class="tool" id="test-tool">
-            <h2>Run a test</h2>
+            <h2>Run a quality test</h2>
             <form data-test-form>
               <div class="field">
                 <label for="baseUrl">Base URL</label>
@@ -222,10 +230,10 @@
       </section>
 
       <section class="page-band">
-        <h2>How it works</h2>
+        <h2>What this test checks</h2>
         <p>
           1) Send a GET request to /v1/models. 2) Send a non-stream chat completion. 3) Send a stream request and
-          measure TTFT.
+          measure TTFT. Together these checks give a practical view of compatibility and relay quality risk.
         </p>
       </section>
 
@@ -233,8 +241,8 @@
         <h2>When to use it</h2>
         <p>
           Use this page when you have an OpenAI-compatible endpoint, a relay, or a proxy and want to know if it is
-          actually fast enough for real chat usage. Compatibility alone is not enough. A slow endpoint can still pass
-          the API shape test, so the latency metrics matter just as much as the status label.
+          actually fast enough for real chat usage. Compatibility alone is not enough. A slow or unstable relay can
+          still pass the API shape test, so the latency and streaming metrics matter just as much as the status label.
         </p>
       </section>
 
@@ -257,11 +265,20 @@
       </section>
 
       <section class="page-band">
+        <h2>What it does not prove</h2>
+        <p>
+          This tool does not absolutely prove whether a relay is watered down or dishonest. It provides technical
+          signals: speed, streaming behavior, model listing, and compatibility. Use it as a low-cost pre-check before
+          buying or relying on an endpoint.
+        </p>
+      </section>
+
+      <section class="page-band">
         <h2>FAQ</h2>
         <div class="faq-list">
           <details class="faq-item">
-            <summary>What is an AI API latency test?</summary>
-            <p>It checks how quickly an AI endpoint answers, how fast the first token appears, and whether streaming is supported.</p>
+            <summary>What is an AI API relay quality test?</summary>
+            <p>It checks how quickly an AI endpoint answers, how fast the first token appears, whether streaming is supported, and whether core OpenAI-compatible calls work.</p>
           </details>
           <details class="faq-item">
             <summary>What does TTFT mean?</summary>
@@ -276,8 +293,8 @@
             <p>Network path, endpoint load, model choice, and relay quality can all change the numbers from one test to the next.</p>
           </details>
           <details class="faq-item">
-            <summary>Can this detect a bad relay or proxy?</summary>
-            <p>It can reveal slow or incompatible behavior, which is often enough to spot a shaky relay. It is a practical test, not a full audit.</p>
+            <summary>Can this detect a watered-down or bad relay?</summary>
+            <p>It can reveal slow, broken, or incompatible behavior, which is often enough to spot quality risk. It is a practical test, not a full audit.</p>
           </details>
           <details class="faq-item">
             <summary>Do you store my API key?</summary>
@@ -287,7 +304,7 @@
       </section>
 
       <footer class="footer">
-        Made for a first MVP: one tool, a few long-tail pages, and no private key storage.
+        Made as a focused tool site: one relay quality test, a few long-tail pages, and no private key storage.
       </footer>
     </main>
 
