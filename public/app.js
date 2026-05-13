@@ -49,6 +49,8 @@ const text = {
     running: "Testing...",
     runningHtml: '<span class="loading-spinner" aria-hidden="true"></span>Testing...',
     supplementing: "Core result is ready. Running supplemental streaming checks...",
+    scorePending: "Almost done",
+    scorePendingNote: "Final model score is waiting for streaming and speed metrics. Please wait a moment.",
     tested: (baseUrl, model) => `${baseUrl} · ${model}`,
     pass: "Pass",
     partial: "Warning",
@@ -89,6 +91,8 @@ const text = {
     running: "检测中...",
     runningHtml: '<span class="loading-spinner" aria-hidden="true"></span>检测中...',
     supplementing: "核心结论已返回，正在补充流式与速度指标...",
+    scorePending: "检测即将结束",
+    scorePendingNote: "模型整体评分还在等待流式与速度指标，请稍等。",
     tested: (baseUrl, model) => `${baseUrl} · ${model}`,
     pass: "通过",
     partial: "注意",
@@ -207,7 +211,17 @@ function renderModelScore(data) {
   });
 }
 
-function renderTestResult(data) {
+function renderModelScorePending() {
+  if (modelGradeEl) {
+    modelGradeEl.innerHTML = `<span class="loading-spinner" aria-hidden="true"></span>${t.scorePending}`;
+  }
+  if (modelScoreEl) modelScoreEl.textContent = "...";
+  if (modelScoreNoteEl) modelScoreNoteEl.textContent = t.scorePendingNote;
+  if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
+}
+
+function renderTestResult(data, options = {}) {
+  const showFinalScore = options.showFinalScore !== false && !data.pendingSupplement;
   const kind = data.compatibility === "pass" ? "pass" : data.compatibility === "partial" ? "partial" : "fail";
   if (resultLoadingEl) resultLoadingEl.hidden = true;
   if (resultDetailsEl) resultDetailsEl.hidden = false;
@@ -219,7 +233,11 @@ function renderTestResult(data) {
   testedTargetEl.textContent = t.tested(data.input.baseUrl, data.input.model);
 
   renderChecks(data.checks || []);
-  renderModelScore(data);
+  if (showFinalScore) {
+    renderModelScore(data);
+  } else {
+    renderModelScorePending();
+  }
   latencyChatEl.textContent = fmtMs(data.summary.latencyMs.chat);
   latencyStreamEl.textContent = fmtMs(data.summary.latencyMs.streamingFirstToken);
   streamTotalEl.textContent = fmtMs(data.summary.latencyMs.streamingTotal);
@@ -408,7 +426,7 @@ form?.addEventListener("submit", async (event) => {
     const quickData = await quickRes.json();
     if (!quickRes.ok) throw new Error(quickData.error || t.requestFailed);
 
-    renderTestResult(quickData);
+    renderTestResult(quickData, { showFinalScore: false });
 
     if (quickData.pendingSupplement) {
       statusEl.textContent = t.partial;
