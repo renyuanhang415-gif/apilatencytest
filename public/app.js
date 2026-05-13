@@ -54,6 +54,7 @@ const text = {
     supplementing: "Core result is ready. Running supplemental streaming checks...",
     scorePending: "Almost done",
     scorePendingNote: "Final model score is waiting for streaming and speed metrics. Please wait a moment.",
+    supplementFailed: "Supplemental streaming check failed. Core checks are still shown above.",
     tested: (baseUrl, model) => `${baseUrl} · ${model}`,
     pass: "Pass",
     partial: "Warning",
@@ -96,6 +97,7 @@ const text = {
     supplementing: "核心结论已返回，正在补充流式与速度指标...",
     scorePending: "检测即将结束",
     scorePendingNote: "模型整体评分还在等待流式与速度指标，请稍等。",
+    supplementFailed: "流式补充检测失败，当前保留上方核心检测结果。",
     tested: (baseUrl, model) => `${baseUrl} · ${model}`,
     pass: "通过",
     partial: "注意",
@@ -248,6 +250,13 @@ function renderModelScorePending() {
   }
   if (modelScoreEl) modelScoreEl.textContent = "...";
   if (modelScoreNoteEl) modelScoreNoteEl.textContent = t.scorePendingNote;
+  if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
+}
+
+function renderSupplementFailed() {
+  if (modelGradeEl) modelGradeEl.textContent = t.partial;
+  if (modelScoreEl) modelScoreEl.textContent = "-";
+  if (modelScoreNoteEl) modelScoreNoteEl.textContent = t.supplementFailed;
   if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
 }
 
@@ -464,13 +473,21 @@ form?.addEventListener("submit", async (event) => {
     if (quickData.pendingSupplement) {
       statusEl.textContent = t.partial;
       verdictTextEl.textContent = locale === "zh" ? t.supplementing : t.supplementing;
-      const supplementRes = await fetch("/api/test?phase=supplement", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const supplementData = await supplementRes.json();
-      if (supplementRes.ok) renderTestResult(supplementData);
+      try {
+        const supplementRes = await fetch("/api/test?phase=supplement", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const supplementData = await supplementRes.json();
+        if (supplementRes.ok) {
+          renderTestResult(supplementData);
+        } else {
+          renderSupplementFailed();
+        }
+      } catch {
+        renderSupplementFailed();
+      }
     }
 
   } catch (error) {
