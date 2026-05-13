@@ -521,27 +521,7 @@ form?.addEventListener("submit", async (event) => {
     const quickData = await quickRes.json();
     if (!quickRes.ok) throw new Error(quickData.error || t.requestFailed);
 
-    renderTestResult(quickData, { showFinalScore: false });
-
-    if (quickData.pendingSupplement) {
-      statusEl.textContent = t.partial;
-      verdictTextEl.textContent = locale === "zh" ? t.supplementing : t.supplementing;
-      try {
-        const supplementRes = await fetch("/api/test?phase=supplement", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        const supplementData = await supplementRes.json();
-        if (supplementRes.ok) {
-          renderTestResult(mergeSupplementResult(quickData, supplementData));
-        } else {
-          renderSupplementFailed();
-        }
-      } catch {
-        renderSupplementFailed();
-      }
-    }
+    renderTestResult(quickData);
 
   } catch (error) {
     if (resultLoadingEl) resultLoadingEl.hidden = true;
