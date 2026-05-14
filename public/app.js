@@ -21,7 +21,6 @@ const modelGradeEl = document.querySelector("[data-model-grade]");
 const modelScoreEl = document.querySelector("[data-model-score]");
 const modelScoreNoteEl = document.querySelector("[data-model-score-note]");
 const modelScoreFactorsEl = document.querySelector("[data-model-score-factors]");
-const evidenceListEl = document.querySelector("[data-evidence-list]");
 const latencyChatEl = document.querySelector("[data-chat-latency]");
 const latencyStreamEl = document.querySelector("[data-stream-latency]");
 const streamTotalEl = document.querySelector("[data-stream-total]");
@@ -162,7 +161,6 @@ function renderJson(el, data) {
 function statusText(status) {
   if (status === "pass") return t.pass;
   if (status === "partial" || status === "warning") return t.partial;
-  if (status === "inconclusive") return locale === "zh" ? "证据不足" : "Inconclusive";
   return t.fail;
 }
 
@@ -210,36 +208,6 @@ function renderChecks(checks) {
 
     row.append(icon, main, result);
     checksEl.appendChild(row);
-  });
-}
-
-function renderEvidence(evidence) {
-  if (!evidenceListEl) return;
-  evidenceListEl.innerHTML = "";
-  const items = evidence?.items || [];
-  if (!items.length) {
-    evidenceListEl.innerHTML = `<p class="hint">${locale === "zh" ? "暂无额外检测依据。" : "No extra evidence available."}</p>`;
-    return;
-  }
-
-  items.forEach((item) => {
-    const row = document.createElement("div");
-    row.className = `evidence-row status-${item.status}`;
-
-    const title = document.createElement("strong");
-    title.textContent = locale === "zh" ? item.labelZh : item.label;
-
-    const detail = document.createElement("p");
-    detail.textContent = locale === "zh" ? item.detailZh : item.detail;
-
-    const status = document.createElement("span");
-    status.className = "evidence-status";
-    status.textContent = statusText(item.status);
-
-    const body = document.createElement("div");
-    body.append(title, detail);
-    row.append(body, status);
-    evidenceListEl.appendChild(row);
   });
 }
 
@@ -291,11 +259,6 @@ function renderDebug(data) {
       phase: data.phase,
       model: data.input?.model,
       score: data.score,
-      evidenceStatus: data.evidence?.status,
-      evidence: data.evidence?.items,
-      streamEvidence: data.summary?.evidence?.stream,
-      responseShape: data.summary?.evidence?.shape,
-      usageEvidence: data.summary?.evidence?.usage,
       qaRate: qa.rate,
       qaResults: (qa.results || []).map((item) => ({
         id: item.id,
@@ -359,7 +322,6 @@ function renderTestResult(data, options = {}) {
     renderModelScorePending();
   }
   renderDebug(data);
-  renderEvidence(data.evidence);
   latencyChatEl.textContent = fmtMs(data.summary.latencyMs.chat);
   latencyStreamEl.textContent = fmtMs(data.summary.latencyMs.streamingFirstToken);
   streamTotalEl.textContent = fmtMs(data.summary.latencyMs.streamingTotal);
@@ -424,7 +386,6 @@ function resetResults() {
   if (modelScoreEl) modelScoreEl.textContent = "-";
   if (modelScoreNoteEl) modelScoreNoteEl.textContent = "";
   if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
-  if (evidenceListEl) evidenceListEl.innerHTML = "";
   if (debugPanelEl) debugPanelEl.hidden = true;
   if (debugOutputEl) debugOutputEl.textContent = "{}";
   if (scoreEl) scoreEl.textContent = "-";
@@ -622,7 +583,6 @@ form?.addEventListener("submit", async (event) => {
       model_family: modelFamily(payload.model),
       score: quickData.score,
       compatibility: quickData.compatibility,
-      evidence_status: quickData.evidence?.status || "unknown",
       qa_rate: quickData.summary?.qa?.rate ?? null,
       latency_ms: quickData.summary?.latencyMs?.chat ?? null,
     });
@@ -636,7 +596,6 @@ form?.addEventListener("submit", async (event) => {
     verdictTitleEl.textContent = t.unavailable;
     verdictTextEl.textContent = error.message;
     renderModelScore({ score: 0, summary: { qa: { passed: 0, total: 5, rate: 0 }, latencyMs: {} }, checks: [] });
-    renderEvidence(null);
     trackEvent("test_failure", {
       model_family: modelFamily(payload.model),
     });
