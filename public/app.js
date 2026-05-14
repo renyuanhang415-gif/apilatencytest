@@ -21,6 +21,7 @@ const modelGradeEl = document.querySelector("[data-model-grade]");
 const modelScoreEl = document.querySelector("[data-model-score]");
 const modelScoreNoteEl = document.querySelector("[data-model-score-note]");
 const modelScoreFactorsEl = document.querySelector("[data-model-score-factors]");
+const evidenceListEl = document.querySelector("[data-evidence-list]");
 const latencyChatEl = document.querySelector("[data-chat-latency]");
 const latencyStreamEl = document.querySelector("[data-stream-latency]");
 const streamTotalEl = document.querySelector("[data-stream-total]");
@@ -127,6 +128,7 @@ const text = {
 
 const t = text[locale];
 let activeModelFilter = "";
+const trackedInputSteps = new Set();
 
 function fmtMs(ms) {
   if (ms === null || ms === undefined) return "-";
@@ -160,7 +162,28 @@ function renderJson(el, data) {
 function statusText(status) {
   if (status === "pass") return t.pass;
   if (status === "partial" || status === "warning") return t.partial;
+  if (status === "inconclusive") return locale === "zh" ? "证据不足" : "Inconclusive";
   return t.fail;
+}
+
+function modelFamily(model) {
+  const value = String(model || "").toLowerCase();
+  if (value.includes("gpt") || value.includes("openai")) return "gpt";
+  if (value.includes("claude") || value.includes("sonnet") || value.includes("opus")) return "claude";
+  if (value.includes("gemini")) return "gemini";
+  if (value.includes("deepseek")) return "deepseek";
+  if (value.includes("grok")) return "grok";
+  if (value.includes("glm")) return "glm";
+  if (value.includes("kimi")) return "kimi";
+  return "other";
+}
+
+function trackEvent(name, params = {}) {
+  if (typeof window.gtag !== "function") return;
+  window.gtag("event", name, {
+    app_locale: locale,
+    ...params,
+  });
 }
 
 function renderChecks(checks) {
@@ -187,6 +210,36 @@ function renderChecks(checks) {
 
     row.append(icon, main, result);
     checksEl.appendChild(row);
+  });
+}
+
+function renderEvidence(evidence) {
+  if (!evidenceListEl) return;
+  evidenceListEl.innerHTML = "";
+  const items = evidence?.items || [];
+  if (!items.length) {
+    evidenceListEl.innerHTML = `<p class="hint">${locale === "zh" ? "暂无额外检测依据。" : "No extra evidence available."}</p>`;
+    return;
+  }
+
+  items.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = `evidence-row status-${item.status}`;
+
+    const title = document.createElement("strong");
+    title.textContent = locale === "zh" ? item.labelZh : item.label;
+
+    const detail = document.createElement("p");
+    detail.textContent = locale === "zh" ? item.detailZh : item.detail;
+
+    const status = document.createElement("span");
+    status.className = "evidence-status";
+    status.textContent = statusText(item.status);
+
+    const body = document.createElement("div");
+    body.append(title, detail);
+    row.append(body, status);
+    evidenceListEl.appendChild(row);
   });
 }
 
@@ -238,6 +291,11 @@ function renderDebug(data) {
       phase: data.phase,
       model: data.input?.model,
       score: data.score,
+      evidenceStatus: data.evidence?.status,
+      evidence: data.evidence?.items,
+      streamEvidence: data.summary?.evidence?.stream,
+      responseShape: data.summary?.evidence?.shape,
+      usageEvidence: data.summary?.evidence?.usage,
       qaRate: qa.rate,
       qaResults: (qa.results || []).map((item) => ({
         id: item.id,
@@ -274,7 +332,16 @@ function renderSupplementFailed() {
 }
 
 function renderTestResult(data, options = {}) {
-  const showFinalScore = options.showFinalScore !== false && !data.pendingSupplement;
+  const forceFinished = Boolean(data.phase === "quick" && data.pendingSupplement);
+  const showFinalScore = options.showFinalScore !== false && (!data.pendingSupplement || forceFinished);
+  if (forceFinished) {
+    data.pendingSupplement = false;
+    const streamCheck = data.checks?.find((item) => item.key === "stream");
+    if (streamCheck?.status === "partial") {
+      streamCheck.detail = "Streaming result was not finalized in the quick path.";
+      streamCheck.detailZh = "快检阶段没有拿到最终流式结果。";
+    }
+  }
   const kind = data.compatibility === "pass" ? "pass" : data.compatibility === "partial" ? "partial" : "fail";
   if (resultLoadingEl) resultLoadingEl.hidden = true;
   if (resultDetailsEl) resultDetailsEl.hidden = false;
@@ -292,6 +359,7 @@ function renderTestResult(data, options = {}) {
     renderModelScorePending();
   }
   renderDebug(data);
+  renderEvidence(data.evidence);
   latencyChatEl.textContent = fmtMs(data.summary.latencyMs.chat);
   latencyStreamEl.textContent = fmtMs(data.summary.latencyMs.streamingFirstToken);
   streamTotalEl.textContent = fmtMs(data.summary.latencyMs.streamingTotal);
@@ -356,6 +424,7 @@ function resetResults() {
   if (modelScoreEl) modelScoreEl.textContent = "-";
   if (modelScoreNoteEl) modelScoreNoteEl.textContent = "";
   if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
+  if (evidenceListEl) evidenceListEl.innerHTML = "";
   if (debugPanelEl) debugPanelEl.hidden = true;
   if (debugOutputEl) debugOutputEl.textContent = "{}";
   if (scoreEl) scoreEl.textContent = "-";
@@ -404,6 +473,7 @@ function renderModelPicker(models, selectedModel = form?.model?.value) {
       button.classList.add("is-active");
       button.setAttribute("aria-pressed", "true");
       setModelStatus(t.selectedModel(model), "pass");
+      trackEvent("model_selected", { model_family: modelFamily(model) });
     });
 
     if (model === selectedModel || (!selectedModel && index === 0)) {
@@ -460,9 +530,26 @@ modelFilterBtns.forEach((button) => {
 
 resetFlowBtn?.addEventListener("click", resetFlow);
 
+form?.baseUrl?.addEventListener("blur", () => {
+  if (trackedInputSteps.has("base_url")) return;
+  if (!String(form.baseUrl.value || "").trim()) return;
+  trackedInputSteps.add("base_url");
+  trackEvent("base_url_entered");
+});
+
+form?.apiKey?.addEventListener("blur", () => {
+  if (trackedInputSteps.has("api_key")) return;
+  if (!String(form.apiKey.value || "").trim()) return;
+  trackedInputSteps.add("api_key");
+  trackEvent("api_key_entered");
+});
+
 fetchModelsBtn?.addEventListener("click", async () => {
   resetResults();
   setModelStatus(t.fetchingModels, "partial");
+  trackEvent("models_fetch_start", {
+    has_api_key: Boolean(String(form.apiKey.value || "").trim()),
+  });
   if (modelStep) modelStep.hidden = false;
   if (modelPicker) modelPicker.innerHTML = `<span class="hint">${t.loadingModels}</span>`;
 
@@ -486,9 +573,14 @@ fetchModelsBtn?.addEventListener("click", async () => {
     renderModelPicker(filteredModels(), data.models[0]);
     setFlowModelsLoaded();
     setModelStatus(`${t.loadedModels(data.models.length, data.timings.totalMs)} ${t.selectModel}`, "pass");
+    trackEvent("models_fetch_success", {
+      model_count: data.models.length,
+      latency_ms: data.timings.totalMs,
+    });
   } catch (error) {
     setModelStatus(error.message, "fail");
     if (modelPicker) modelPicker.innerHTML = `<span class="hint">${error.message}</span>`;
+    trackEvent("models_fetch_failure");
   }
 });
 
@@ -511,6 +603,10 @@ form?.addEventListener("submit", async (event) => {
     apiKey: form.apiKey.value,
     model: form.model.value,
   };
+  trackEvent("test_start", {
+    model_family: modelFamily(payload.model),
+    has_api_key: Boolean(String(payload.apiKey || "").trim()),
+  });
 
   try {
     const quickRes = await fetch("/api/test?phase=quick", {
@@ -522,6 +618,14 @@ form?.addEventListener("submit", async (event) => {
     if (!quickRes.ok) throw new Error(quickData.error || t.requestFailed);
 
     renderTestResult(quickData);
+    trackEvent("test_success", {
+      model_family: modelFamily(payload.model),
+      score: quickData.score,
+      compatibility: quickData.compatibility,
+      evidence_status: quickData.evidence?.status || "unknown",
+      qa_rate: quickData.summary?.qa?.rate ?? null,
+      latency_ms: quickData.summary?.latencyMs?.chat ?? null,
+    });
 
   } catch (error) {
     if (resultLoadingEl) resultLoadingEl.hidden = true;
@@ -532,5 +636,9 @@ form?.addEventListener("submit", async (event) => {
     verdictTitleEl.textContent = t.unavailable;
     verdictTextEl.textContent = error.message;
     renderModelScore({ score: 0, summary: { qa: { passed: 0, total: 5, rate: 0 }, latencyMs: {} }, checks: [] });
+    renderEvidence(null);
+    trackEvent("test_failure", {
+      model_family: modelFamily(payload.model),
+    });
   }
 });
