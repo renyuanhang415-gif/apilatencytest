@@ -260,6 +260,9 @@ function renderDebug(data) {
       model: data.input?.model,
       score: data.score,
       qaRate: qa.rate,
+      qaMode: qa.mode,
+      qaTimings: qa.timings,
+      qaBatchError: qa.batchError,
       qaResults: (qa.results || []).map((item) => ({
         id: item.id,
         status: item.status,
