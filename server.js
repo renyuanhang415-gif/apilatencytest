@@ -82,12 +82,18 @@ async function fileExists(filePath) {
   }
 }
 
-async function serveStatic(res, filePath) {
+async function serveStatic(req, res, filePath) {
   const type = contentTypeFor(filePath);
+  const info = await stat(filePath);
   res.writeHead(200, {
     "Content-Type": type,
+    "Content-Length": info.size,
     "Cache-Control": "no-store",
   });
+  if (req.method === "HEAD") {
+    res.end();
+    return;
+  }
   createReadStream(filePath).pipe(res);
 }
 
@@ -212,7 +218,7 @@ async function handleRequest(req, res) {
     }
   }
 
-  if (req.method !== "GET") {
+  if (req.method !== "GET" && req.method !== "HEAD") {
     return sendText(res, 405, "Method not allowed");
   }
 
@@ -220,12 +226,12 @@ async function handleRequest(req, res) {
   const mapped = pages[pathname];
 
   if (mapped) {
-    return serveStatic(res, path.join(publicDir, mapped));
+    return serveStatic(req, res, path.join(publicDir, mapped));
   }
 
   const candidate = path.join(publicDir, pathname.slice(1));
   if (candidate.startsWith(publicDir) && (await fileExists(candidate))) {
-    return serveStatic(res, candidate);
+    return serveStatic(req, res, candidate);
   }
 
   return sendText(res, 404, "Not found");
