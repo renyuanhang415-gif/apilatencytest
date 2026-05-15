@@ -112,45 +112,47 @@
         </div>
 
         <div hidden data-result-details>
-          <div class="check-list" data-checks></div>
-
-          <div class="metric-strip">
-            <div class="metric">
-              <div class="label">延迟</div>
-              <div class="value" data-chat-latency>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">首 Token</div>
-              <div class="value" data-stream-latency>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">流式总耗时</div>
-              <div class="value" data-stream-total>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">Tokens/秒</div>
-              <div class="value" data-tokens-speed>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">输入 Tokens</div>
-              <div class="value" data-input-tokens>-</div>
-            </div>
-            <div class="metric">
-              <div class="label">输出 Tokens</div>
-              <div class="value" data-output-tokens>-</div>
-            </div>
-          </div>
-
-          <div class="result-panel model-score-panel">
-            <div class="model-score-head">
-              <div>
-                <div class="label">模型整体评分</div>
-                <h3 data-model-grade>-</h3>
+          <div class="result-board">
+            <div class="result-panel model-score-panel">
+              <div class="label">模型整体评分</div>
+              <div class="score-ring">
+                <strong data-model-score>-</strong>
+                <span data-model-grade>-</span>
               </div>
-              <strong data-model-score>-</strong>
+              <p data-model-score-note></p>
+              <div class="score-factors" data-model-score-factors></div>
             </div>
-            <p data-model-score-note></p>
-            <div class="score-factors" data-model-score-factors></div>
+
+            <div class="result-main">
+              <div class="check-list" data-checks></div>
+
+              <div class="metric-strip">
+                <div class="metric">
+                  <div class="label">延迟</div>
+                  <div class="value" data-chat-latency>-</div>
+                </div>
+                <div class="metric">
+                  <div class="label">首 Token</div>
+                  <div class="value" data-stream-latency>-</div>
+                </div>
+                <div class="metric">
+                  <div class="label">流式总耗时</div>
+                  <div class="value" data-stream-total>-</div>
+                </div>
+                <div class="metric">
+                  <div class="label">Tokens/秒</div>
+                  <div class="value" data-tokens-speed>-</div>
+                </div>
+                <div class="metric">
+                  <div class="label">输入 Tokens</div>
+                  <div class="value" data-input-tokens>-</div>
+                </div>
+                <div class="metric">
+                  <div class="label">输出 Tokens</div>
+                  <div class="value" data-output-tokens>-</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <details class="result-panel debug-panel" hidden data-debug-panel>
