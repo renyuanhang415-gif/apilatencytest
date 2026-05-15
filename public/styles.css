@@ -230,7 +230,7 @@ h1 {
 
 .config-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(280px, 0.85fr) minmax(360px, 1.15fr);
   gap: 18px;
 }
 
