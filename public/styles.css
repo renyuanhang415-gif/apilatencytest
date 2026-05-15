@@ -89,6 +89,23 @@ a {
   padding: 7px 11px;
 }
 
+.header-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  background: var(--accent);
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.header-cta:hover {
+  background: var(--accent-dark);
+}
+
 .nav a.active,
 .lang-switch a.active {
   color: var(--text);
@@ -1001,6 +1018,129 @@ h1 {
   color: var(--accent-dark);
 }
 
+.contact-shell {
+  display: grid;
+  gap: 22px;
+  padding: 18px 0 28px;
+}
+
+.contact-hero {
+  display: grid;
+  gap: 10px;
+  max-width: 760px;
+}
+
+.contact-hero h1 {
+  margin-bottom: 0;
+  font-size: clamp(34px, 4.4vw, 56px);
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.88fr) minmax(0, 1.12fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.contact-panel,
+.contact-form-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 22px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.contact-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.contact-panel h2,
+.contact-form-card h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.contact-points {
+  display: grid;
+  gap: 10px;
+}
+
+.contact-point {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  background: var(--soft);
+}
+
+.contact-point strong,
+.contact-tip strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.contact-point p,
+.contact-tip p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.contact-tip {
+  padding-top: 2px;
+}
+
+.contact-form {
+  display: grid;
+  gap: 16px;
+}
+
+.contact-form textarea {
+  width: 100%;
+  min-height: 148px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 13px;
+  background: #f8f9fb;
+  color: var(--text);
+  outline: none;
+}
+
+.contact-form textarea:focus {
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+}
+
+.contact-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.contact-footnote {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.contact-status {
+  min-height: 24px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.contact-status.is-fail {
+  color: var(--danger);
+}
+
+.contact-status.is-pass {
+  color: var(--accent-dark);
+}
+
 .status-pass {
   color: var(--accent-dark);
 }
@@ -1045,6 +1185,7 @@ h1 {
   .hero-grid,
   .callouts,
   .explain-grid,
+  .contact-layout,
   .config-grid,
   .result-summary,
   .metric-strip {

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contact - API Latency Test</title>
+    <meta
+      name="description"
+      content="Leave your name, contact info, and note for feedback, feature requests, or collaboration."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" type="image/png" href="/favicon.png?v=20260515c" />
+    <link rel="canonical" href="https://apilatencytest.com/en/contact" />
+    <link rel="alternate" hreflang="en" href="https://apilatencytest.com/en/contact" />
+    <link rel="alternate" hreflang="zh-CN" href="https://apilatencytest.com/contact" />
+  </head>
+  <body data-locale="en">
+    <main class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/en"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="header-actions">
+          <nav class="nav">
+            <a href="/en">Quality Test</a>
+            <a class="header-cta" href="/en/contact">Contact</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switch">
+            <a class="active" href="/en/contact">EN</a>
+            <a href="/contact">中文</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="contact-shell">
+        <div class="contact-hero">
+          <p class="eyebrow">Contact</p>
+          <h1>Get in touch</h1>
+          <p class="lede">Share feedback, request a feature, or start a conversation about collaboration.</p>
+        </div>
+
+        <section class="contact-layout" aria-label="Contact form">
+          <div class="contact-panel">
+            <h2>What to send</h2>
+            <div class="contact-points">
+              <div class="contact-point">
+                <strong>Bug report</strong>
+                <p>If something breaks or looks wrong, describe what happened and how you hit it.</p>
+              </div>
+              <div class="contact-point">
+                <strong>Feature request</strong>
+                <p>Tell us what model, detection signal, or workflow you want added next.</p>
+              </div>
+              <div class="contact-point">
+                <strong>Collaboration</strong>
+                <p>If you want to talk about working together, leave a short intro and a way to reach you.</p>
+              </div>
+            </div>
+            <div class="contact-tip">
+              <strong>Helpful detail</strong>
+              <p>Clear reproduction steps and concise notes make it easier to follow up on real issues fast.</p>
+            </div>
+          </div>
+
+          <section class="contact-form-card">
+            <h2>Your details</h2>
+            <form class="contact-form" data-contact-form novalidate>
+              <div class="field">
+                <label for="contactName">Name</label>
+                <input id="contactName" name="name" placeholder="How should we address you?" maxlength="40" />
+              </div>
+              <div class="field">
+                <label for="contactMethod">Contact</label>
+                <input id="contactMethod" name="contact" placeholder="Email, Telegram, phone, or anything you use" maxlength="120" />
+              </div>
+              <div class="field">
+                <label for="contactNote">Note</label>
+                <textarea
+                  id="contactNote"
+                  name="note"
+                  placeholder="Briefly describe your feedback, request, or what you want help with"
+                  maxlength="1000"
+                ></textarea>
+              </div>
+              <div class="contact-actions">
+                <span class="contact-footnote">Please make sure your contact info works so we can reply.</span>
+                <button class="btn btn-primary btn-large" type="submit">Submit</button>
+              </div>
+              <div class="contact-status" data-contact-status aria-live="polite"></div>
+            </form>
+          </section>
+        </section>
+      </section>
+
+      <footer class="footer authority-footer">
+        <a class="footer-brand" href="/en"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="footer-links">
+          <a href="https://platform.openai.com/docs/api-reference/models/list" rel="noopener noreferrer" target="_blank">Models</a>
+          <a href="https://platform.openai.com/docs/api-reference/chat/create-chat-completion" rel="noopener noreferrer" target="_blank">Chat Completions</a>
+          <a href="https://platform.openai.com/docs/api-reference/chat-streaming" rel="noopener noreferrer" target="_blank">Streaming</a>
+          <a href="https://github.com/renyuanhang415-gif/apilatencytest" rel="noopener noreferrer" target="_blank">GitHub</a>
+          <span>© 2026</span>
+        </div>
+      </footer>
+    </main>
+
+    <script type="module" src="/contact.js"></script>
+  </body>
+</html>

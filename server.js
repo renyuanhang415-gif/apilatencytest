@@ -14,6 +14,9 @@ const pages = {
   "/": "index.html",
   "/zh": "zh.html",
   "/en": "en.html",
+  "/contact": "contact.html",
+  "/zh/contact": "contact.html",
+  "/en/contact": "contact-en.html",
   "/openai-api-validator": "openai-api-validator.html",
   "/openai-compatible-api-checker": "openai-compatible-api-checker.html",
 };

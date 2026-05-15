@@ -11,6 +11,18 @@
     {
       "source": "/v1/chat/completions",
       "destination": "/api/demo-chat"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/zh/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/en/contact",
+      "destination": "/contact-en.html"
     }
   ],
   "functions": {
