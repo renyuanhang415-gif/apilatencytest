@@ -128,6 +128,8 @@ const text = {
 const t = text[locale];
 let activeModelFilter = "";
 const trackedInputSteps = new Set();
+let isTesting = false;
+let verificationModal = null;
 
 function fmtMs(ms) {
   if (ms === null || ms === undefined) return "-";
@@ -464,6 +466,224 @@ function refreshModelPicker() {
   renderModelPicker(filteredModels(), form?.model?.value);
 }
 
+function ensureVerificationModal() {
+  if (verificationModal) return verificationModal;
+
+  const copy =
+    locale === "zh"
+      ? {
+          title: "请先完成滑动验证",
+          subtitle: "滑到右侧后开始本次检测。",
+          drag: "按住滑块拖到最右侧",
+          success: "验证通过，正在开始检测",
+          cancel: "取消",
+          close: "关闭验证窗口",
+          handle: "拖动滑块完成验证",
+        }
+      : {
+          title: "Complete the slider check",
+          subtitle: "Slide to the right to start this test.",
+          drag: "Drag the slider all the way to the right",
+          success: "Verified. Starting the test",
+          cancel: "Cancel",
+          close: "Close verification dialog",
+          handle: "Drag slider to verify",
+        };
+
+  const overlay = document.createElement("div");
+  overlay.className = "verify-overlay";
+  overlay.hidden = true;
+  overlay.innerHTML = `
+    <div class="verify-dialog" role="dialog" aria-modal="true" aria-labelledby="verify-title">
+      <button class="verify-close" type="button" data-verify-close aria-label="${copy.close}">×</button>
+      <div class="verify-copy">
+        <h3 id="verify-title">${copy.title}</h3>
+        <p>${copy.subtitle}</p>
+      </div>
+      <div class="verify-slider" data-verify-slider>
+        <div class="verify-slider-fill" data-verify-fill></div>
+        <div class="verify-slider-text" data-verify-label>${copy.drag}</div>
+        <button class="verify-thumb" type="button" data-verify-thumb aria-label="${copy.handle}">
+          <span>→</span>
+        </button>
+      </div>
+      <div class="verify-actions">
+        <button class="btn btn-secondary btn-small" type="button" data-verify-cancel>${copy.cancel}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const slider = overlay.querySelector("[data-verify-slider]");
+  const fill = overlay.querySelector("[data-verify-fill]");
+  const label = overlay.querySelector("[data-verify-label]");
+  const thumb = overlay.querySelector("[data-verify-thumb]");
+  const closeBtn = overlay.querySelector("[data-verify-close]");
+  const cancelBtn = overlay.querySelector("[data-verify-cancel]");
+
+  const state = {
+    overlay,
+    slider,
+    fill,
+    label,
+    thumb,
+    closeBtn,
+    cancelBtn,
+    dragText: copy.drag,
+    successText: copy.success,
+    onSuccess: null,
+    dragging: false,
+    startX: 0,
+    startOffset: 0,
+    offset: 0,
+  };
+
+  function maxOffset() {
+    return Math.max(0, slider.clientWidth - thumb.offsetWidth - 8);
+  }
+
+  function applyOffset(nextOffset) {
+    const max = maxOffset();
+    const clamped = Math.min(max, Math.max(0, nextOffset));
+    state.offset = clamped;
+    thumb.style.transform = `translateX(${clamped}px)`;
+    fill.style.width = `${clamped + thumb.offsetWidth}px`;
+    return max ? clamped / max : 0;
+  }
+
+  function resetVerification() {
+    state.dragging = false;
+    slider.classList.remove("is-success");
+    label.textContent = state.dragText;
+    applyOffset(0);
+  }
+
+  function closeVerification() {
+    overlay.hidden = true;
+    document.body.classList.remove("verify-open");
+    state.onSuccess = null;
+    resetVerification();
+  }
+
+  function completeVerification() {
+    slider.classList.add("is-success");
+    label.textContent = state.successText;
+    trackEvent("human_verify_success");
+    const onSuccess = state.onSuccess;
+    window.setTimeout(() => {
+      closeVerification();
+      onSuccess?.();
+    }, 220);
+  }
+
+  function handlePointerMove(event) {
+    if (!state.dragging) return;
+    const ratio = applyOffset(state.startOffset + event.clientX - state.startX);
+    if (ratio >= 0.98) {
+      state.dragging = false;
+      completeVerification();
+    }
+  }
+
+  function handlePointerUp() {
+    if (!state.dragging) return;
+    state.dragging = false;
+    resetVerification();
+  }
+
+  thumb.addEventListener("pointerdown", (event) => {
+    if (slider.classList.contains("is-success")) return;
+    state.dragging = true;
+    state.startX = event.clientX;
+    state.startOffset = state.offset;
+    thumb.setPointerCapture?.(event.pointerId);
+  });
+
+  window.addEventListener("pointermove", handlePointerMove);
+  window.addEventListener("pointerup", handlePointerUp);
+  closeBtn?.addEventListener("click", () => {
+    trackEvent("human_verify_cancel");
+    closeVerification();
+  });
+  cancelBtn?.addEventListener("click", () => {
+    trackEvent("human_verify_cancel");
+    closeVerification();
+  });
+
+  verificationModal = {
+    open(onSuccess) {
+      state.onSuccess = onSuccess;
+      overlay.hidden = false;
+      document.body.classList.add("verify-open");
+      resetVerification();
+      trackEvent("human_verify_open");
+    },
+    close: closeVerification,
+  };
+
+  return verificationModal;
+}
+
+async function runTestSubmission() {
+  if (isTesting) return;
+  isTesting = true;
+
+  if (!form.model.value && allModels[0]) form.model.value = allModels[0];
+
+  resultWrap.hidden = false;
+  if (resultLoadingEl) resultLoadingEl.hidden = false;
+  if (resultDetailsEl) resultDetailsEl.hidden = true;
+  scoreEl.textContent = "...";
+  statusEl.textContent = t.running;
+  statusEl.className = "status-pill status-partial";
+  verdictTitleEl.innerHTML = t.runningHtml;
+  verdictTextEl.textContent = locale === "zh" ? "正在检查兼容性、延迟、流式输出和响应结构。" : "Checking compatibility, latency, streaming, and response shape.";
+  checksEl.innerHTML = "";
+
+  const payload = {
+    baseUrl: form.baseUrl.value,
+    apiKey: form.apiKey.value,
+    model: form.model.value,
+  };
+  trackEvent("test_start", {
+    model_family: modelFamily(payload.model),
+    has_api_key: Boolean(String(payload.apiKey || "").trim()),
+  });
+
+  try {
+    const quickRes = await fetch("/api/test?phase=quick", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const quickData = await quickRes.json();
+    if (!quickRes.ok) throw new Error(quickData.error || t.requestFailed);
+
+    renderTestResult(quickData);
+    trackEvent("test_success", {
+      model_family: modelFamily(payload.model),
+      score: quickData.score,
+      compatibility: quickData.compatibility,
+      qa_rate: quickData.summary?.qa?.rate ?? null,
+      latency_ms: quickData.summary?.latencyMs?.chat ?? null,
+    });
+  } catch (error) {
+    if (resultLoadingEl) resultLoadingEl.hidden = true;
+    if (resultDetailsEl) resultDetailsEl.hidden = false;
+    scoreEl.textContent = "0%";
+    statusEl.textContent = t.fail;
+    statusEl.className = "status-pill status-fail";
+    verdictTitleEl.textContent = t.unavailable;
+    verdictTextEl.textContent = error.message;
+    renderModelScore({ score: 0, summary: { qa: { passed: 0, total: 5, rate: 0 }, latencyMs: {} }, checks: [] });
+    trackEvent("test_failure", {
+      model_family: modelFamily(payload.model),
+    });
+  } finally {
+    isTesting = false;
+  }
+}
+
 toggleKeyBtn?.addEventListener("click", () => {
   const isHidden = form.apiKey.type === "password";
   form.apiKey.type = isHidden ? "text" : "password";
@@ -550,57 +770,8 @@ fetchModelsBtn?.addEventListener("click", async () => {
 
 form?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  if (!form.model.value && allModels[0]) form.model.value = allModels[0];
-
-  resultWrap.hidden = false;
-  if (resultLoadingEl) resultLoadingEl.hidden = false;
-  if (resultDetailsEl) resultDetailsEl.hidden = true;
-  scoreEl.textContent = "...";
-  statusEl.textContent = t.running;
-  statusEl.className = "status-pill status-partial";
-  verdictTitleEl.innerHTML = t.runningHtml;
-  verdictTextEl.textContent = locale === "zh" ? "正在检查兼容性、延迟、流式输出和响应结构。" : "Checking compatibility, latency, streaming, and response shape.";
-  checksEl.innerHTML = "";
-
-  const payload = {
-    baseUrl: form.baseUrl.value,
-    apiKey: form.apiKey.value,
-    model: form.model.value,
-  };
-  trackEvent("test_start", {
-    model_family: modelFamily(payload.model),
-    has_api_key: Boolean(String(payload.apiKey || "").trim()),
+  if (isTesting) return;
+  ensureVerificationModal().open(() => {
+    void runTestSubmission();
   });
-
-  try {
-    const quickRes = await fetch("/api/test?phase=quick", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const quickData = await quickRes.json();
-    if (!quickRes.ok) throw new Error(quickData.error || t.requestFailed);
-
-    renderTestResult(quickData);
-    trackEvent("test_success", {
-      model_family: modelFamily(payload.model),
-      score: quickData.score,
-      compatibility: quickData.compatibility,
-      qa_rate: quickData.summary?.qa?.rate ?? null,
-      latency_ms: quickData.summary?.latencyMs?.chat ?? null,
-    });
-
-  } catch (error) {
-    if (resultLoadingEl) resultLoadingEl.hidden = true;
-    if (resultDetailsEl) resultDetailsEl.hidden = false;
-    scoreEl.textContent = "0%";
-    statusEl.textContent = t.fail;
-    statusEl.className = "status-pill status-fail";
-    verdictTitleEl.textContent = t.unavailable;
-    verdictTextEl.textContent = error.message;
-    renderModelScore({ score: 0, summary: { qa: { passed: 0, total: 5, rate: 0 }, latencyMs: {} }, checks: [] });
-    trackEvent("test_failure", {
-      model_family: modelFamily(payload.model),
-    });
-  }
 });
