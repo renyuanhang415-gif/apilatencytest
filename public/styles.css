@@ -340,8 +340,8 @@ h1 {
 
 .common-model-card small {
   position: absolute;
-  top: -8px;
-  left: 12px;
+  top: 4px;
+  left: 10px;
   border-radius: 999px;
   padding: 2px 7px;
   background: #16a34a;

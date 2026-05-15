@@ -35,9 +35,9 @@ const commonModels = [
   { key: "opus47", name: "Opus 4.7", id: "claude-opus-4-7" },
   { key: "opus46", name: "Opus 4.6", id: "claude-opus-4-5" },
   { key: "sonnet46", name: "Sonnet 4.6", id: "claude-sonnet-4-6" },
-  { key: "gpt55", name: "GPT 5.5", id: "gpt-5.5", badge: "NEW" },
-  { key: "gpt54", name: "GPT 5.4", id: "gpt-5.4" },
   { key: "gemini31pro", name: "Gemini 3.1 Pro", id: "gemini-3.1-pro" },
+  { key: "gpt54", name: "GPT 5.4", id: "gpt-5.4" },
+  { key: "gpt55", name: "GPT 5.5", id: "gpt-5.5", badge: "NEW" },
 ];
 const defaultCommonModelId = "gpt-5.5";
 const debugMode = new URLSearchParams(window.location.search).get("debug") === "1";
