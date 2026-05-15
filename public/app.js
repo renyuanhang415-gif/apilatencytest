@@ -255,13 +255,7 @@ function renderModelScore(data) {
   if (modelScoreEl) modelScoreEl.textContent = `${data.score}%`;
   if (modelScoreNoteEl) modelScoreNoteEl.textContent = t.scoreNotes[grade];
   if (!modelScoreFactorsEl) return;
-
   modelScoreFactorsEl.innerHTML = "";
-  t.modelScoreFactors(qa, latency, protocolOk).forEach((item) => {
-    const badge = document.createElement("span");
-    badge.textContent = item;
-    modelScoreFactorsEl.appendChild(badge);
-  });
 }
 
 function renderDebug(data) {
