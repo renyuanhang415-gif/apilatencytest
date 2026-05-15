@@ -22,6 +22,7 @@ const modelGradeEl = document.querySelector("[data-model-grade]");
 const modelScoreEl = document.querySelector("[data-model-score]");
 const modelScoreNoteEl = document.querySelector("[data-model-score-note]");
 const modelScoreFactorsEl = document.querySelector("[data-model-score-factors]");
+const scoreRingEl = document.querySelector(".score-ring");
 const latencyChatEl = document.querySelector("[data-chat-latency]");
 const latencyStreamEl = document.querySelector("[data-stream-latency]");
 const streamTotalEl = document.querySelector("[data-stream-total]");
@@ -232,6 +233,14 @@ function modelGrade(score) {
   return "poor";
 }
 
+function scoreRingTone(score) {
+  if (score >= 100) return "perfect";
+  if (score >= 90) return "excellent";
+  if (score >= 75) return "good";
+  if (score >= 60) return "watch";
+  return "poor";
+}
+
 function qaLatencyCap(qa) {
   const latencies = (qa?.results || [])
     .map((item) => item.latencyMs)
@@ -246,13 +255,18 @@ function qaLatencyCap(qa) {
 }
 
 function renderModelScore(data) {
-  const grade = modelGrade(data.score || 0);
+  const score = Number(data.score || 0);
+  const grade = modelGrade(score);
   const qa = data.summary?.qa || { passed: 0, total: 0, rate: 0 };
   const latency = fmtMs(data.summary?.latencyMs?.chat);
   const protocolOk = data.checks?.every((item) => item.key !== "protocol" || item.status === "pass");
 
+  if (scoreRingEl) {
+    scoreRingEl.style.setProperty("--score-progress", `${Math.max(0, Math.min(100, score))}`);
+    scoreRingEl.dataset.tone = scoreRingTone(score);
+  }
   if (modelGradeEl) modelGradeEl.textContent = t.scoreGrades[grade];
-  if (modelScoreEl) modelScoreEl.textContent = `${data.score}%`;
+  if (modelScoreEl) modelScoreEl.textContent = `${score}%`;
   if (modelScoreNoteEl) modelScoreNoteEl.textContent = t.scoreNotes[grade];
   if (!modelScoreFactorsEl) return;
   modelScoreFactorsEl.innerHTML = "";
@@ -290,6 +304,10 @@ function renderDebug(data) {
 }
 
 function renderModelScorePending() {
+  if (scoreRingEl) {
+    scoreRingEl.style.setProperty("--score-progress", "0");
+    scoreRingEl.dataset.tone = "pending";
+  }
   if (modelGradeEl) {
     modelGradeEl.innerHTML = `<span class="loading-spinner" aria-hidden="true"></span>${t.scorePending}`;
   }
@@ -299,6 +317,10 @@ function renderModelScorePending() {
 }
 
 function renderSupplementFailed() {
+  if (scoreRingEl) {
+    scoreRingEl.style.setProperty("--score-progress", "0");
+    scoreRingEl.dataset.tone = "watch";
+  }
   if (modelGradeEl) modelGradeEl.textContent = t.partial;
   if (modelScoreEl) modelScoreEl.textContent = "-";
   if (modelScoreNoteEl) modelScoreNoteEl.textContent = t.supplementFailed;
@@ -306,6 +328,10 @@ function renderSupplementFailed() {
 }
 
 function renderRequestFailed() {
+  if (scoreRingEl) {
+    scoreRingEl.style.setProperty("--score-progress", "0");
+    scoreRingEl.dataset.tone = "poor";
+  }
   if (modelGradeEl) modelGradeEl.textContent = "-";
   if (modelScoreEl) modelScoreEl.textContent = "-";
   if (modelScoreNoteEl) modelScoreNoteEl.textContent = locale === "zh" ? "本次检测未完成" : "This test did not complete.";
