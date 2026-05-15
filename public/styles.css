@@ -364,11 +364,11 @@ h1 {
 
 .btn-primary {
   background: var(--accent);
-  color: #07140c;
+  color: #ffffff;
 }
 
 .btn-primary:hover {
-  background: #0fda70;
+  background: var(--accent-dark);
 }
 
 .btn-secondary {
