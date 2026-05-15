@@ -167,19 +167,19 @@
             <summary>这个检测工具到底在看什么？</summary>
             <p>我们会检查模型列表是否正常、目标模型是否可用、响应结构是否符合 OpenAI 兼容格式，并通过一组固定控制题观察指令跟随、基础知识、结构化输出和家族题库表现。</p>
           </details>
-          <details class="faq-item">
+          <details class="faq-item" open>
             <summary>为什么说它的判断更有参考价值？</summary>
             <p>我们不是只看单个字段，而是把接口可达性、返回结构、批量知识问答、流式输出和延迟信号放在一起看。这样更适合发现“表面能用、细节不稳”或“模型能力对不上”的情况。</p>
           </details>
-          <details class="faq-item">
+          <details class="faq-item" open>
             <summary>API Key 会被保存吗？</summary>
             <p>不会。你的 API Key 只用于这一次实时检测，不写入账号系统，不进入榜单库，检测完成后即销毁。这个站点也不提供托管密钥功能。</p>
           </details>
-          <details class="faq-item">
+          <details class="faq-item" open>
             <summary>检测结果能证明这个中转站绝对安全吗？</summary>
             <p>不能。它更像一次技术体检，帮助你在接入前发现明显异常、性能偏差和兼容性风险。是否长期稳定、是否适合大额充值，仍然需要你结合多次测试和使用经验判断。</p>
           </details>
-          <details class="faq-item">
+          <details class="faq-item" open>
             <summary>为什么有时看起来同一模型也会分数不同？</summary>
             <p>中转站本身可能会切线路、切上游、切机房，延迟和返回行为也会波动。我们的评分会受本次检测中的延迟、题库回答和协议表现影响，所以更适合多测几次看趋势，而不是只看一次结果。</p>
           </details>
