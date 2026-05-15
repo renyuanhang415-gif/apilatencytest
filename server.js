@@ -4,6 +4,7 @@ import { createReadStream } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildModelsResult, buildQuickTestResult, buildSupplementTestResult, buildTestResult } from "./lib/api-core.js";
+import contactHandler from "./api/contact.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -145,6 +146,10 @@ async function handleRequest(req, res) {
 
   if (req.method === "POST" && url.pathname === "/api/models") {
     return handleApiModels(req, res);
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/contact") {
+    return contactHandler(req, res);
   }
 
   if (url.pathname === "/v1/models" || url.pathname === "/v1/chat/completions") {

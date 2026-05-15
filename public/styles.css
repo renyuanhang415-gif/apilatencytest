@@ -499,6 +499,11 @@ h1 {
   font-weight: 900;
 }
 
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
 .btn-large {
   min-width: 142px;
   min-height: 52px;
