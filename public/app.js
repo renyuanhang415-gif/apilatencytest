@@ -541,13 +541,23 @@ function renderCommonModels(selectedModel = form?.model?.value) {
 
     const title = document.createElement("strong");
     title.textContent = item.name;
+    const idText = document.createElement("span");
+    idText.className = "common-model-id-text";
+    idText.textContent = item.model;
     const idInput = document.createElement("input");
     idInput.className = "common-model-id-input";
     idInput.value = item.model;
     idInput.spellcheck = false;
     idInput.autocomplete = "off";
     idInput.setAttribute("aria-label", `${item.name} model id`);
-    card.append(title, idInput);
+    idInput.hidden = true;
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "common-model-edit";
+    editBtn.setAttribute("aria-label", `Edit ${item.name} model id`);
+    editBtn.title = "Edit model id";
+    editBtn.innerHTML = "✎";
+    card.append(title, idText, idInput, editBtn);
 
     if (item.badge) {
       const badge = document.createElement("small");
@@ -562,11 +572,24 @@ function renderCommonModels(selectedModel = form?.model?.value) {
       item.id = source.id;
       item.model = source.id;
       idInput.value = source.id;
+      idText.textContent = source.id;
       card.title = item.id;
+      card.classList.remove("is-editing");
+      idInput.hidden = true;
+      idText.hidden = false;
       if (card.classList.contains("is-active")) {
         form.model.value = item.id;
         setModelStatus(t.selectedModel(item.id), "pass");
       }
+    };
+
+    const openEditor = (event) => {
+      event.stopPropagation();
+      card.classList.add("is-editing");
+      idText.hidden = true;
+      idInput.hidden = false;
+      idInput.focus();
+      idInput.select();
     };
 
     card.addEventListener("click", () => selectModel(idInput.value.trim(), "common_model"));
@@ -576,8 +599,22 @@ function renderCommonModels(selectedModel = form?.model?.value) {
         selectModel(idInput.value.trim(), "common_model");
       }
     });
+    editBtn.addEventListener("click", openEditor);
     idInput.addEventListener("click", (event) => event.stopPropagation());
-    idInput.addEventListener("keydown", (event) => event.stopPropagation());
+    idInput.addEventListener("keydown", (event) => {
+      event.stopPropagation();
+      if (event.key === "Enter") {
+        event.preventDefault();
+        commitInputValue();
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        idInput.value = item.id;
+        card.classList.remove("is-editing");
+        idInput.hidden = true;
+        idText.hidden = false;
+      }
+    });
     idInput.addEventListener("change", commitInputValue);
     idInput.addEventListener("blur", commitInputValue);
     grid.appendChild(card);
