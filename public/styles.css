@@ -60,7 +60,7 @@ a {
   width: 26px;
   height: 26px;
   border-radius: 7px;
-  background: center / cover no-repeat url("/favicon.png");
+  background: center / cover no-repeat url("/favicon.png?v=20260515c");
   flex: 0 0 26px;
 }
 
