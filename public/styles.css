@@ -290,7 +290,7 @@ h1 {
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
   overflow-x: auto;
-  padding-top: 2px;
+  padding-top: 10px;
 }
 
 .common-model-card {
@@ -340,8 +340,8 @@ h1 {
 
 .common-model-card small {
   position: absolute;
-  top: 4px;
-  left: 10px;
+  top: -10px;
+  left: 12px;
   border-radius: 999px;
   padding: 2px 7px;
   background: #16a34a;
