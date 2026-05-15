@@ -37,7 +37,7 @@ a {
 }
 
 .site-shell {
-  width: min(1160px, calc(100% - 64px));
+  width: min(1080px, calc(100% - 72px));
   margin: 0 auto;
 }
 
@@ -46,7 +46,7 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 20px 0;
+  padding: 16px 0;
 }
 
 .brand {
@@ -86,7 +86,7 @@ a {
 .lang-switch a {
   color: var(--muted);
   border-radius: 999px;
-  padding: 8px 12px;
+  padding: 7px 11px;
 }
 
 .nav a.active,
@@ -97,13 +97,13 @@ a {
 
 .lang-switch {
   gap: 2px;
-  padding: 3px;
+  padding: 2px;
   border: 1px solid var(--line);
   border-radius: 999px;
 }
 
 .tester-hero {
-  padding: 22px 0 18px;
+  padding: 18px 0 14px;
 }
 
 .tool-map {
@@ -132,7 +132,7 @@ a {
 }
 
 .hero-copy {
-  max-width: 1040px;
+  max-width: 920px;
 }
 
 .eyebrow {
@@ -152,24 +152,24 @@ p {
 }
 
 h1 {
-  max-width: 1040px;
-  margin-bottom: 12px;
-  font-size: clamp(42px, 4.6vw, 72px);
+  max-width: 920px;
+  margin-bottom: 10px;
+  font-size: clamp(38px, 4.2vw, 64px);
   line-height: 1.05;
   letter-spacing: 0;
 }
 
 .lede {
-  max-width: 680px;
-  margin-bottom: 24px;
+  max-width: 620px;
+  margin-bottom: 20px;
   color: var(--muted);
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .test-card {
   border: 1px solid var(--line);
-  border-radius: 24px;
-  padding: 24px;
+  border-radius: 22px;
+  padding: 20px;
   background: var(--panel);
   box-shadow: var(--shadow);
 }
@@ -219,7 +219,7 @@ h1 {
 
 .field {
   min-width: 0;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .field label,
@@ -234,10 +234,10 @@ h1 {
 .field input,
 .model-search {
   width: 100%;
-  min-height: 48px;
+  min-height: 44px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 0 14px;
+  padding: 0 13px;
   background: #f8f9fb;
   color: var(--text);
   outline: none;
@@ -260,7 +260,7 @@ h1 {
 }
 
 .icon-btn {
-  min-width: 68px;
+  min-width: 64px;
   border: 1px solid var(--line);
   border-left: 0;
   border-radius: 0 12px 12px 0;
@@ -337,7 +337,7 @@ h1 {
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 18px;
+  margin-top: 14px;
   flex-wrap: wrap;
 }
 
@@ -350,14 +350,14 @@ h1 {
 }
 
 .btn-large {
-  min-width: 150px;
-  min-height: 56px;
-  padding: 0 24px;
-  font-size: 17px;
+  min-width: 142px;
+  min-height: 52px;
+  padding: 0 22px;
+  font-size: 16px;
 }
 
 .btn-small {
-  min-height: 44px;
+  min-height: 40px;
   padding: 0 18px;
 }
 
@@ -631,15 +631,15 @@ h1 {
 }
 
 .page-band {
-  margin: 28px 0 18px;
-  padding: 20px 0 0;
+  margin: 22px 0 16px;
+  padding: 18px 0 0;
   border-top: 1px solid var(--line);
 }
 
 .faq-list {
   display: grid;
   gap: 0;
-  max-width: 1080px;
+  max-width: 980px;
   border-top: 1px solid var(--line);
 }
 
@@ -653,14 +653,14 @@ h1 {
   border: 0;
   border-bottom: 1px solid var(--line);
   border-radius: 0;
-  padding: 22px 0;
+  padding: 18px 0;
   background: transparent;
 }
 
 .faq-item summary {
   display: block;
   list-style: none;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .faq-item summary::-webkit-details-marker {
@@ -679,7 +679,7 @@ h1 {
 
 .faq-item p {
   max-width: none;
-  line-height: 1.8;
+  line-height: 1.7;
 }
 
 .page-cta {
@@ -687,8 +687,8 @@ h1 {
 }
 
 .compact-copy h2 {
-  margin: 0 0 12px;
-  font-size: 24px;
+  margin: 0 0 10px;
+  font-size: 22px;
 }
 
 .compact-copy p {
@@ -710,7 +710,7 @@ h1 {
   gap: 32px;
   width: 100vw;
   margin: 8px calc(50% - 50vw) 0;
-  padding: 18px max(32px, calc((100vw - 1160px) / 2));
+  padding: 18px max(36px, calc((100vw - 1080px) / 2));
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   background: #fff;
@@ -759,7 +759,7 @@ h1 {
 
 @media (max-width: 920px) {
   .site-shell {
-    width: min(100% - 28px, 1240px);
+    width: min(100% - 28px, 1080px);
   }
 
   .topbar,
@@ -781,7 +781,7 @@ h1 {
   }
 
   h1 {
-    font-size: clamp(38px, 14vw, 58px);
+    font-size: clamp(34px, 13vw, 52px);
   }
 
   .tool-map,
