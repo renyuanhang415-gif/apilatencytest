@@ -4,6 +4,7 @@ const fetchModelsBtn = document.querySelector("[data-fetch-models]");
 const runTestBtn = document.querySelector("[data-run-test]");
 const resetFlowBtn = document.querySelector("[data-reset-flow]");
 const modelStep = document.querySelector("[data-model-step]");
+const commonModelsEl = document.querySelector("[data-common-models]");
 const modelPicker = document.querySelector("[data-model-picker]");
 const modelSearchInput = document.querySelector("[data-model-search]");
 const modelFilterBtns = document.querySelectorAll("[data-model-filter]");
@@ -30,6 +31,16 @@ const outputTokensEl = document.querySelector("[data-output-tokens]");
 const debugPanelEl = document.querySelector("[data-debug-panel]");
 const debugOutputEl = document.querySelector("[data-debug-output]");
 const allModels = [];
+const commonModels = [
+  { name: "GPT 5.5", id: "gpt-5.5", badge: "NEW" },
+  { name: "GPT 5.4", id: "gpt-5.4" },
+  { name: "GPT 4.1", id: "gpt-4.1" },
+  { name: "GPT 4o", id: "gpt-4o" },
+  { name: "Claude Sonnet 4.6", id: "claude-sonnet-4-6" },
+  { name: "Claude Opus 4.7", id: "claude-opus-4-7" },
+  { name: "Gemini 3.1 Pro", id: "gemini-3.1-pro" },
+  { name: "DeepSeek Chat", id: "deepseek-chat" },
+];
 const debugMode = new URLSearchParams(window.location.search).get("debug") === "1";
 
 const locale = (document.body.dataset.locale || document.documentElement.lang || "en").toLowerCase().startsWith("zh")
@@ -45,6 +56,7 @@ const text = {
     fetchingModels: "Fetching models...",
     loadingModels: "Loading model list...",
     noMatchingModels: "No matching models.",
+    commonModels: "Common models",
     selectModel: "Select a model, then start the test.",
     selectedModel: (model) => `Selected ${model}. Start the test when ready.`,
     loadedModels: (count, ms) => `Loaded ${count} models in ${ms} ms.`,
@@ -88,6 +100,7 @@ const text = {
     fetchingModels: "正在获取模型...",
     loadingModels: "正在加载模型列表...",
     noMatchingModels: "没有匹配的模型。",
+    commonModels: "常用模型",
     selectModel: "选择一个目标模型，然后开始检测。",
     selectedModel: (model) => `已选择 ${model}，可以开始检测。`,
     loadedModels: (count, ms) => `已获取 ${count} 个模型，用时 ${ms} ms。`,
@@ -402,6 +415,7 @@ function resetFlow() {
   allModels.length = 0;
   if (form?.model) form.model.value = "";
   if (modelSearchInput) modelSearchInput.value = "";
+  if (commonModelsEl) commonModelsEl.innerHTML = "";
   if (modelPicker) modelPicker.innerHTML = `<span class="hint">${locale === "zh" ? "先获取模型列表。" : "Fetch models first."}</span>`;
   if (modelStep) modelStep.hidden = true;
   if (fetchModelsBtn) fetchModelsBtn.hidden = false;
@@ -426,20 +440,13 @@ function renderModelPicker(models, selectedModel = form?.model?.value) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "model-card";
+    button.dataset.model = model;
     button.textContent = model;
     button.title = model;
     button.setAttribute("aria-pressed", "false");
 
     button.addEventListener("click", () => {
-      form.model.value = model;
-      document.querySelectorAll(".model-card").forEach((card) => {
-        card.classList.remove("is-active");
-        card.setAttribute("aria-pressed", "false");
-      });
-      button.classList.add("is-active");
-      button.setAttribute("aria-pressed", "true");
-      setModelStatus(t.selectedModel(model), "pass");
-      trackEvent("model_selected", { model_family: modelFamily(model) });
+      selectModel(model, "model_list");
     });
 
     if (model === selectedModel || (!selectedModel && index === 0)) {
@@ -450,6 +457,86 @@ function renderModelPicker(models, selectedModel = form?.model?.value) {
 
     modelPicker.appendChild(button);
   });
+}
+
+function normalizeModelId(model) {
+  return String(model || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[._]/g, "-");
+}
+
+function modelMatchesCandidate(model, candidateId) {
+  const modelId = normalizeModelId(model);
+  const candidate = normalizeModelId(candidateId);
+  return modelId === candidate || modelId.includes(candidate);
+}
+
+function availableCommonModels() {
+  return commonModels
+    .map((item) => ({
+      ...item,
+      model: allModels.find((model) => modelMatchesCandidate(model, item.id)),
+    }))
+    .filter((item) => item.model);
+}
+
+function selectModel(model, source = "model_list") {
+  if (!form || !model) return;
+  form.model.value = model;
+  document.querySelectorAll(".model-card, .common-model-card").forEach((card) => {
+    const selected = card.dataset.model === model;
+    card.classList.toggle("is-active", selected);
+    card.setAttribute("aria-pressed", selected ? "true" : "false");
+  });
+  setModelStatus(t.selectedModel(model), "pass");
+  trackEvent("model_selected", { model_family: modelFamily(model), source });
+}
+
+function preferredDefaultModel(models) {
+  const common = availableCommonModels();
+  return common[0]?.model || models[0] || "";
+}
+
+function renderCommonModels(selectedModel = form?.model?.value) {
+  if (!commonModelsEl) return;
+  const models = availableCommonModels();
+  commonModelsEl.innerHTML = "";
+  if (!models.length) return;
+
+  const heading = document.createElement("div");
+  heading.className = "common-models-heading";
+  heading.textContent = t.commonModels;
+  commonModelsEl.appendChild(heading);
+
+  const grid = document.createElement("div");
+  grid.className = "common-model-grid";
+  models.forEach((item) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "common-model-card";
+    button.dataset.model = item.model;
+    button.setAttribute("aria-pressed", item.model === selectedModel ? "true" : "false");
+    button.title = item.model;
+    if (item.model === selectedModel) button.classList.add("is-active");
+
+    const title = document.createElement("strong");
+    title.textContent = item.name;
+    const id = document.createElement("span");
+    id.textContent = item.model;
+    button.append(title, id);
+
+    if (item.badge) {
+      const badge = document.createElement("small");
+      badge.textContent = item.badge;
+      button.appendChild(badge);
+    }
+
+    button.addEventListener("click", () => selectModel(item.model, "common_model"));
+    grid.appendChild(button);
+  });
+
+  commonModelsEl.appendChild(grid);
 }
 
 function filteredModels() {
@@ -463,6 +550,7 @@ function filteredModels() {
 }
 
 function refreshModelPicker() {
+  renderCommonModels(form?.model?.value);
   renderModelPicker(filteredModels(), form?.model?.value);
 }
 
@@ -754,9 +842,17 @@ fetchModelsBtn?.addEventListener("click", async () => {
     if (modelSearchInput) modelSearchInput.value = "";
     activeModelFilter = "";
     modelFilterBtns.forEach((button) => button.classList.toggle("is-active", button.dataset.modelFilter === ""));
-    renderModelPicker(filteredModels(), data.models[0]);
+    const defaultModel = preferredDefaultModel(data.models);
+    if (defaultModel) form.model.value = defaultModel;
+    renderCommonModels(defaultModel);
+    renderModelPicker(filteredModels(), defaultModel);
     setFlowModelsLoaded();
-    setModelStatus(`${t.loadedModels(data.models.length, data.timings.totalMs)} ${t.selectModel}`, "pass");
+    setModelStatus(
+      defaultModel
+        ? `${t.loadedModels(data.models.length, data.timings.totalMs)} ${t.selectedModel(defaultModel)}`
+        : `${t.loadedModels(data.models.length, data.timings.totalMs)} ${t.selectModel}`,
+      "pass"
+    );
     trackEvent("models_fetch_success", {
       model_count: data.models.length,
       latency_ms: data.timings.totalMs,

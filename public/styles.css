@@ -274,6 +274,77 @@ h1 {
   margin-top: 4px;
 }
 
+.common-models {
+  margin-bottom: 12px;
+}
+
+.common-models-heading {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.common-model-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+  gap: 10px;
+}
+
+.common-model-card {
+  position: relative;
+  appearance: none;
+  min-width: 0;
+  min-height: 72px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.common-model-card strong,
+.common-model-card span,
+.common-model-card small {
+  display: block;
+}
+
+.common-model-card strong {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.common-model-card span {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.common-model-card small {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  border-radius: 999px;
+  padding: 2px 7px;
+  background: #16a34a;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.common-model-card:hover,
+.common-model-card.is-active {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  background: #fcfaff;
+}
+
 .model-filters {
   display: flex;
   flex-wrap: wrap;
