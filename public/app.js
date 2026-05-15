@@ -41,6 +41,7 @@ const commonModels = [
   { name: "Gemini 3.1 Pro", id: "gemini-3.1-pro" },
   { name: "DeepSeek Chat", id: "deepseek-chat" },
 ];
+const defaultCommonModelId = "gpt-5.5";
 const debugMode = new URLSearchParams(window.location.search).get("debug") === "1";
 
 const locale = (document.body.dataset.locale || document.documentElement.lang || "en").toLowerCase().startsWith("zh")
@@ -390,8 +391,16 @@ function mergeSupplementResult(baseData, supplementData) {
 
 function setFlowModelsLoaded() {
   if (modelStep) modelStep.hidden = false;
+  if (modelSearchInput) modelSearchInput.hidden = false;
+  if (modelPicker) modelPicker.hidden = false;
+  if (modelFilterBtns.length) {
+    modelFilterBtns.forEach((button) => {
+      button.hidden = false;
+    });
+  }
+  const filtersWrap = document.querySelector("[data-model-filters]");
+  if (filtersWrap) filtersWrap.hidden = false;
   if (fetchModelsBtn) fetchModelsBtn.hidden = true;
-  if (runTestBtn) runTestBtn.hidden = false;
   if (resetFlowBtn) resetFlowBtn.hidden = false;
 }
 
@@ -413,18 +422,33 @@ function resetResults() {
 
 function resetFlow() {
   allModels.length = 0;
-  if (form?.model) form.model.value = "";
-  if (modelSearchInput) modelSearchInput.value = "";
-  if (commonModelsEl) commonModelsEl.innerHTML = "";
-  if (modelPicker) modelPicker.innerHTML = `<span class="hint">${locale === "zh" ? "先获取模型列表。" : "Fetch models first."}</span>`;
-  if (modelStep) modelStep.hidden = true;
+  if (form?.model) form.model.value = defaultCommonModelId;
+  if (modelSearchInput) {
+    modelSearchInput.value = "";
+    modelSearchInput.hidden = true;
+  }
+  if (modelPicker) {
+    modelPicker.innerHTML = `<span class="hint">${locale === "zh" ? "先获取模型列表。" : "Fetch models first."}</span>`;
+    modelPicker.hidden = true;
+  }
+  if (modelStep) modelStep.hidden = false;
   if (fetchModelsBtn) fetchModelsBtn.hidden = false;
-  if (runTestBtn) runTestBtn.hidden = true;
   if (resetFlowBtn) resetFlowBtn.hidden = true;
   activeModelFilter = "";
-  modelFilterBtns.forEach((button) => button.classList.toggle("is-active", button.dataset.modelFilter === ""));
+  modelFilterBtns.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.modelFilter === "");
+    button.hidden = true;
+  });
+  const filtersWrap = document.querySelector("[data-model-filters]");
+  if (filtersWrap) filtersWrap.hidden = true;
+  renderCommonModels(form?.model?.value || defaultCommonModelId);
   resetResults();
-  setModelStatus(locale === "zh" ? "不需要注册。API Key 只用于本次实时检测。" : "No account. API keys are used only for this live test.");
+  setModelStatus(
+    locale === "zh"
+      ? `已默认选择 ${defaultCommonModelId}，可直接开始检测，或先获取模型列表。`
+      : `Defaulted to ${defaultCommonModelId}. Start the test now or fetch the full model list first.`,
+    "pass"
+  );
 }
 
 function renderModelPicker(models, selectedModel = form?.model?.value) {
@@ -473,6 +497,9 @@ function modelMatchesCandidate(model, candidateId) {
 }
 
 function availableCommonModels() {
+  if (!allModels.length) {
+    return commonModels.map((item) => ({ ...item, model: item.id }));
+  }
   return commonModels
     .map((item) => ({
       ...item,
@@ -552,6 +579,19 @@ function filteredModels() {
 function refreshModelPicker() {
   renderCommonModels(form?.model?.value);
   renderModelPicker(filteredModels(), form?.model?.value);
+}
+
+function initDefaultModelShortcuts() {
+  if (form?.model && !form.model.value) {
+    form.model.value = defaultCommonModelId;
+  }
+  renderCommonModels(form?.model?.value || defaultCommonModelId);
+  setModelStatus(
+    locale === "zh"
+      ? `已默认选择 ${form?.model?.value || defaultCommonModelId}，可直接开始检测，或先获取模型列表。`
+      : `Defaulted to ${form?.model?.value || defaultCommonModelId}. Start the test now or fetch the full model list first.`,
+    "pass"
+  );
 }
 
 function ensureVerificationModal() {
@@ -871,3 +911,5 @@ form?.addEventListener("submit", async (event) => {
     void runTestSubmission();
   });
 });
+
+initDefaultModelShortcuts();

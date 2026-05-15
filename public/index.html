@@ -62,10 +62,10 @@
               </div>
             </div>
 
-            <div class="model-step" hidden data-model-step>
+            <div class="model-step" data-model-step>
               <label>目标模型</label>
               <div class="common-models" data-common-models></div>
-              <div class="model-filters" data-model-filters>
+              <div class="model-filters" hidden data-model-filters>
                 <button type="button" class="filter-chip is-active" data-model-filter="">全部</button>
                 <button type="button" class="filter-chip" data-model-filter="gpt">GPT</button>
                 <button type="button" class="filter-chip" data-model-filter="claude">Claude</button>
@@ -75,8 +75,8 @@
                 <button type="button" class="filter-chip" data-model-filter="glm">GLM</button>
                 <button type="button" class="filter-chip" data-model-filter="kimi">Kimi</button>
               </div>
-              <input class="model-search" data-model-search placeholder="搜索模型..." />
-              <div class="model-picker" data-model-picker>
+              <input class="model-search" hidden data-model-search placeholder="搜索模型..." />
+              <div class="model-picker" hidden data-model-picker>
                 <span class="hint">先获取模型列表。</span>
               </div>
             </div>
@@ -86,7 +86,7 @@
 
             <div class="action-row">
               <button class="btn btn-primary btn-large" type="button" data-fetch-models>获取模型</button>
-              <button class="btn btn-primary btn-large" type="submit" hidden data-run-test>开始检测</button>
+              <button class="btn btn-primary btn-large" type="submit" data-run-test>开始检测</button>
               <button class="btn btn-secondary btn-small" type="button" data-reset-flow hidden>更换接口</button>
             </div>
             <div class="hint" data-model-status>不需要注册。API Key 只用于本次实时检测。</div>

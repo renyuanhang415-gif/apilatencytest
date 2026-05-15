@@ -62,10 +62,10 @@
               </div>
             </div>
 
-            <div class="model-step" hidden data-model-step>
+            <div class="model-step" data-model-step>
               <label>Target model</label>
               <div class="common-models" data-common-models></div>
-              <div class="model-filters" data-model-filters>
+              <div class="model-filters" hidden data-model-filters>
                 <button type="button" class="filter-chip is-active" data-model-filter="">All</button>
                 <button type="button" class="filter-chip" data-model-filter="gpt">GPT</button>
                 <button type="button" class="filter-chip" data-model-filter="claude">Claude</button>
@@ -75,8 +75,8 @@
                 <button type="button" class="filter-chip" data-model-filter="glm">GLM</button>
                 <button type="button" class="filter-chip" data-model-filter="kimi">Kimi</button>
               </div>
-              <input class="model-search" data-model-search placeholder="Search models..." />
-              <div class="model-picker" data-model-picker>
+              <input class="model-search" hidden data-model-search placeholder="Search models..." />
+              <div class="model-picker" hidden data-model-picker>
                 <span class="hint">Fetch models first.</span>
               </div>
             </div>
@@ -86,7 +86,7 @@
 
             <div class="action-row">
               <button class="btn btn-primary btn-large" type="button" data-fetch-models>Fetch models</button>
-              <button class="btn btn-primary btn-large" type="submit" hidden data-run-test>Start test</button>
+              <button class="btn btn-primary btn-large" type="submit" data-run-test>Start test</button>
               <button class="btn btn-secondary btn-small" type="button" data-reset-flow hidden>Change endpoint</button>
             </div>
             <div class="hint" data-model-status>No account. API keys are used only for this live test.</div>
