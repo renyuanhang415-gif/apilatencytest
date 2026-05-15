@@ -685,6 +685,42 @@ h1 {
   font-size: 13px;
 }
 
+.authority-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.authority-note {
+  display: grid;
+  gap: 3px;
+}
+
+.authority-note strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+  white-space: nowrap;
+}
+
+.footer-links a {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.footer-links a:hover {
+  color: var(--accent-dark);
+}
+
 .status-pass {
   color: var(--accent-dark);
 }
@@ -704,9 +740,15 @@ h1 {
   }
 
   .topbar,
-  .header-actions {
+  .header-actions,
+  .authority-footer {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .footer-links {
+    justify-content: flex-start;
+    white-space: normal;
   }
 
   h1 {
