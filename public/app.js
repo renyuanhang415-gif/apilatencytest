@@ -32,14 +32,12 @@ const debugPanelEl = document.querySelector("[data-debug-panel]");
 const debugOutputEl = document.querySelector("[data-debug-output]");
 const allModels = [];
 const commonModels = [
-  { name: "GPT 5.5", id: "gpt-5.5", badge: "NEW" },
-  { name: "GPT 5.4", id: "gpt-5.4" },
-  { name: "GPT 4.1", id: "gpt-4.1" },
-  { name: "GPT 4o", id: "gpt-4o" },
-  { name: "Claude Sonnet 4.6", id: "claude-sonnet-4-6" },
-  { name: "Claude Opus 4.7", id: "claude-opus-4-7" },
-  { name: "Gemini 3.1 Pro", id: "gemini-3.1-pro" },
-  { name: "DeepSeek Chat", id: "deepseek-chat" },
+  { key: "opus47", name: "Opus 4.7", id: "claude-opus-4-7" },
+  { key: "opus46", name: "Opus 4.6", id: "claude-opus-4-5" },
+  { key: "sonnet46", name: "Sonnet 4.6", id: "claude-sonnet-4-6" },
+  { key: "gpt55", name: "GPT 5.5", id: "gpt-5.5", badge: "NEW" },
+  { key: "gpt54", name: "GPT 5.4", id: "gpt-5.4" },
+  { key: "gemini31pro", name: "Gemini 3.1 Pro", id: "gemini-3.1-pro" },
 ];
 const defaultCommonModelId = "gpt-5.5";
 const debugMode = new URLSearchParams(window.location.search).get("debug") === "1";
@@ -497,22 +495,15 @@ function modelMatchesCandidate(model, candidateId) {
 }
 
 function availableCommonModels() {
-  if (!allModels.length) {
-    return commonModels.map((item) => ({ ...item, model: item.id }));
-  }
-  return commonModels
-    .map((item) => ({
-      ...item,
-      model: allModels.find((model) => modelMatchesCandidate(model, item.id)),
-    }))
-    .filter((item) => item.model);
+  return commonModels.map((item) => ({ ...item, model: item.id, source: item }));
 }
 
 function selectModel(model, source = "model_list") {
   if (!form || !model) return;
   form.model.value = model;
   document.querySelectorAll(".model-card, .common-model-card").forEach((card) => {
-    const selected = card.dataset.model === model;
+    const input = card.querySelector(".common-model-id-input");
+    const selected = input ? input.value.trim() === model : card.dataset.model === model;
     card.classList.toggle("is-active", selected);
     card.setAttribute("aria-pressed", selected ? "true" : "false");
   });
@@ -539,28 +530,57 @@ function renderCommonModels(selectedModel = form?.model?.value) {
   const grid = document.createElement("div");
   grid.className = "common-model-grid";
   models.forEach((item) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "common-model-card";
-    button.dataset.model = item.model;
-    button.setAttribute("aria-pressed", item.model === selectedModel ? "true" : "false");
-    button.title = item.model;
-    if (item.model === selectedModel) button.classList.add("is-active");
+    const card = document.createElement("div");
+    card.className = "common-model-card";
+    card.dataset.commonKey = item.key;
+    card.setAttribute("role", "button");
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("aria-pressed", item.model === selectedModel ? "true" : "false");
+    card.title = item.model;
+    if (item.model === selectedModel) card.classList.add("is-active");
 
     const title = document.createElement("strong");
     title.textContent = item.name;
-    const id = document.createElement("span");
-    id.textContent = item.model;
-    button.append(title, id);
+    const idInput = document.createElement("input");
+    idInput.className = "common-model-id-input";
+    idInput.value = item.model;
+    idInput.spellcheck = false;
+    idInput.autocomplete = "off";
+    idInput.setAttribute("aria-label", `${item.name} model id`);
+    card.append(title, idInput);
 
     if (item.badge) {
       const badge = document.createElement("small");
       badge.textContent = item.badge;
-      button.appendChild(badge);
+      card.appendChild(badge);
     }
 
-    button.addEventListener("click", () => selectModel(item.model, "common_model"));
-    grid.appendChild(button);
+    const commitInputValue = () => {
+      const nextValue = idInput.value.trim();
+      const source = item.source || item;
+      source.id = nextValue || source.id;
+      item.id = source.id;
+      item.model = source.id;
+      idInput.value = source.id;
+      card.title = item.id;
+      if (card.classList.contains("is-active")) {
+        form.model.value = item.id;
+        setModelStatus(t.selectedModel(item.id), "pass");
+      }
+    };
+
+    card.addEventListener("click", () => selectModel(idInput.value.trim(), "common_model"));
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        selectModel(idInput.value.trim(), "common_model");
+      }
+    });
+    idInput.addEventListener("click", (event) => event.stopPropagation());
+    idInput.addEventListener("keydown", (event) => event.stopPropagation());
+    idInput.addEventListener("change", commitInputValue);
+    idInput.addEventListener("blur", commitInputValue);
+    grid.appendChild(card);
   });
 
   commonModelsEl.appendChild(grid);
