@@ -311,6 +311,19 @@ function renderSupplementFailed() {
   if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
 }
 
+function renderRequestFailed() {
+  if (modelGradeEl) modelGradeEl.textContent = "-";
+  if (modelScoreEl) modelScoreEl.textContent = "-";
+  if (modelScoreNoteEl) modelScoreNoteEl.textContent = locale === "zh" ? "本次检测未完成" : "This test did not complete.";
+  if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
+  latencyChatEl.textContent = "-";
+  latencyStreamEl.textContent = "-";
+  streamTotalEl.textContent = "-";
+  tokensSpeedEl.textContent = "-";
+  inputTokensEl.textContent = "-";
+  outputTokensEl.textContent = "-";
+}
+
 function renderTestResult(data, options = {}) {
   const forceFinished = Boolean(data.phase === "quick" && data.pendingSupplement);
   const showFinalScore = options.showFinalScore !== false && (!data.pendingSupplement || forceFinished);
@@ -855,12 +868,13 @@ async function runTestSubmission() {
   } catch (error) {
     if (resultLoadingEl) resultLoadingEl.hidden = true;
     if (resultDetailsEl) resultDetailsEl.hidden = false;
-    scoreEl.textContent = "0%";
+    scoreEl.textContent = "-";
     statusEl.textContent = t.fail;
     statusEl.className = "status-pill status-fail";
     verdictTitleEl.textContent = t.unavailable;
     verdictTextEl.textContent = error.message;
-    renderModelScore({ score: 0, summary: { qa: { passed: 0, total: 5, rate: 0 }, latencyMs: {} }, checks: [] });
+    checksEl.innerHTML = "";
+    renderRequestFailed();
     trackEvent("test_failure", {
       model_family: modelFamily(payload.model),
     });

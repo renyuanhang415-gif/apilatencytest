@@ -62,6 +62,9 @@ function contentTypeFor(filePath) {
 
 function demoAnswer(payload) {
   const prompt = JSON.stringify(payload?.messages || "").toLowerCase();
+  if (prompt.includes("c1.") && prompt.includes("c2.") && prompt.includes("g2.")) {
+    return ["C1=PURPLE", "C2=45", 'C3={"ok":true}', "G1=a-b-c", "G2=OK|2026"].join("\n");
+  }
   if (prompt.includes("purple")) return "PURPLE";
   if (prompt.includes("capital of france")) return "Paris";
   if (prompt.includes("法国首都")) return "Paris";
@@ -113,13 +116,17 @@ async function handleApiTest(req, res) {
   }
 
   const phase = String(new URL(req.url, `http://${req.headers.host}`).searchParams.get("phase") || payload.phase || "").toLowerCase();
-  const result =
-    phase === "quick"
-      ? await buildQuickTestResult(payload, req.headers.host)
-      : phase === "supplement"
-        ? await buildSupplementTestResult(payload, req.headers.host)
-        : await buildTestResult(payload, req.headers.host);
-  return sendJson(res, result.status, result.body);
+  try {
+    const result =
+      phase === "quick"
+        ? await buildQuickTestResult(payload, req.headers.host)
+        : phase === "supplement"
+          ? await buildSupplementTestResult(payload, req.headers.host)
+          : await buildTestResult(payload, req.headers.host);
+    return sendJson(res, result.status, result.body);
+  } catch (error) {
+    return sendJson(res, 502, { error: error.message || "Test request failed." });
+  }
 }
 
 async function handleApiModels(req, res) {
@@ -133,8 +140,12 @@ async function handleApiModels(req, res) {
     return sendJson(res, 400, { error: "Invalid JSON body." });
   }
 
-  const result = await buildModelsResult(payload, req.headers.host);
-  return sendJson(res, result.status, result.body);
+  try {
+    const result = await buildModelsResult(payload, req.headers.host);
+    return sendJson(res, result.status, result.body);
+  } catch (error) {
+    return sendJson(res, 502, { error: error.message || "Models request failed." });
+  }
 }
 
 async function handleRequest(req, res) {
