@@ -6,7 +6,7 @@
     <title>中转站价格对比 - API Latency Test</title>
     <meta
       name="description"
-      content="临时采样版 AI API 中转站价格对比，先看 GPT-4o 和 Claude-3.5 的输入输出价格、稳定评分和风险字段。"
+      content="AI API 中转站价格对比，查看 gpt-5.4 和 claude-opus-4-6 的输入输出价格排行榜。"
     />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="icon" type="image/png" href="/favicon.png?v=20260515c" />
@@ -32,7 +32,7 @@
       <section class="pricing-hero">
         <p class="eyebrow">API relay price radar</p>
         <h1>中转站价格对比</h1>
-        <p class="lede">把价格、风险、稳定评分放在同一张表里，方便快速筛选候选站点。</p>
+        <p class="lede">默认先看 gpt-5.4，把主流平台的输入输出价格和分组放在一张表里，方便快速筛选。</p>
       </section>
 
       <section class="pricing-toolbar" aria-label="价格筛选">
@@ -50,30 +50,30 @@
         <div class="price-stat">
           <span>最低输入价</span>
           <strong data-lowest-input>-</strong>
-          <small>¥ / K tokens</small>
+          <small>¥ / 1M tokens</small>
         </div>
         <div class="price-stat">
           <span>最低输出价</span>
           <strong data-lowest-output>-</strong>
-          <small>¥ / K tokens</small>
+          <small>¥ / 1M tokens</small>
         </div>
         <div class="price-stat">
-          <span>采样数量</span>
+          <span>收录数量</span>
           <strong data-sample-count>-</strong>
-          <small>临时样本</small>
+          <small>价格样本</small>
         </div>
         <div class="price-stat">
           <span>更新时间</span>
           <strong data-updated-at>-</strong>
-          <small>人工采样</small>
+          <small>公开页面采样</small>
         </div>
       </section>
 
       <section class="price-table-panel">
         <div class="price-table-head">
           <div>
-            <h2 data-table-title>价格采样</h2>
-            <p>价格单位：¥ / K tokens。风险与评分仅用于快速初筛，不替代实际检测。</p>
+            <h2 data-table-title>价格排行榜</h2>
+            <p>价格单位：¥ / 1M tokens。数据来自公开页面采样，仅用于快速比价。</p>
           </div>
           <a class="btn btn-secondary btn-small" href="/">去检测质量</a>
         </div>
@@ -82,9 +82,7 @@
             <thead>
               <tr>
                 <th>服务商</th>
-                <th>风险</th>
-                <th>稳定</th>
-                <th>评分</th>
+                <th>分组</th>
                 <th>输入价</th>
                 <th>输出价</th>
               </tr>
@@ -98,7 +96,7 @@
         <a class="footer-brand" href="/"><span class="brand-mark"></span><span>API Latency Test</span></a>
         <div class="footer-links">
           <a href="/">质量检测</a>
-          <a href="/pricing">价格对比</a>
+          <a href="/pricing">中转站价格对比</a>
           <a href="/contact">联系我们</a>
           <span>© 2026</span>
         </div>

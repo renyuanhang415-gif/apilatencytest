@@ -6,7 +6,7 @@
     <title>Relay Pricing Comparison - API Latency Test</title>
     <meta
       name="description"
-      content="Temporary sampled AI relay pricing page for GPT-4o and Claude-3.5 with input and output price comparison, risk labels, and stability scores."
+      content="AI relay pricing comparison for gpt-5.4 and claude-opus-4-6 input and output prices."
     />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="icon" type="image/png" href="/favicon.png?v=20260515c" />
@@ -32,7 +32,7 @@
       <section class="pricing-hero">
         <p class="eyebrow">API relay price radar</p>
         <h1>Relay pricing comparison</h1>
-        <p class="lede">Price, risk, and stability are placed into one table so users can scan candidate relays faster.</p>
+        <p class="lede">The page opens with gpt-5.4 and shows leading relay platforms, groups, and input/output prices in one table.</p>
       </section>
 
       <section class="pricing-toolbar" aria-label="Pricing filters">
@@ -50,30 +50,30 @@
         <div class="price-stat">
           <span>Lowest input</span>
           <strong data-lowest-input>-</strong>
-          <small>¥ / K tokens</small>
+          <small>¥ / 1M tokens</small>
         </div>
         <div class="price-stat">
           <span>Lowest output</span>
           <strong data-lowest-output>-</strong>
-          <small>¥ / K tokens</small>
+          <small>¥ / 1M tokens</small>
         </div>
         <div class="price-stat">
-          <span>Samples</span>
+          <span>Entries</span>
           <strong data-sample-count>-</strong>
-          <small>temporary set</small>
+          <small>price samples</small>
         </div>
         <div class="price-stat">
           <span>Updated</span>
           <strong data-updated-at>-</strong>
-          <small>manual sample</small>
+          <small>public page sample</small>
         </div>
       </section>
 
       <section class="price-table-panel">
         <div class="price-table-head">
           <div>
-            <h2 data-table-title>Sample pricing</h2>
-            <p>Pricing unit: ¥ / K tokens. Risk and ratings are only for quick screening, not a replacement for live testing.</p>
+            <h2 data-table-title>Price ranking</h2>
+            <p>Pricing unit: ¥ / 1M tokens. Data is sampled from public pages and intended for quick comparison.</p>
           </div>
           <a class="btn btn-secondary btn-small" href="/en">Run quality test</a>
         </div>
@@ -82,9 +82,7 @@
             <thead>
               <tr>
                 <th>Provider</th>
-                <th>Risk</th>
-                <th>Stability</th>
-                <th>Rating</th>
+                <th>Group</th>
                 <th>Input</th>
                 <th>Output</th>
               </tr>

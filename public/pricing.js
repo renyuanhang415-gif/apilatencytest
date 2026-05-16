@@ -3,70 +3,92 @@ const locale = document.body.dataset.locale === "en" ? "en" : "zh";
 const copy = {
   zh: {
     lowest: "最低",
-    normal: "正常",
-    watch: "观察",
-    danger: "高风险",
     empty: "暂无",
+    titleSuffix: "价格排行",
+    countSuffix: "条",
+    currency: "¥",
     sorts: {
       price: "价格最低",
-      stability: "最稳定",
-      rating: "评分最高",
+      output: "输出最低",
+      name: "名称",
     },
-    titleSuffix: "价格采样",
-    countSuffix: "个",
-    currency: "¥",
   },
   en: {
     lowest: "Lowest",
-    normal: "Normal",
-    watch: "Watch",
-    danger: "High risk",
     empty: "N/A",
-    sorts: {
-      price: "Lowest price",
-      stability: "Most stable",
-      rating: "Highest rating",
-    },
-    titleSuffix: "Sample pricing",
+    titleSuffix: "price ranking",
     countSuffix: "",
     currency: "¥",
+    sorts: {
+      price: "Lowest input",
+      output: "Lowest output",
+      name: "Name",
+    },
   },
 };
 
 const modelConfigs = [
-  { key: "gpt4o", label: "GPT-4o" },
-  { key: "claude35", label: "Claude-3.5" },
+  { key: "gpt54", label: "gpt-5.4" },
+  { key: "opus46", label: "claude-opus-4-6" },
 ];
 
 const providerSets = {
-  gpt4o: [
-    { name: "KFCV50 API", slug: "kfcv50", risk: "danger", stability: 2.8, rating: 2.5, input: 0.2, output: 0.2 },
-    { name: "GPTGod", slug: "gptgod", risk: "danger", stability: 2.5, rating: 2.8, input: 0.6, output: 0.6 },
-    { name: "发现AI", slug: "findcg", risk: "watch", stability: 3.5, rating: 3.5, input: 0.63, output: 3.8 },
-    { name: "AZAPI", slug: "azapi", risk: "safe", stability: 4.0, rating: 4.0, input: 0.8, output: 0.8 },
-    { name: "DawCode", slug: "dawcode", risk: "watch", stability: 4.0, rating: 3.8, input: 1.0, output: 6.0 },
-    { name: "Nio API", slug: "nio", risk: "safe", stability: 3.8, rating: 3.8, input: 1.0, output: 1.0 },
-    { name: "RightCode", slug: "rightcodes", risk: "safe", stability: 4.2, rating: 4.3, input: 1.25, output: 7.5 },
-    { name: "OpenAI Next", slug: "openai-next", risk: "safe", stability: null, rating: null, input: 1.5, output: 4.8 },
-    { name: "OpenAI SB", slug: "openai-sb", risk: "watch", stability: 3.6, rating: 3.7, input: 1.8, output: 5.5 },
-    { name: "PackyCode", slug: "packycode", risk: "safe", stability: 4.5, rating: 4.5, input: 2.4, output: 12.0 },
+  gpt54: [
+    { name: "JiKe AI", url: "https://magic666.top/register?aff=bUDr", group: "gpt特惠", input: 0.125, output: 0.75 },
+    { name: "ZeroCode", url: "https://www.zerocode.sbs/register?aff=mwKZ", group: "畅享满血GPT", input: 0.275, output: 1.65 },
+    { name: "Now Coding", url: "https://nowcoding.ai/register?aff=UCJU", group: "Codex 官方", input: 0.375, output: 2.25 },
+    { name: "Xcode Best", url: "https://xcode.best/register?aff=ifZk", group: "default", input: 0.375, output: 2.25 },
+    { name: "Spark Code", url: "https://sparkcode.top/register?aff=eIDz", group: "codex", input: 0.4995, output: 3.996 },
+    { name: "IKun Code", url: "https://api.ikuncode.cc/register?aff=OFj6", group: "Codex", input: 0.5, output: 3 },
+    { name: "Right Code", url: "https://www.right.codes/register?aff=cdb3e9e9", group: "Codex 日抛plus", input: 0.5, output: 3 },
+    { name: "VBCode", url: "https://vbcode.io/register?aff=XQe4", group: "codex", input: 0.5, output: 3 },
+    { name: "Doro", url: "https://doro.lol/register?aff=DNae", group: "openai gpt codex", input: 0.5, output: 4 },
+    { name: "Fox Code", url: "https://foxcode.rjj.cc/auth/register?aff=J3WK6S7", group: "Codex满血官渠", input: 0.585, output: 3.51 },
+    { name: "AiYa", url: "https://api.aiyahmm.com/register?aff=z7fA", group: "codex", input: 0.75, output: 4.5 },
+    { name: "ByteCat", url: "https://www.bytecatcode.org/register?aff=vd0x", group: "codex", input: 0.75, output: 4.5 },
+    { name: "DawCode", url: "https://dawclaudecode.com/register?aff=jOjU", group: "codex-stu", input: 0.75, output: 4.5 },
+    { name: "Yunwu", url: "https://yunwu.ai/register?aff=sFFz", group: "限时特价", input: 0.75, output: 4.5 },
+    { name: "Monking", url: "https://www.monking.ai/register?aff=Fisx", group: "codex-Pro", input: 0.875, output: 7 },
+    { name: "Neko", url: "https://nekocode.ai?aff=5S49GJBF", group: "按量-[Codex]-VIP", input: 0.9, output: 5.4 },
+    { name: "17NAS", url: "https://ai.17nas.com/register?aff=NrDt", group: "cn", input: 0.912, output: 5.472 },
+    { name: "ClaudeCN", url: "https://claudecn.top/register?aff=65QD", group: "CodeX", input: 1.25, output: 7.5 },
+    { name: "LinkAPI", url: "https://linkapi.ai/register?aff=4njS", group: "default", input: 1.25, output: 7.5 },
+    { name: "OneXModel", url: "https://1xm.ai/register?aff=qQbZ", group: "openai(x0.5)", input: 1.25, output: 7.5 },
+    { name: "AI Go Code", url: "https://aigocode.com/invite/ZM4TFMEM", group: "Codex", input: 1.75, output: 10.5 },
+    { name: "Duck Coding", url: "https://www.duckcoding.ai/register?aff=bzPt", group: "CodeX专用（Droid/OpenClaw）", input: 2, output: 12 },
+    { name: "Plato", url: "https://api.bltcy.ai/register?aff=FPBd112311", group: "default", input: 2.5, output: 15 },
+    { name: "PoloAPI", url: "https://poloai.top/register?aff=7jXk", group: "Claude-code稳定", input: 2.5, output: 15 },
   ],
-  claude35: [
-    { name: "鸡哥API", slug: "youseapi", risk: "safe", stability: 4.3, rating: 4.3, input: 0.04, output: 0.04 },
-    { name: "AI派", slug: "aipaibox", risk: "safe", stability: 4.3, rating: 4.3, input: 0.9, output: 4.5 },
-    { name: "OpenAI Next", slug: "openai-next", risk: "safe", stability: null, rating: null, input: 1.8, output: 7.0 },
-    { name: "OpenAI SB", slug: "openai-sb", risk: "watch", stability: 3.6, rating: 3.7, input: 2.0, output: 8.0 },
-    { name: "N1N.ai", slug: "n1n-ai", risk: "safe", stability: null, rating: null, input: 2.2, output: 9.0 },
-    { name: "星辰中转 API", slug: "xingchen-api", risk: "safe", stability: null, rating: null, input: 2.5, output: 9.8 },
-    { name: "KK云计算", slug: "kkclouds", risk: "safe", stability: null, rating: null, input: 2.6, output: 10.5 },
-    { name: "AIHubMix", slug: "aihubmix", risk: "safe", stability: null, rating: null, input: 2.6, output: 10.0 },
-    { name: "one-api", slug: "one-api", risk: "safe", stability: null, rating: null, input: 2.6, output: 10.2 },
-    { name: "Qu-API", slug: "qu-api", risk: "safe", stability: null, rating: null, input: 2.7, output: 10.5 },
+  opus46: [
+    { name: "Doro", url: "https://doro.lol/register?aff=DNae", group: "Claude 逆向A1", input: 0.4, output: 2 },
+    { name: "ZeroCode", url: "https://www.zerocode.sbs/register?aff=mwKZ", group: "无缓claude", input: 0.95, output: 4.75 },
+    { name: "ByteCat", url: "https://www.bytecatcode.org/register?aff=vd0x", group: "kiro", input: 1, output: 5 },
+    { name: "Now Coding", url: "https://nowcoding.ai/register?aff=UCJU", group: "Claude Code 特惠", input: 1, output: 5 },
+    { name: "Xcode Best", url: "https://xcode.best/register?aff=ifZk", group: "claude逆向特价", input: 1.25, output: 6.25 },
+    { name: "Packy", url: "https://www.packyapi.com/register?aff=MKIV", group: "aws-q", input: 1.5, output: 7.5 },
+    { name: "Right Code", url: "https://www.right.codes/register?aff=cdb3e9e9", group: "Claude awsq", input: 1.5, output: 7.5 },
+    { name: "AiYa", url: "https://api.aiyahmm.com/register?aff=z7fA", group: "default", input: 1.75, output: 8.75 },
+    { name: "Spark Code", url: "https://sparkcode.top/register?aff=eIDz", group: "cc逆向1", input: 1.998, output: 9.99 },
+    { name: "Duck Coding", url: "https://www.duckcoding.ai/register?aff=bzPt", group: "Claude Code专用-逆向", input: 2, output: 10 },
+    { name: "IKun Code", url: "https://api.ikuncode.cc/register?aff=OFj6", group: "cc逆向", input: 2, output: 10 },
+    { name: "Neko", url: "https://nekocode.ai?aff=5S49GJBF", group: "按量-[ClaudeCode-KIRO]", input: 2, output: 10 },
+    { name: "VBCode", url: "https://vbcode.io/register?aff=XQe4", group: "cc-windsurf", input: 2, output: 10 },
+    { name: "DawCode", url: "https://dawclaudecode.com/register?aff=jOjU", group: "cc-tehui", input: 2.25, output: 11.25 },
+    { name: "Fox Code", url: "https://foxcode.rjj.cc/auth/register?aff=J3WK6S7", group: "Ultra特价CC", input: 2.34, output: 11.7 },
+    { name: "LinkAPI", url: "https://linkapi.ai/register?aff=4njS", group: "claudecheap", input: 2.5, output: 12.5 },
+    { name: "OneXModel", url: "https://1xm.ai/register?aff=qQbZ", group: "cc-windsurf", input: 2.5, output: 12.5 },
+    { name: "Yunwu", url: "https://yunwu.ai/register?aff=sFFz", group: "default", input: 2.5, output: 12.5 },
+    { name: "Chintao", url: "https://chintao.cn/register?aff=CetX", group: "default", input: 3, output: 15 },
+    { name: "AI Go Code", url: "https://aigocode.com/invite/ZM4TFMEM", group: "Claude 普通型", input: 3.5, output: 17.5 },
+    { name: "Plato", url: "https://api.bltcy.ai/register?aff=FPBd112311", group: "cc", input: 4, output: 20 },
+    { name: "V-API", url: "https://api.gpt.ge/register?aff=Oglx", group: "claude_kiro", input: 4.375, output: 21.875 },
+    { name: "17NAS", url: "https://ai.17nas.com/register?aff=NrDt", group: "vip", input: 4.4, output: 22 },
+    { name: "EasyChat", url: "https://easychat.site/#/user/login?ref=45dd380e-72f8-4c7b-888c-dae2610bc050", group: "default", input: 4.5455, output: 22.7273 },
   ],
 };
 
 const state = {
-  model: modelConfigs[0].key,
+  model: "gpt54",
   sort: "price",
 };
 
@@ -79,12 +101,6 @@ const lowestOutput = document.querySelector("[data-lowest-output]");
 const sampleCount = document.querySelector("[data-sample-count]");
 const updatedAt = document.querySelector("[data-updated-at]");
 
-function riskLabel(risk) {
-  if (risk === "danger") return copy[locale].danger;
-  if (risk === "watch") return copy[locale].watch;
-  return copy[locale].normal;
-}
-
 function activeRows() {
   return providerSets[state.model] || [];
 }
@@ -92,15 +108,18 @@ function activeRows() {
 function sortedRows() {
   const rows = [...activeRows()];
   rows.sort((left, right) => {
-    if (state.sort === "rating") return (right.rating ?? 0) - (left.rating ?? 0);
-    if (state.sort === "stability") return (right.stability ?? 0) - (left.stability ?? 0);
+    if (state.sort === "output") return left.output - right.output;
+    if (state.sort === "name") return left.name.localeCompare(right.name, locale === "zh" ? "zh-Hans-CN" : "en");
     return left.input - right.input;
   });
   return rows;
 }
 
-function sourceHref(slug) {
-  return `https://www.token1000.com/zhan/${slug}`;
+function formatPrice(price) {
+  if (price == null) return copy[locale].empty;
+  const decimals = price < 1 ? 4 : 2;
+  const formatted = price.toFixed(decimals).replace(/0+$/, "").replace(/\.$/, "");
+  return `${copy[locale].currency}${formatted}`;
 }
 
 function renderTabs() {
@@ -113,8 +132,8 @@ function renderTabs() {
 
   sortTabs.innerHTML = [
     ["price", copy[locale].sorts.price],
-    ["stability", copy[locale].sorts.stability],
-    ["rating", copy[locale].sorts.rating],
+    ["output", copy[locale].sorts.output],
+    ["name", copy[locale].sorts.name],
   ]
     .map(
       ([value, label]) =>
@@ -130,25 +149,21 @@ function renderTable() {
   const minOutput = Math.min(...rows.map((row) => row.output));
 
   tableTitle.textContent = `${activeModel.label} ${copy[locale].titleSuffix}`;
-  lowestInput.textContent = `${copy[locale].currency}${minInput.toFixed(2)}`;
-  lowestOutput.textContent = `${copy[locale].currency}${minOutput.toFixed(2)}`;
+  lowestInput.textContent = formatPrice(minInput);
+  lowestOutput.textContent = formatPrice(minOutput);
   sampleCount.textContent = locale === "zh" ? `${rows.length} ${copy[locale].countSuffix}` : String(rows.length);
   updatedAt.textContent = "2026-05-16";
 
   rowsTarget.innerHTML = rows
     .map((row) => {
-      const rating = row.rating == null ? copy[locale].empty : row.rating.toFixed(1);
-      const stability = row.stability == null ? copy[locale].empty : row.stability.toFixed(1);
       const inputMark = row.input === minInput ? `<small>${copy[locale].lowest}</small>` : "";
       const outputMark = row.output === minOutput ? `<small>${copy[locale].lowest}</small>` : "";
 
       return `<tr>
-        <td><a href="${sourceHref(row.slug)}" target="_blank" rel="noopener noreferrer">${row.name}</a></td>
-        <td><span class="risk-pill risk-${row.risk}">${riskLabel(row.risk)}</span></td>
-        <td>${stability}</td>
-        <td>${rating}</td>
-        <td><strong class="${row.input === minInput ? "is-lowest" : ""}">${copy[locale].currency}${row.input.toFixed(2)}</strong>${inputMark}</td>
-        <td><strong class="${row.output === minOutput ? "is-lowest" : ""}">${copy[locale].currency}${row.output.toFixed(2)}</strong>${outputMark}</td>
+        <td><a href="${row.url}" target="_blank" rel="noopener noreferrer">${row.name}</a></td>
+        <td>${row.group}</td>
+        <td><strong class="${row.input === minInput ? "is-lowest" : ""}">${formatPrice(row.input)}</strong>${inputMark}</td>
+        <td><strong class="${row.output === minOutput ? "is-lowest" : ""}">${formatPrice(row.output)}</strong>${outputMark}</td>
       </tr>`;
     })
     .join("");
