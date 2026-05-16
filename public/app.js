@@ -198,15 +198,6 @@ function hasRequiredCredentials() {
   return fieldHasUserInput(baseUrlInput) && fieldHasUserInput(apiKeyInput);
 }
 
-function updateCredentialActions() {
-  const ready = hasRequiredCredentials();
-  [fetchModelsBtn, runTestBtn].forEach((button) => {
-    if (!button) return;
-    button.disabled = !ready;
-    button.setAttribute("aria-disabled", ready ? "false" : "true");
-  });
-}
-
 function requireCredentials() {
   if (hasRequiredCredentials()) return true;
   showTemporaryNotice(t.missingCredentials);
@@ -1017,9 +1008,6 @@ apiKeyInput?.addEventListener("blur", () => {
   trackEvent("api_key_entered");
 });
 
-baseUrlInput?.addEventListener("input", updateCredentialActions);
-apiKeyInput?.addEventListener("input", updateCredentialActions);
-
 fetchModelsBtn?.addEventListener("click", async () => {
   if (!requireCredentials()) return;
   resetResults();
@@ -1084,4 +1072,3 @@ form?.addEventListener("submit", async (event) => {
 });
 
 initDefaultModelShortcuts();
-updateCredentialActions();
