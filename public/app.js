@@ -33,14 +33,15 @@ const debugPanelEl = document.querySelector("[data-debug-panel]");
 const debugOutputEl = document.querySelector("[data-debug-output]");
 const allModels = [];
 const commonModels = [
-  { key: "opus47", name: "Opus 4.7", id: "claude-opus-4-7" },
-  { key: "opus46", name: "Opus 4.6", id: "claude-opus-4-5" },
-  { key: "sonnet46", name: "Sonnet 4.6", id: "claude-sonnet-4-6" },
-  { key: "gemini31pro", name: "Gemini 3.1 Pro", id: "gemini-3.1-pro" },
-  { key: "gpt54", name: "GPT 5.4", id: "gpt-5.4" },
-  { key: "gpt55", name: "GPT 5.5", id: "gpt-5.5", badge: "NEW" },
+  { key: "opus47", name: "Opus 4.7", id: "claude-opus-4-7", profile: "claude-opus-4-7" },
+  { key: "opus46", name: "Opus 4.6", id: "claude-opus-4-5", profile: "claude-opus-4-5" },
+  { key: "sonnet46", name: "Sonnet 4.6", id: "claude-sonnet-4-6", profile: "claude-sonnet-4-6" },
+  { key: "gemini31pro", name: "Gemini 3.1 Pro", id: "gemini-3.1-pro", profile: "gemini-3.1-pro" },
+  { key: "gpt54", name: "GPT 5.4", id: "gpt-5.4", profile: "gpt-5.4" },
+  { key: "gpt55", name: "GPT 5.5", id: "gpt-5.5", profile: "gpt-5.5", badge: "NEW" },
 ];
 const defaultCommonModelId = "gpt-5.5";
+let selectedModelProfile = defaultCommonModelId;
 const debugMode = new URLSearchParams(window.location.search).get("debug") === "1";
 
 const locale = (document.body.dataset.locale || document.documentElement.lang || "en").toLowerCase().startsWith("zh")
@@ -280,6 +281,7 @@ function renderDebug(data) {
     {
       phase: data.phase,
       model: data.input?.model,
+      targetModel: data.input?.targetModel,
       score: data.score,
       qaRate: qa.rate,
       qaMode: qa.mode,
@@ -534,9 +536,11 @@ function availableCommonModels() {
 function selectModel(model, source = "model_list") {
   if (!form || !model) return;
   form.model.value = model;
+  selectedModelProfile = model;
   document.querySelectorAll(".model-card, .common-model-card").forEach((card) => {
     const input = card.querySelector(".common-model-id-input");
     const selected = input ? input.value.trim() === model : card.dataset.model === model;
+    if (selected && card.dataset.profileModel) selectedModelProfile = card.dataset.profileModel;
     card.classList.toggle("is-active", selected);
     card.setAttribute("aria-pressed", selected ? "true" : "false");
   });
@@ -566,6 +570,7 @@ function renderCommonModels(selectedModel = form?.model?.value) {
     const card = document.createElement("div");
     card.className = "common-model-card";
     card.dataset.commonKey = item.key;
+    card.dataset.profileModel = item.profile || item.source?.profile || item.id;
     card.setAttribute("role", "button");
     card.setAttribute("tabindex", "0");
     card.setAttribute("aria-pressed", item.model === selectedModel ? "true" : "false");
@@ -612,6 +617,7 @@ function renderCommonModels(selectedModel = form?.model?.value) {
       idText.hidden = false;
       if (card.classList.contains("is-active")) {
         form.model.value = item.id;
+        selectedModelProfile = card.dataset.profileModel;
         setModelStatus(t.selectedModel(item.id), "pass");
       }
     };
@@ -674,6 +680,7 @@ function refreshModelPicker() {
 function initDefaultModelShortcuts() {
   if (form?.model && !form.model.value) {
     form.model.value = defaultCommonModelId;
+    selectedModelProfile = defaultCommonModelId;
   }
   renderCommonModels(form?.model?.value || defaultCommonModelId);
   setModelStatus(
@@ -862,6 +869,7 @@ async function runTestSubmission() {
     baseUrl: form.baseUrl.value,
     apiKey: form.apiKey.value,
     model: form.model.value,
+    targetModel: selectedModelProfile || form.model.value,
   };
   trackEvent("test_start", {
     model_family: modelFamily(payload.model),
