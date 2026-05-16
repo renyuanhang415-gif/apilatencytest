@@ -185,14 +185,20 @@ function showTemporaryNotice(message) {
   }, 2200);
 }
 
+function fieldHasUserInput(input) {
+  if (!input) return false;
+  if (input.matches?.(":placeholder-shown")) return false;
+  return Boolean(String(input.value || "").trim());
+}
+
 function hasRequiredCredentials() {
-  return Boolean(String(form?.baseUrl?.value || "").trim() && String(form?.apiKey?.value || "").trim());
+  return fieldHasUserInput(form?.baseUrl) && fieldHasUserInput(form?.apiKey);
 }
 
 function requireCredentials() {
   if (hasRequiredCredentials()) return true;
   showTemporaryNotice(t.missingCredentials);
-  if (!String(form?.baseUrl?.value || "").trim()) {
+  if (!fieldHasUserInput(form?.baseUrl)) {
     form?.baseUrl?.focus();
   } else {
     form?.apiKey?.focus();
