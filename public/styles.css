@@ -72,7 +72,8 @@ a {
 }
 
 .header-actions {
-  justify-content: flex-end;
+  flex: 1 1 auto;
+  justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
 }
