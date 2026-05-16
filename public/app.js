@@ -283,6 +283,7 @@ function renderDebug(data) {
       phase: data.phase,
       model: data.input?.model,
       targetModel: data.input?.targetModel,
+      selectionMode: data.input?.selectionMode,
       score: data.score,
       qaRate: qa.rate,
       qaMode: qa.mode,
