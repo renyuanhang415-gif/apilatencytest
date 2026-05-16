@@ -1,4 +1,7 @@
 const form = document.querySelector("[data-test-form]");
+const baseUrlInput = document.querySelector("#baseUrl");
+const apiKeyInput = document.querySelector("#apiKey");
+const modelInput = document.querySelector("#model");
 const resultWrap = document.querySelector("[data-results]");
 const fetchModelsBtn = document.querySelector("[data-fetch-models]");
 const runTestBtn = document.querySelector("[data-run-test]");
@@ -192,16 +195,16 @@ function fieldHasUserInput(input) {
 }
 
 function hasRequiredCredentials() {
-  return fieldHasUserInput(form?.baseUrl) && fieldHasUserInput(form?.apiKey);
+  return fieldHasUserInput(baseUrlInput) && fieldHasUserInput(apiKeyInput);
 }
 
 function requireCredentials() {
   if (hasRequiredCredentials()) return true;
   showTemporaryNotice(t.missingCredentials);
-  if (!fieldHasUserInput(form?.baseUrl)) {
-    form?.baseUrl?.focus();
+  if (!fieldHasUserInput(baseUrlInput)) {
+    baseUrlInput?.focus();
   } else {
-    form?.apiKey?.focus();
+    apiKeyInput?.focus();
   }
   return false;
 }
@@ -500,7 +503,7 @@ function resetResults() {
 
 function resetFlow() {
   allModels.length = 0;
-  if (form?.model) form.model.value = defaultCommonModelId;
+  if (modelInput) modelInput.value = defaultCommonModelId;
   selectedModelProfile = defaultCommonModelId;
   selectedModelMode = "fixed";
   if (modelSearchInput) {
@@ -521,7 +524,7 @@ function resetFlow() {
   });
   const filtersWrap = document.querySelector("[data-model-filters]");
   if (filtersWrap) filtersWrap.hidden = true;
-  renderCommonModels(form?.model?.value || defaultCommonModelId);
+  renderCommonModels(modelInput?.value || defaultCommonModelId);
   resetResults();
   setModelStatus(
     locale === "zh"
@@ -531,7 +534,7 @@ function resetFlow() {
   );
 }
 
-function renderModelPicker(models, selectedModel = form?.model?.value) {
+function renderModelPicker(models, selectedModel = modelInput?.value) {
   if (!modelPicker || !form) return;
   modelPicker.innerHTML = "";
 
@@ -554,7 +557,7 @@ function renderModelPicker(models, selectedModel = form?.model?.value) {
     });
 
     if (model === selectedModel || (!selectedModel && index === 0)) {
-      form.model.value = model;
+      modelInput.value = model;
       button.classList.add("is-active");
       button.setAttribute("aria-pressed", "true");
     }
@@ -582,7 +585,7 @@ function availableCommonModels() {
 
 function selectModel(model, source = "model_list") {
   if (!form || !model) return;
-  form.model.value = model;
+  modelInput.value = model;
   selectedModelProfile = model;
   selectedModelMode = source === "model_list" ? "fetched" : "fixed";
   document.querySelectorAll(".model-card, .common-model-card").forEach((card) => {
@@ -597,12 +600,12 @@ function selectModel(model, source = "model_list") {
 }
 
 function preferredDefaultModel(models) {
-  const current = String(form?.model?.value || "").trim();
+  const current = String(modelInput?.value || "").trim();
   if (current && models.includes(current)) return current;
   return models[0] || "";
 }
 
-function renderCommonModels(selectedModel = form?.model?.value) {
+function renderCommonModels(selectedModel = modelInput?.value) {
   if (!commonModelsEl) return;
   const models = availableCommonModels();
   commonModelsEl.innerHTML = "";
@@ -665,7 +668,7 @@ function renderCommonModels(selectedModel = form?.model?.value) {
       idInput.hidden = true;
       idText.hidden = false;
       if (card.classList.contains("is-active")) {
-        form.model.value = item.id;
+        modelInput.value = item.id;
         selectedModelProfile = card.dataset.profileModel;
         setModelStatus(t.selectedModel(item.id), "pass");
       }
@@ -722,20 +725,20 @@ function filteredModels() {
 }
 
 function refreshModelPicker() {
-  renderCommonModels(form?.model?.value);
-  renderModelPicker(filteredModels(), form?.model?.value);
+  renderCommonModels(modelInput?.value);
+  renderModelPicker(filteredModels(), modelInput?.value);
 }
 
 function initDefaultModelShortcuts() {
-  if (form?.model && !form.model.value) {
-    form.model.value = defaultCommonModelId;
+  if (modelInput && !modelInput.value) {
+    modelInput.value = defaultCommonModelId;
     selectedModelProfile = defaultCommonModelId;
   }
-  renderCommonModels(form?.model?.value || defaultCommonModelId);
+  renderCommonModels(modelInput?.value || defaultCommonModelId);
   setModelStatus(
     locale === "zh"
-      ? `已默认选择 ${form?.model?.value || defaultCommonModelId}，可直接开始检测。`
-      : `Defaulted to ${form?.model?.value || defaultCommonModelId}. Start the test when ready.`,
+      ? `已默认选择 ${modelInput?.value || defaultCommonModelId}，可直接开始检测。`
+      : `Defaulted to ${modelInput?.value || defaultCommonModelId}. Start the test when ready.`,
     "pass"
   );
 }
@@ -902,7 +905,7 @@ async function runTestSubmission() {
   if (isTesting) return;
   isTesting = true;
 
-  if (!form.model.value && allModels[0]) form.model.value = allModels[0];
+  if (!modelInput.value && allModels[0]) modelInput.value = allModels[0];
 
   resultWrap.hidden = false;
   if (resultLoadingEl) resultLoadingEl.hidden = false;
@@ -915,10 +918,10 @@ async function runTestSubmission() {
   checksEl.innerHTML = "";
 
   const payload = {
-    baseUrl: form.baseUrl.value,
-    apiKey: form.apiKey.value,
-    model: form.model.value,
-    targetModel: selectedModelMode === "fetched" ? form.model.value : (selectedModelProfile || form.model.value),
+    baseUrl: baseUrlInput.value,
+    apiKey: apiKeyInput.value,
+    model: modelInput.value,
+    targetModel: selectedModelMode === "fetched" ? modelInput.value : (selectedModelProfile || modelInput.value),
     selectionMode: selectedModelMode,
   };
   trackEvent("test_start", {
@@ -962,8 +965,8 @@ async function runTestSubmission() {
 }
 
 toggleKeyBtn?.addEventListener("click", () => {
-  const isHidden = form.apiKey.type === "password";
-  form.apiKey.type = isHidden ? "text" : "password";
+  const isHidden = apiKeyInput.type === "password";
+  apiKeyInput.type = isHidden ? "text" : "password";
   toggleKeyBtn.textContent = isHidden ? t.hide : t.show;
   toggleKeyBtn.setAttribute("aria-label", isHidden ? t.hideKey : t.showKey);
   toggleKeyBtn.title = isHidden ? t.hideKey : t.showKey;
@@ -991,16 +994,16 @@ modelFilterBtns.forEach((button) => {
 
 resetFlowBtn?.addEventListener("click", resetFlow);
 
-form?.baseUrl?.addEventListener("blur", () => {
+baseUrlInput?.addEventListener("blur", () => {
   if (trackedInputSteps.has("base_url")) return;
-  if (!String(form.baseUrl.value || "").trim()) return;
+  if (!String(baseUrlInput.value || "").trim()) return;
   trackedInputSteps.add("base_url");
   trackEvent("base_url_entered");
 });
 
-form?.apiKey?.addEventListener("blur", () => {
+apiKeyInput?.addEventListener("blur", () => {
   if (trackedInputSteps.has("api_key")) return;
-  if (!String(form.apiKey.value || "").trim()) return;
+  if (!String(apiKeyInput.value || "").trim()) return;
   trackedInputSteps.add("api_key");
   trackEvent("api_key_entered");
 });
@@ -1010,7 +1013,7 @@ fetchModelsBtn?.addEventListener("click", async () => {
   resetResults();
   setModelStatus(t.fetchingModels, "partial");
   trackEvent("models_fetch_start", {
-    has_api_key: Boolean(String(form.apiKey.value || "").trim()),
+    has_api_key: Boolean(String(apiKeyInput.value || "").trim()),
   });
   if (modelStep) modelStep.hidden = false;
   if (modelPicker) modelPicker.innerHTML = `<span class="hint">${t.loadingModels}</span>`;
@@ -1020,8 +1023,8 @@ fetchModelsBtn?.addEventListener("click", async () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        baseUrl: form.baseUrl.value,
-        apiKey: form.apiKey.value,
+        baseUrl: baseUrlInput.value,
+        apiKey: apiKeyInput.value,
       }),
     });
     const data = await res.json();
@@ -1034,7 +1037,7 @@ fetchModelsBtn?.addEventListener("click", async () => {
     modelFilterBtns.forEach((button) => button.classList.toggle("is-active", button.dataset.modelFilter === ""));
     const defaultModel = preferredDefaultModel(data.models);
     if (defaultModel) {
-      form.model.value = defaultModel;
+      modelInput.value = defaultModel;
       selectedModelProfile = defaultModel;
       selectedModelMode = "fetched";
     }
