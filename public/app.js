@@ -75,6 +75,7 @@ const text = {
     fail: "Fail",
     unavailable: "Unavailable",
     requestFailed: "Request failed.",
+    missingCredentials: "API Base URL or API Key is empty. Please enter it first.",
     rawNoStream: "No stream response body.",
     modelScoreFactors: (qa, latency, protocol) => [
       `Knowledge QA ${qa.rate}%`,
@@ -119,6 +120,7 @@ const text = {
     fail: "失败",
     unavailable: "不可用",
     requestFailed: "请求失败。",
+    missingCredentials: "API 接口地址或 API Key 为空，请先输入。",
     rawNoStream: "没有流式响应正文。",
     modelScoreFactors: (qa, latency, protocol) => [
       `知识问答通过率 ${qa.rate}%`,
@@ -145,6 +147,7 @@ let activeModelFilter = "";
 const trackedInputSteps = new Set();
 let isTesting = false;
 let verificationModal = null;
+let noticeTimer = null;
 
 function fmtMs(ms) {
   if (ms === null || ms === undefined) return "-";
@@ -161,6 +164,40 @@ function setModelStatus(message, kind = "") {
   if (!modelStatus) return;
   modelStatus.textContent = message;
   modelStatus.className = kind ? `hint status-${kind}` : "hint";
+}
+
+function showTemporaryNotice(message) {
+  let notice = document.querySelector("[data-temporary-notice]");
+  if (!notice) {
+    notice = document.createElement("div");
+    notice.className = "temporary-notice";
+    notice.dataset.temporaryNotice = "";
+    notice.setAttribute("role", "status");
+    notice.setAttribute("aria-live", "polite");
+    document.body.appendChild(notice);
+  }
+
+  notice.textContent = message;
+  notice.classList.add("is-visible");
+  clearTimeout(noticeTimer);
+  noticeTimer = setTimeout(() => {
+    notice.classList.remove("is-visible");
+  }, 2200);
+}
+
+function hasRequiredCredentials() {
+  return Boolean(String(form?.baseUrl?.value || "").trim() && String(form?.apiKey?.value || "").trim());
+}
+
+function requireCredentials() {
+  if (hasRequiredCredentials()) return true;
+  showTemporaryNotice(t.missingCredentials);
+  if (!String(form?.baseUrl?.value || "").trim()) {
+    form?.baseUrl?.focus();
+  } else {
+    form?.apiKey?.focus();
+  }
+  return false;
 }
 
 function displayPayload(payload) {
@@ -963,6 +1000,7 @@ form?.apiKey?.addEventListener("blur", () => {
 });
 
 fetchModelsBtn?.addEventListener("click", async () => {
+  if (!requireCredentials()) return;
   resetResults();
   setModelStatus(t.fetchingModels, "partial");
   trackEvent("models_fetch_start", {
@@ -1018,6 +1056,7 @@ fetchModelsBtn?.addEventListener("click", async () => {
 form?.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (isTesting) return;
+  if (!requireCredentials()) return;
   ensureVerificationModal().open(() => {
     void runTestSubmission();
   });
