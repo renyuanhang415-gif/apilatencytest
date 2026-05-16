@@ -6,6 +6,7 @@ const copy = {
     normal: "正常",
     watch: "观察",
     danger: "高风险",
+    empty: "暂无",
     sorts: {
       price: "价格最低",
       stability: "最稳定",
@@ -20,6 +21,7 @@ const copy = {
     normal: "Normal",
     watch: "Watch",
     danger: "High risk",
+    empty: "N/A",
     sorts: {
       price: "Lowest price",
       stability: "Most stable",
@@ -135,8 +137,8 @@ function renderTable() {
 
   rowsTarget.innerHTML = rows
     .map((row) => {
-      const rating = row.rating == null ? "-" : row.rating.toFixed(1);
-      const stability = row.stability == null ? "-" : row.stability.toFixed(1);
+      const rating = row.rating == null ? copy[locale].empty : row.rating.toFixed(1);
+      const stability = row.stability == null ? copy[locale].empty : row.stability.toFixed(1);
       const inputMark = row.input === minInput ? `<small>${copy[locale].lowest}</small>` : "";
       const outputMark = row.output === minOutput ? `<small>${copy[locale].lowest}</small>` : "";
 
