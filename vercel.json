@@ -13,6 +13,18 @@
       "destination": "/api/demo-chat"
     },
     {
+      "source": "/pricing",
+      "destination": "/pricing.html"
+    },
+    {
+      "source": "/zh/pricing",
+      "destination": "/pricing.html"
+    },
+    {
+      "source": "/en/pricing",
+      "destination": "/pricing-en.html"
+    },
+    {
       "source": "/contact",
       "destination": "/contact.html"
     },

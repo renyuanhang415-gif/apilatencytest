@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Relay Pricing Comparison - API Latency Test</title>
+    <meta
+      name="description"
+      content="Temporary sampled AI relay pricing page for GPT-4o and Claude-3.5 with input and output price comparison, risk labels, and stability scores."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" type="image/png" href="/favicon.png?v=20260515c" />
+    <link rel="canonical" href="https://apilatencytest.com/en/pricing" />
+  </head>
+  <body data-locale="en">
+    <main class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/en"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="header-actions">
+          <nav class="nav">
+            <a href="/en">Quality Test</a>
+            <a class="active" href="/en/pricing">Pricing</a>
+            <a class="header-cta" href="/en/contact">Contact</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switch">
+            <a class="active" href="/en/pricing">EN</a>
+            <a href="/pricing">中文</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="pricing-hero">
+        <div>
+          <p class="eyebrow">API relay price radar</p>
+          <h1>Relay pricing comparison</h1>
+          <p class="lede">A temporary sampled page that puts price, risk, and stability into one table so users can scan candidates faster.</p>
+        </div>
+        <div class="pricing-source">
+          <strong>Temporary sample</strong>
+          <span>First 10 entries are sampled from a public page and stored locally for this MVP.</span>
+        </div>
+      </section>
+
+      <section class="pricing-toolbar" aria-label="Pricing filters">
+        <div>
+          <div class="toolbar-label">Model</div>
+          <div class="pricing-tabs" data-price-models></div>
+        </div>
+        <div>
+          <div class="toolbar-label">Sort</div>
+          <div class="pricing-tabs" data-price-sorts></div>
+        </div>
+      </section>
+
+      <section class="price-summary" aria-label="Pricing summary">
+        <div class="price-stat">
+          <span>Lowest input</span>
+          <strong data-lowest-input>-</strong>
+          <small>¥ / K tokens</small>
+        </div>
+        <div class="price-stat">
+          <span>Lowest output</span>
+          <strong data-lowest-output>-</strong>
+          <small>¥ / K tokens</small>
+        </div>
+        <div class="price-stat">
+          <span>Samples</span>
+          <strong data-sample-count>-</strong>
+          <small>temporary set</small>
+        </div>
+        <div class="price-stat">
+          <span>Updated</span>
+          <strong data-updated-at>-</strong>
+          <small>manual sample</small>
+        </div>
+      </section>
+
+      <section class="price-table-panel">
+        <div class="price-table-head">
+          <div>
+            <h2 data-table-title>Sample pricing</h2>
+            <p>Pricing unit: ¥ / K tokens. Risk and ratings are only for quick screening, not a replacement for live testing.</p>
+          </div>
+          <a class="btn btn-secondary btn-small" href="/en">Run quality test</a>
+        </div>
+        <div class="price-table-wrap">
+          <table class="price-table">
+            <thead>
+              <tr>
+                <th>Provider</th>
+                <th>Risk</th>
+                <th>Stability</th>
+                <th>Rating</th>
+                <th>Input</th>
+                <th>Output</th>
+              </tr>
+            </thead>
+            <tbody data-price-rows></tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="footer authority-footer">
+        <a class="footer-brand" href="/en"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="footer-links">
+          <a href="/en">Quality Test</a>
+          <a href="/en/pricing">Pricing</a>
+          <a href="/en/contact">Contact</a>
+          <span>© 2026</span>
+        </div>
+      </footer>
+    </main>
+
+    <script type="module" src="/pricing.js"></script>
+  </body>
+</html>

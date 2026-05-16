@@ -6,4 +6,10 @@
   <url>
     <loc>https://apilatencytest.com/en</loc>
   </url>
+  <url>
+    <loc>https://apilatencytest.com/pricing</loc>
+  </url>
+  <url>
+    <loc>https://apilatencytest.com/en/pricing</loc>
+  </url>
 </urlset>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>中转站价格对比 - API Latency Test</title>
+    <meta
+      name="description"
+      content="临时采样版 AI API 中转站价格对比，先看 GPT-4o 和 Claude-3.5 的输入输出价格、稳定评分和风险字段。"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" type="image/png" href="/favicon.png?v=20260515c" />
+    <link rel="canonical" href="https://apilatencytest.com/pricing" />
+  </head>
+  <body data-locale="zh">
+    <main class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="header-actions">
+          <nav class="nav">
+            <a href="/">质量检测</a>
+            <a class="active" href="/pricing">价格对比</a>
+            <a class="header-cta" href="/contact">联系我们</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switch">
+            <a href="/en/pricing">EN</a>
+            <a class="active" href="/pricing">中文</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="pricing-hero">
+        <div>
+          <p class="eyebrow">API relay price radar</p>
+          <h1>中转站价格对比</h1>
+          <p class="lede">先做一个临时采样版，把价格、风险、稳定评分放在同一张表里，方便快速筛选候选站点。</p>
+        </div>
+        <div class="pricing-source">
+          <strong>临时数据</strong>
+          <span>首批 10 条公开页面采样，后续可替换成自维护数据源。</span>
+        </div>
+      </section>
+
+      <section class="pricing-toolbar" aria-label="价格筛选">
+        <div>
+          <div class="toolbar-label">模型</div>
+          <div class="pricing-tabs" data-price-models></div>
+        </div>
+        <div>
+          <div class="toolbar-label">排序</div>
+          <div class="pricing-tabs" data-price-sorts></div>
+        </div>
+      </section>
+
+      <section class="price-summary" aria-label="价格摘要">
+        <div class="price-stat">
+          <span>最低输入价</span>
+          <strong data-lowest-input>-</strong>
+          <small>¥ / K tokens</small>
+        </div>
+        <div class="price-stat">
+          <span>最低输出价</span>
+          <strong data-lowest-output>-</strong>
+          <small>¥ / K tokens</small>
+        </div>
+        <div class="price-stat">
+          <span>采样数量</span>
+          <strong data-sample-count>-</strong>
+          <small>临时样本</small>
+        </div>
+        <div class="price-stat">
+          <span>更新时间</span>
+          <strong data-updated-at>-</strong>
+          <small>人工采样</small>
+        </div>
+      </section>
+
+      <section class="price-table-panel">
+        <div class="price-table-head">
+          <div>
+            <h2 data-table-title>价格采样</h2>
+            <p>价格单位：¥ / K tokens。风险与评分仅用于快速初筛，不替代实际检测。</p>
+          </div>
+          <a class="btn btn-secondary btn-small" href="/">去检测质量</a>
+        </div>
+        <div class="price-table-wrap">
+          <table class="price-table">
+            <thead>
+              <tr>
+                <th>服务商</th>
+                <th>风险</th>
+                <th>稳定</th>
+                <th>评分</th>
+                <th>输入价</th>
+                <th>输出价</th>
+              </tr>
+            </thead>
+            <tbody data-price-rows></tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="footer authority-footer">
+        <a class="footer-brand" href="/"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="footer-links">
+          <a href="/">质量检测</a>
+          <a href="/pricing">价格对比</a>
+          <a href="/contact">联系我们</a>
+          <span>© 2026</span>
+        </div>
+      </footer>
+    </main>
+
+    <script type="module" src="/pricing.js"></script>
+  </body>
+</html>
