@@ -42,6 +42,7 @@ const commonModels = [
 ];
 const defaultCommonModelId = "gpt-5.5";
 let selectedModelProfile = defaultCommonModelId;
+let selectedModelMode = "fixed";
 const debugMode = new URLSearchParams(window.location.search).get("debug") === "1";
 
 const locale = (document.body.dataset.locale || document.documentElement.lang || "en").toLowerCase().startsWith("zh")
@@ -456,12 +457,14 @@ function resetResults() {
 function resetFlow() {
   allModels.length = 0;
   if (form?.model) form.model.value = defaultCommonModelId;
+  selectedModelProfile = defaultCommonModelId;
+  selectedModelMode = "fixed";
   if (modelSearchInput) {
     modelSearchInput.value = "";
     modelSearchInput.hidden = true;
   }
   if (modelPicker) {
-    modelPicker.innerHTML = `<span class="hint">${locale === "zh" ? "先获取模型列表。" : "Fetch models first."}</span>`;
+    modelPicker.innerHTML = `<span class="hint">${locale === "zh" ? "可直接选择常用模型。" : "Choose a common model above."}</span>`;
     modelPicker.hidden = true;
   }
   if (modelStep) modelStep.hidden = false;
@@ -478,8 +481,8 @@ function resetFlow() {
   resetResults();
   setModelStatus(
     locale === "zh"
-      ? `已默认选择 ${defaultCommonModelId}，可直接开始检测，或先获取模型列表。`
-      : `Defaulted to ${defaultCommonModelId}. Start the test now or fetch the full model list first.`,
+      ? `已默认选择 ${defaultCommonModelId}，可直接开始检测。`
+      : `Defaulted to ${defaultCommonModelId}. Start the test when ready.`,
     "pass"
   );
 }
@@ -537,6 +540,7 @@ function selectModel(model, source = "model_list") {
   if (!form || !model) return;
   form.model.value = model;
   selectedModelProfile = model;
+  selectedModelMode = source === "model_list" ? "fetched" : "fixed";
   document.querySelectorAll(".model-card, .common-model-card").forEach((card) => {
     const input = card.querySelector(".common-model-id-input");
     const selected = input ? input.value.trim() === model : card.dataset.model === model;
@@ -549,8 +553,9 @@ function selectModel(model, source = "model_list") {
 }
 
 function preferredDefaultModel(models) {
-  const common = availableCommonModels();
-  return common[0]?.model || models[0] || "";
+  const current = String(form?.model?.value || "").trim();
+  if (current && models.includes(current)) return current;
+  return models[0] || "";
 }
 
 function renderCommonModels(selectedModel = form?.model?.value) {
@@ -685,8 +690,8 @@ function initDefaultModelShortcuts() {
   renderCommonModels(form?.model?.value || defaultCommonModelId);
   setModelStatus(
     locale === "zh"
-      ? `已默认选择 ${form?.model?.value || defaultCommonModelId}，可直接开始检测，或先获取模型列表。`
-      : `Defaulted to ${form?.model?.value || defaultCommonModelId}. Start the test now or fetch the full model list first.`,
+      ? `已默认选择 ${form?.model?.value || defaultCommonModelId}，可直接开始检测。`
+      : `Defaulted to ${form?.model?.value || defaultCommonModelId}. Start the test when ready.`,
     "pass"
   );
 }
@@ -869,7 +874,8 @@ async function runTestSubmission() {
     baseUrl: form.baseUrl.value,
     apiKey: form.apiKey.value,
     model: form.model.value,
-    targetModel: selectedModelProfile || form.model.value,
+    targetModel: selectedModelMode === "fetched" ? form.model.value : (selectedModelProfile || form.model.value),
+    selectionMode: selectedModelMode,
   };
   trackEvent("test_start", {
     model_family: modelFamily(payload.model),
@@ -982,9 +988,14 @@ fetchModelsBtn?.addEventListener("click", async () => {
     activeModelFilter = "";
     modelFilterBtns.forEach((button) => button.classList.toggle("is-active", button.dataset.modelFilter === ""));
     const defaultModel = preferredDefaultModel(data.models);
-    if (defaultModel) form.model.value = defaultModel;
+    if (defaultModel) {
+      form.model.value = defaultModel;
+      selectedModelProfile = defaultModel;
+      selectedModelMode = "fetched";
+    }
     renderCommonModels(defaultModel);
     renderModelPicker(filteredModels(), defaultModel);
+    if (defaultModel) selectModel(defaultModel, "model_list");
     setFlowModelsLoaded();
     setModelStatus(
       defaultModel
