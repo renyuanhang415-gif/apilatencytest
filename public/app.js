@@ -46,6 +46,7 @@ const commonModels = [
 const defaultCommonModelId = "gpt-5.5";
 let selectedModelProfile = defaultCommonModelId;
 let selectedModelMode = "fixed";
+let selectedCommonModelKey = "gpt55";
 const debugMode = new URLSearchParams(window.location.search).get("debug") === "1";
 
 const locale = (document.body.dataset.locale || document.documentElement.lang || "en").toLowerCase().startsWith("zh")
@@ -506,6 +507,7 @@ function resetFlow() {
   if (modelInput) modelInput.value = defaultCommonModelId;
   selectedModelProfile = defaultCommonModelId;
   selectedModelMode = "fixed";
+  selectedCommonModelKey = "gpt55";
   if (modelSearchInput) {
     modelSearchInput.value = "";
     modelSearchInput.hidden = true;
@@ -588,9 +590,13 @@ function selectModel(model, source = "model_list") {
   modelInput.value = model;
   selectedModelProfile = model;
   selectedModelMode = source === "model_list" ? "fetched" : "fixed";
+  if (source === "model_list") selectedCommonModelKey = "";
   document.querySelectorAll(".model-card, .common-model-card").forEach((card) => {
     const input = card.querySelector(".common-model-id-input");
-    const selected = input ? input.value.trim() === model : card.dataset.model === model;
+    const selected =
+      card.classList.contains("common-model-card")
+        ? source === "common_model" && card.dataset.commonKey === selectedCommonModelKey
+        : card.dataset.model === model;
     if (selected && card.dataset.profileModel) selectedModelProfile = card.dataset.profileModel;
     card.classList.toggle("is-active", selected);
     card.setAttribute("aria-pressed", selected ? "true" : "false");
@@ -625,9 +631,10 @@ function renderCommonModels(selectedModel = modelInput?.value) {
     card.dataset.profileModel = item.profile || item.source?.profile || item.id;
     card.setAttribute("role", "button");
     card.setAttribute("tabindex", "0");
-    card.setAttribute("aria-pressed", item.model === selectedModel ? "true" : "false");
+    const isSelected = selectedModelMode === "fixed" ? item.key === selectedCommonModelKey : item.model === selectedModel;
+    card.setAttribute("aria-pressed", isSelected ? "true" : "false");
     card.title = item.model;
-    if (item.model === selectedModel) card.classList.add("is-active");
+    if (isSelected) card.classList.add("is-active");
 
     const title = document.createElement("strong");
     title.textContent = item.name;
@@ -670,6 +677,7 @@ function renderCommonModels(selectedModel = modelInput?.value) {
       if (card.classList.contains("is-active")) {
         modelInput.value = item.id;
         selectedModelProfile = card.dataset.profileModel;
+        selectedCommonModelKey = item.key;
         setModelStatus(t.selectedModel(item.id), "pass");
       }
     };
@@ -683,10 +691,14 @@ function renderCommonModels(selectedModel = modelInput?.value) {
       idInput.select();
     };
 
-    card.addEventListener("click", () => selectModel(idInput.value.trim(), "common_model"));
+    card.addEventListener("click", () => {
+      selectedCommonModelKey = item.key;
+      selectModel(idInput.value.trim(), "common_model");
+    });
     card.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
+        selectedCommonModelKey = item.key;
         selectModel(idInput.value.trim(), "common_model");
       }
     });
