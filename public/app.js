@@ -17,6 +17,7 @@ const scoreEl = document.querySelector("[data-score]");
 const statusEl = document.querySelector("[data-status]");
 const verdictTitleEl = document.querySelector("[data-verdict-title]");
 const verdictTextEl = document.querySelector("[data-verdict-text]");
+const resultErrorEl = document.querySelector("[data-result-error]");
 const testedTargetEl = document.querySelector("[data-tested-target]");
 const resultLoadingEl = document.querySelector("[data-result-loading]");
 const resultDetailsEl = document.querySelector("[data-result-details]");
@@ -84,6 +85,8 @@ const text = {
     requestFailed: "Request failed.",
     missingCredentials: "API Base URL or API Key is empty. Please enter it first.",
     rawNoStream: "No stream response body.",
+    failurePrefix: "Possible reason",
+    rawLogPrefix: "raw log",
     requestStatuses: {
       models: "Models (model list)",
       chat: "Chat (test reply)",
@@ -143,6 +146,8 @@ const text = {
     requestFailed: "请求失败。",
     missingCredentials: "API 接口地址或 API Key 为空，请先输入。",
     rawNoStream: "没有流式响应正文。",
+    failurePrefix: "可能原因",
+    rawLogPrefix: "原始日志",
     requestStatuses: {
       models: "Models（模型列表）",
       chat: "Chat（问答接口）",
@@ -210,6 +215,32 @@ function requestStatusText(label, result) {
   }
   if (result.error || /aborted|timeout/i.test(String(result.text || ""))) return `${label}: ${t.requestStatuses.timeout}`;
   return `${label}: ${t.requestStatuses.missing}`;
+}
+
+function explainFailure(message) {
+  const raw = String(message || "").trim();
+  const lower = raw.toLowerCase();
+  let reason =
+    locale === "zh"
+      ? "接口连接失败。可能是地址不对、接口不可用、网络超时、Key 无权限、余额不足或上游服务异常。"
+      : "The endpoint could not be reached. Possible causes include a wrong URL, unavailable endpoint, timeout, missing access, insufficient balance, or upstream failure.";
+
+  if (/401|invalid api key|api key 无效|unauthorized/.test(lower)) {
+    reason = locale === "zh" ? "API Key 无效，或当前 Key 没有访问权限。" : "The API key is invalid or does not have access.";
+  } else if (/403|forbidden|无权限|permission/.test(lower)) {
+    reason = locale === "zh" ? "接口拒绝访问，可能是 Key 权限不足、模型未授权或账户余额不足。" : "Access was rejected. The key may lack permission, model access, or account balance.";
+  } else if (/429|rate limit|too many|限流/.test(lower)) {
+    reason = locale === "zh" ? "请求过多被限流，建议稍后重试或换线路。" : "The endpoint is rate limited. Try again later or switch routes.";
+  } else if (/timeout|aborted|timed out|超时|中断/.test(lower)) {
+    reason = locale === "zh" ? "请求超时或被中断，可能是线路慢、上游卡住或高并发不稳定。" : "The request timed out or was aborted. The route may be slow, stuck upstream, or unstable under load.";
+  } else if (/insufficient|balance|quota|credit|余额|额度|欠费/.test(lower)) {
+    reason = locale === "zh" ? "账户余额、额度或配额可能不足，请检查中转站后台。" : "The account may have insufficient balance, quota, or credits.";
+  } else if (/404|not found/.test(lower)) {
+    reason = locale === "zh" ? "接口路径不存在，请检查 API 接口地址是否填到了正确的根地址。" : "The endpoint path was not found. Check whether the API base URL is correct.";
+  }
+
+  const rawLog = raw ? ` ${t.rawLogPrefix}: ${raw}` : "";
+  return `${t.failurePrefix}: ${reason}${rawLog}`;
 }
 
 function setModelStatus(message, kind = "") {
@@ -426,7 +457,7 @@ function renderSupplementFailed() {
   if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
 }
 
-function renderRequestFailed() {
+function renderRequestFailed(message = "") {
   if (scoreRingEl) {
     scoreRingEl.style.setProperty("--score-progress", "0");
     scoreRingEl.dataset.tone = "poor";
@@ -441,9 +472,14 @@ function renderRequestFailed() {
   tokensSpeedEl.textContent = "-";
   inputTokensEl.textContent = "-";
   outputTokensEl.textContent = "-";
-  if (modelsStatusCodeEl) modelsStatusCodeEl.textContent = `${t.requestStatuses.models}: -`;
-  if (chatStatusCodeEl) chatStatusCodeEl.textContent = `${t.requestStatuses.chat}: -`;
-  if (streamStatusCodeEl) streamStatusCodeEl.textContent = `${t.requestStatuses.stream}: -`;
+  const failed = locale === "zh" ? "未拿到响应" : "no response";
+  if (modelsStatusCodeEl) modelsStatusCodeEl.textContent = `${t.requestStatuses.models}: ${failed}`;
+  if (chatStatusCodeEl) chatStatusCodeEl.textContent = `${t.requestStatuses.chat}: ${failed}`;
+  if (streamStatusCodeEl) streamStatusCodeEl.textContent = `${t.requestStatuses.stream}: ${failed}`;
+  if (resultErrorEl) {
+    resultErrorEl.hidden = false;
+    resultErrorEl.textContent = explainFailure(message);
+  }
 }
 
 function renderTestResult(data, options = {}) {
@@ -465,6 +501,10 @@ function renderTestResult(data, options = {}) {
   statusEl.className = `status-pill status-${kind}`;
   verdictTitleEl.textContent = locale === "zh" ? data.verdict.titleZh : data.verdict.title;
   verdictTextEl.textContent = locale === "zh" ? data.verdict.textZh : data.verdict.text;
+  if (resultErrorEl) {
+    resultErrorEl.hidden = true;
+    resultErrorEl.textContent = "";
+  }
   testedTargetEl.textContent = t.tested(data.input.baseUrl, data.input.model);
 
   renderChecks(data.checks || []);
@@ -553,6 +593,10 @@ function resetResults() {
   if (debugOutputEl) debugOutputEl.textContent = "{}";
   if (scoreEl) scoreEl.textContent = "-";
   if (statusEl) statusEl.textContent = "-";
+  if (resultErrorEl) {
+    resultErrorEl.hidden = true;
+    resultErrorEl.textContent = "";
+  }
   if (testedTargetEl) testedTargetEl.textContent = "-";
   if (modelsStatusCodeEl) modelsStatusCodeEl.textContent = `${t.requestStatuses.models}: -`;
   if (chatStatusCodeEl) chatStatusCodeEl.textContent = `${t.requestStatuses.chat}: -`;
@@ -1022,9 +1066,9 @@ async function runTestSubmission() {
     statusEl.textContent = t.fail;
     statusEl.className = "status-pill status-fail";
     verdictTitleEl.textContent = t.unavailable;
-    verdictTextEl.textContent = error.message;
+    verdictTextEl.textContent = locale === "zh" ? "接口连接失败，请查看下面的原因提示。" : "The endpoint could not be tested. See the reason below.";
     checksEl.innerHTML = "";
-    renderRequestFailed();
+    renderRequestFailed(error.message);
     trackEvent("test_failure", {
       model_family: modelFamily(payload.model),
     });

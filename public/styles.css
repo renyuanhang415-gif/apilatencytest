@@ -877,6 +877,13 @@ h1 {
   margin-bottom: 10px;
 }
 
+.result-error {
+  margin: 10px 0 0;
+  color: #dc2626;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .result-panel ul {
   margin: 0;
   padding-left: 20px;
