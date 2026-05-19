@@ -866,23 +866,6 @@ h1 {
   font-weight: 900;
 }
 
-.metric-status .value {
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.metric-status-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.metric-status-stack span {
-  display: block;
-  color: var(--text);
-  line-height: 1.4;
-}
-
 .result-panel {
   min-width: 0;
   border: 1px solid var(--line);
@@ -903,11 +886,11 @@ h1 {
 .model-score-panel {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 18px;
+  align-items: stretch;
+  gap: 16px;
   padding: 26px 24px 22px;
   border-color: rgba(124, 58, 237, 0.24);
-  background: linear-gradient(180deg, #fbfaff, #ffffff);
+  background: linear-gradient(180deg, #faf8ff, #ffffff);
 }
 
 .score-ring {
@@ -926,6 +909,7 @@ h1 {
     radial-gradient(closest-side, #fff calc(100% - 15px), transparent calc(100% - 14px)),
     conic-gradient(var(--score-color) calc(var(--score-progress) * 1%), var(--score-track) 0);
   box-shadow: inset 0 0 0 1px rgba(124, 58, 237, 0.08);
+  align-self: center;
 }
 
 .score-ring:not([data-tone]) {
@@ -983,6 +967,7 @@ h1 {
   font-size: 15px;
   line-height: 1.8;
   text-align: center;
+  align-self: center;
 }
 
 .result-board {
@@ -999,18 +984,58 @@ h1 {
 .result-notes {
   display: grid;
   gap: 10px;
-  margin-top: 18px;
 }
 
 .result-notes p {
   margin: 0;
-  padding: 12px 14px;
-  border: 1px solid var(--line);
+  padding: 11px 13px;
+  border: 1px solid #e6e7ef;
   border-radius: 14px;
-  background: #fafafa;
+  background: linear-gradient(180deg, #ffffff, #fafbff);
   color: var(--muted);
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.score-side-status {
+  display: grid;
+  gap: 8px;
+}
+
+.score-side-status span {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  border: 1px solid #e7e8f2;
+  background: #fff;
+  color: #344054;
+}
+
+.score-side-status span:nth-child(1) {
+  border-color: #dbe7ff;
+  background: linear-gradient(180deg, #f8fbff, #eef4ff);
+  color: #175cd3;
+}
+
+.score-side-status span:nth-child(2) {
+  border-color: #d8f3e5;
+  background: linear-gradient(180deg, #f5fffa, #e8f8ef);
+  color: #067647;
+}
+
+.score-side-status span:nth-child(3) {
+  border-color: #efe4ff;
+  background: linear-gradient(180deg, #fcfaff, #f4eeff);
+  color: #6e3bf3;
+}
+
+.score-notes {
+  margin-top: 2px;
 }
 
 .score-factors {

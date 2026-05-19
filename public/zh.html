@@ -131,6 +131,15 @@
                 <span data-model-grade>-</span>
               </div>
               <p data-model-score-note></p>
+              <div class="score-side-status">
+                <span data-models-status-code>-</span>
+                <span data-chat-status-code>-</span>
+                <span data-stream-status-code>-</span>
+              </div>
+              <div class="result-notes score-notes">
+                <p data-result-scope>本次结果只代表当前这一次快检，更适合充值前初筛，不代表长期稳定性或 SLA。</p>
+                <p data-result-key-safety>API Key 仅用于本次检测请求。建议优先使用测试 Key，不要直接使用高权限主 Key。</p>
+              </div>
               <div class="score-factors" data-model-score-factors></div>
             </div>
 
@@ -138,14 +147,6 @@
               <div class="check-list" data-checks></div>
 
               <div class="metric-strip">
-                <div class="metric metric-status">
-                  <div class="label">请求状态</div>
-                  <div class="value metric-status-stack">
-                    <span data-models-status-code>-</span>
-                    <span data-chat-status-code>-</span>
-                    <span data-stream-status-code>-</span>
-                  </div>
-                </div>
                 <div class="metric">
                   <div class="label">延迟</div>
                   <div class="value" data-chat-latency>-</div>
@@ -170,11 +171,6 @@
                   <div class="label">输出 Tokens</div>
                   <div class="value" data-output-tokens>-</div>
                 </div>
-              </div>
-
-              <div class="result-notes">
-                <p data-result-scope>本次结果只代表当前这一次快检，更适合充值前初筛，不代表长期稳定性或 SLA。</p>
-                <p data-result-key-safety>API Key 仅用于本次检测请求。建议优先使用测试 Key，不要直接使用高权限主 Key。</p>
               </div>
             </div>
           </div>
