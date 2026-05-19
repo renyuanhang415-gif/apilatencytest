@@ -90,6 +90,13 @@ const text = {
       stream: "Stream (live output)",
       timeout: "timeout / aborted",
       missing: "not run",
+      ok: "ok",
+      badRequest: "bad request",
+      unauthorized: "invalid key / no access",
+      forbidden: "forbidden",
+      notFound: "not found",
+      rateLimited: "rate limited",
+      serverError: "server error",
     },
     modelScoreFactors: (qa, latency, protocol) => [
       `Knowledge QA ${qa.rate}%`,
@@ -142,6 +149,13 @@ const text = {
       stream: "Stream（流式输出）",
       timeout: "超时 / 中断",
       missing: "未执行",
+      ok: "正常返回",
+      badRequest: "请求格式有问题",
+      unauthorized: "Key 无效或无权限",
+      forbidden: "接口被拒绝",
+      notFound: "接口不存在",
+      rateLimited: "请求过多被限流",
+      serverError: "服务端异常",
     },
     modelScoreFactors: (qa, latency, protocol) => [
       `知识问答通过率 ${qa.rate}%`,
@@ -183,7 +197,17 @@ function fmtValue(value, suffix = "") {
 
 function requestStatusText(label, result) {
   if (!result) return `${label}: ${t.requestStatuses.missing}`;
-  if (Number.isFinite(result.status) && result.status > 0) return `${label}: HTTP ${result.status}`;
+  if (Number.isFinite(result.status) && result.status > 0) {
+    let meaning = t.requestStatuses.serverError;
+    if (result.status >= 200 && result.status < 300) meaning = t.requestStatuses.ok;
+    else if (result.status === 400) meaning = t.requestStatuses.badRequest;
+    else if (result.status === 401) meaning = t.requestStatuses.unauthorized;
+    else if (result.status === 403) meaning = t.requestStatuses.forbidden;
+    else if (result.status === 404) meaning = t.requestStatuses.notFound;
+    else if (result.status === 429) meaning = t.requestStatuses.rateLimited;
+    const wrappedMeaning = locale === "zh" ? `（${meaning}）` : ` (${meaning})`;
+    return `${label}: HTTP ${result.status}${wrappedMeaning}`;
+  }
   if (result.error || /aborted|timeout/i.test(String(result.text || ""))) return `${label}: ${t.requestStatuses.timeout}`;
   return `${label}: ${t.requestStatuses.missing}`;
 }
