@@ -33,9 +33,6 @@ const streamTotalEl = document.querySelector("[data-stream-total]");
 const tokensSpeedEl = document.querySelector("[data-tokens-speed]");
 const inputTokensEl = document.querySelector("[data-input-tokens]");
 const outputTokensEl = document.querySelector("[data-output-tokens]");
-const modelsStatusCodeEl = document.querySelector("[data-models-status-code]");
-const chatStatusCodeEl = document.querySelector("[data-chat-status-code]");
-const streamStatusCodeEl = document.querySelector("[data-stream-status-code]");
 const debugPanelEl = document.querySelector("[data-debug-panel]");
 const debugOutputEl = document.querySelector("[data-debug-output]");
 const allModels = [];
@@ -198,23 +195,6 @@ function fmtMs(ms) {
 function fmtValue(value, suffix = "") {
   if (value === null || value === undefined) return "-";
   return `${value}${suffix}`;
-}
-
-function requestStatusText(label, result) {
-  if (!result) return `${label}: ${t.requestStatuses.missing}`;
-  if (Number.isFinite(result.status) && result.status > 0) {
-    let meaning = t.requestStatuses.serverError;
-    if (result.status >= 200 && result.status < 300) meaning = t.requestStatuses.ok;
-    else if (result.status === 400) meaning = t.requestStatuses.badRequest;
-    else if (result.status === 401) meaning = t.requestStatuses.unauthorized;
-    else if (result.status === 403) meaning = t.requestStatuses.forbidden;
-    else if (result.status === 404) meaning = t.requestStatuses.notFound;
-    else if (result.status === 429) meaning = t.requestStatuses.rateLimited;
-    const wrappedMeaning = locale === "zh" ? `（${meaning}）` : ` (${meaning})`;
-    return `${label}: HTTP ${result.status}${wrappedMeaning}`;
-  }
-  if (result.error || /aborted|timeout/i.test(String(result.text || ""))) return `${label}: ${t.requestStatuses.timeout}`;
-  return `${label}: ${t.requestStatuses.missing}`;
 }
 
 function explainFailure(message) {
@@ -472,10 +452,6 @@ function renderRequestFailed(message = "") {
   tokensSpeedEl.textContent = "-";
   inputTokensEl.textContent = "-";
   outputTokensEl.textContent = "-";
-  const failed = locale === "zh" ? "未拿到响应" : "no response";
-  if (modelsStatusCodeEl) modelsStatusCodeEl.textContent = `${t.requestStatuses.models}: ${failed}`;
-  if (chatStatusCodeEl) chatStatusCodeEl.textContent = `${t.requestStatuses.chat}: ${failed}`;
-  if (streamStatusCodeEl) streamStatusCodeEl.textContent = `${t.requestStatuses.stream}: ${failed}`;
   if (resultErrorEl) {
     resultErrorEl.hidden = false;
     resultErrorEl.textContent = explainFailure(message);
@@ -520,9 +496,6 @@ function renderTestResult(data, options = {}) {
   tokensSpeedEl.textContent = fmtValue(data.summary.tokens?.perSecond);
   inputTokensEl.textContent = fmtValue(data.summary.tokens?.input);
   outputTokensEl.textContent = fmtValue(data.summary.tokens?.output);
-  if (modelsStatusCodeEl) modelsStatusCodeEl.textContent = requestStatusText(t.requestStatuses.models, data.results?.models);
-  if (chatStatusCodeEl) chatStatusCodeEl.textContent = requestStatusText(t.requestStatuses.chat, data.results?.chat);
-  if (streamStatusCodeEl) streamStatusCodeEl.textContent = requestStatusText(t.requestStatuses.stream, data.results?.streaming);
 }
 
 function mergeSupplementResult(baseData, supplementData) {
@@ -598,9 +571,6 @@ function resetResults() {
     resultErrorEl.textContent = "";
   }
   if (testedTargetEl) testedTargetEl.textContent = "-";
-  if (modelsStatusCodeEl) modelsStatusCodeEl.textContent = `${t.requestStatuses.models}: -`;
-  if (chatStatusCodeEl) chatStatusCodeEl.textContent = `${t.requestStatuses.chat}: -`;
-  if (streamStatusCodeEl) streamStatusCodeEl.textContent = `${t.requestStatuses.stream}: -`;
 }
 
 function resetFlow() {

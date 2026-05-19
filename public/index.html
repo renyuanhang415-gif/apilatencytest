@@ -115,7 +115,6 @@
             <div class="label">检测结论</div>
             <h2 data-verdict-title>未检测</h2>
             <p data-verdict-text>获取模型并选择目标模型后，点击开始检测。</p>
-            <p class="result-error" data-result-error hidden></p>
           </div>
           <div class="tested-meta">
             <span data-status>-</span>
@@ -132,15 +131,7 @@
                 <span data-model-grade>-</span>
               </div>
               <p data-model-score-note></p>
-              <div class="score-side-status">
-                <span data-models-status-code>-</span>
-                <span data-chat-status-code>-</span>
-                <span data-stream-status-code>-</span>
-              </div>
-              <div class="result-notes score-notes">
-                <p data-result-scope>本次结果只代表当前这一次快检，更适合充值前初筛，不代表长期稳定性或 SLA。</p>
-                <p data-result-key-safety>API Key 仅用于本次检测请求。建议优先使用测试 Key，不要直接使用高权限主 Key。</p>
-              </div>
+              <p class="result-error score-error" data-result-error hidden></p>
               <div class="score-factors" data-model-score-factors></div>
             </div>
 
