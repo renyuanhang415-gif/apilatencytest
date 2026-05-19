@@ -199,6 +199,10 @@
             <p>聊天、客服、写作和 Agent 都依赖首 Token 与连续分片。普通请求能返回，不代表流式体验稳定，所以必须单独看。</p>
           </details>
           <details class="faq-item" open>
+            <summary>延迟、首 Token、流式总耗时和 Tokens 是什么意思？</summary>
+            <p>延迟是普通请求从发出到拿到首个响应的时间，越短越快。首 Token 是流式返回里第一个字或片段出现的时间，也叫 TTFT，越短越适合聊天和实时输出。流式总耗时是这次流式完整结束一共花了多久。Tokens/秒是模型输出速度，数字越大代表吐字越快。输入 Tokens 是这次请求里你发给模型的内容被拆成了多少 token，输出 Tokens 是模型这次实际返回了多少 token。</p>
+          </details>
+          <details class="faq-item" open>
             <summary>题库检测能看出什么问题？</summary>
             <p>固定题库会观察指令跟随、结构化输出和基础知识表现，能暴露模型能力不匹配、返回被加工、回答不稳定等风险。</p>
           </details>

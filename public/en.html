@@ -183,6 +183,10 @@
             <p>It checks model listing, selected model availability, OpenAI-compatible response shape, streaming behavior, latency, and a fixed set of control questions for instruction following, basic knowledge, structured output, and model-family behavior.</p>
           </details>
           <details class="faq-item" open>
+            <summary>What do latency, TTFT, streaming total, and tokens mean?</summary>
+            <p>Latency is the time from sending a normal request to getting the first response. TTFT, or first token time, is when the first streamed word or chunk appears. Streaming total is the full end-to-end streaming time. Tokens/sec is output speed. Input tokens are the prompt tokens you sent, and output tokens are the tokens the model returned.</p>
+          </details>
+          <details class="faq-item" open>
             <summary>Why is the result useful?</summary>
             <p>The score combines multiple technical signals instead of trusting one field. That makes it easier to notice relays that look usable at first but have unstable structure, weak model behavior, or slow response patterns.</p>
           </details>
