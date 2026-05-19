@@ -69,7 +69,7 @@
                     Show
                   </button>
                 </div>
-                <p class="field-note">We do not store your API key. It is used only for this live test and discarded after the request finishes.</p>
+                <p class="field-note">We do not store your API key. It is used only for this live request, not saved to accounts, rankings, or hosted-key features. A low-scope test key is recommended.</p>
               </div>
             </div>
 
@@ -138,6 +138,14 @@
               <div class="check-list" data-checks></div>
 
               <div class="metric-strip">
+                <div class="metric metric-status">
+                  <div class="label">Request status</div>
+                  <div class="value metric-status-stack">
+                    <span data-models-status-code>-</span>
+                    <span data-chat-status-code>-</span>
+                    <span data-stream-status-code>-</span>
+                  </div>
+                </div>
                 <div class="metric">
                   <div class="label">Latency</div>
                   <div class="value" data-chat-latency>-</div>
@@ -163,6 +171,11 @@
                   <div class="value" data-output-tokens>-</div>
                 </div>
               </div>
+
+              <div class="result-notes">
+                <p data-result-scope>This result reflects one quick run only. It is best used as a pre-purchase screen, not a long-term SLA or stability guarantee.</p>
+                <p data-result-key-safety>The API key is used only for this test request. Prefer a low-scope or temporary test key instead of a primary production key.</p>
+              </div>
             </div>
           </div>
 
@@ -187,11 +200,15 @@
           </details>
           <details class="faq-item" open>
             <summary>Do you store API keys?</summary>
-            <p>No. The API key is used only for this live test. It is not saved to an account system, ranking database, or hosted-key feature, and is discarded after the request finishes.</p>
+            <p>No. The API key is used only for this live test. It is not saved to an account system, ranking database, or hosted-key feature. Prefer a low-scope or temporary test key.</p>
           </details>
           <details class="faq-item" open>
             <summary>Can this prove a relay is absolutely safe?</summary>
             <p>No. Treat it as a technical health check before buying, integrating, or relying on a relay. Long-term stability and business risk still require repeated testing and your own judgment.</p>
+          </details>
+          <details class="faq-item" open>
+            <summary>What does the score actually mean?</summary>
+            <p>The score is a single-run quick-check score built from question accuracy, model-target match, protocol and response-shape consistency, plus streaming and latency signals. It is not a long-term benchmark or statistical confidence score.</p>
           </details>
           <details class="faq-item" open>
             <summary>Why can the same model get different scores?</summary>

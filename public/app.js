@@ -32,6 +32,9 @@ const streamTotalEl = document.querySelector("[data-stream-total]");
 const tokensSpeedEl = document.querySelector("[data-tokens-speed]");
 const inputTokensEl = document.querySelector("[data-input-tokens]");
 const outputTokensEl = document.querySelector("[data-output-tokens]");
+const modelsStatusCodeEl = document.querySelector("[data-models-status-code]");
+const chatStatusCodeEl = document.querySelector("[data-chat-status-code]");
+const streamStatusCodeEl = document.querySelector("[data-stream-status-code]");
 const debugPanelEl = document.querySelector("[data-debug-panel]");
 const debugOutputEl = document.querySelector("[data-debug-output]");
 const allModels = [];
@@ -81,6 +84,13 @@ const text = {
     requestFailed: "Request failed.",
     missingCredentials: "API Base URL or API Key is empty. Please enter it first.",
     rawNoStream: "No stream response body.",
+    requestStatuses: {
+      models: "Models",
+      chat: "Chat",
+      stream: "Stream",
+      timeout: "timeout / aborted",
+      missing: "not run",
+    },
     modelScoreFactors: (qa, latency, protocol) => [
       `Knowledge QA ${qa.rate}%`,
       `Latency ${latency}`,
@@ -126,6 +136,13 @@ const text = {
     requestFailed: "请求失败。",
     missingCredentials: "API 接口地址或 API Key 为空，请先输入。",
     rawNoStream: "没有流式响应正文。",
+    requestStatuses: {
+      models: "Models",
+      chat: "Chat",
+      stream: "Stream",
+      timeout: "超时 / 中断",
+      missing: "未执行",
+    },
     modelScoreFactors: (qa, latency, protocol) => [
       `知识问答通过率 ${qa.rate}%`,
       `延迟 ${latency}`,
@@ -162,6 +179,13 @@ function fmtMs(ms) {
 function fmtValue(value, suffix = "") {
   if (value === null || value === undefined) return "-";
   return `${value}${suffix}`;
+}
+
+function requestStatusText(label, result) {
+  if (!result) return `${label}: ${t.requestStatuses.missing}`;
+  if (Number.isFinite(result.status) && result.status > 0) return `${label}: HTTP ${result.status}`;
+  if (result.error || /aborted|timeout/i.test(String(result.text || ""))) return `${label}: ${t.requestStatuses.timeout}`;
+  return `${label}: ${t.requestStatuses.missing}`;
 }
 
 function setModelStatus(message, kind = "") {
@@ -393,6 +417,9 @@ function renderRequestFailed() {
   tokensSpeedEl.textContent = "-";
   inputTokensEl.textContent = "-";
   outputTokensEl.textContent = "-";
+  if (modelsStatusCodeEl) modelsStatusCodeEl.textContent = `${t.requestStatuses.models}: -`;
+  if (chatStatusCodeEl) chatStatusCodeEl.textContent = `${t.requestStatuses.chat}: -`;
+  if (streamStatusCodeEl) streamStatusCodeEl.textContent = `${t.requestStatuses.stream}: -`;
 }
 
 function renderTestResult(data, options = {}) {
@@ -429,6 +456,9 @@ function renderTestResult(data, options = {}) {
   tokensSpeedEl.textContent = fmtValue(data.summary.tokens?.perSecond);
   inputTokensEl.textContent = fmtValue(data.summary.tokens?.input);
   outputTokensEl.textContent = fmtValue(data.summary.tokens?.output);
+  if (modelsStatusCodeEl) modelsStatusCodeEl.textContent = requestStatusText(t.requestStatuses.models, data.results?.models);
+  if (chatStatusCodeEl) chatStatusCodeEl.textContent = requestStatusText(t.requestStatuses.chat, data.results?.chat);
+  if (streamStatusCodeEl) streamStatusCodeEl.textContent = requestStatusText(t.requestStatuses.stream, data.results?.streaming);
 }
 
 function mergeSupplementResult(baseData, supplementData) {
@@ -500,6 +530,9 @@ function resetResults() {
   if (scoreEl) scoreEl.textContent = "-";
   if (statusEl) statusEl.textContent = "-";
   if (testedTargetEl) testedTargetEl.textContent = "-";
+  if (modelsStatusCodeEl) modelsStatusCodeEl.textContent = `${t.requestStatuses.models}: -`;
+  if (chatStatusCodeEl) chatStatusCodeEl.textContent = `${t.requestStatuses.chat}: -`;
+  if (streamStatusCodeEl) streamStatusCodeEl.textContent = `${t.requestStatuses.stream}: -`;
 }
 
 function resetFlow() {
