@@ -370,7 +370,7 @@ function setModelStatus(message, kind = "") {
   modelStatus.className = kind ? `hint status-${kind}` : "hint";
 }
 
-function showTemporaryNotice(message) {
+function showTemporaryNotice(message, kind = "fail") {
   let notice = document.querySelector("[data-temporary-notice]");
   if (!notice) {
     notice = document.createElement("div");
@@ -382,6 +382,7 @@ function showTemporaryNotice(message) {
   }
 
   notice.textContent = message;
+  notice.dataset.kind = kind;
   notice.classList.add("is-visible");
   clearTimeout(noticeTimer);
   noticeTimer = setTimeout(() => {
@@ -1287,10 +1288,10 @@ shareLinkBtn?.addEventListener("click", async () => {
   if (!shareUrl) return;
   try {
     await copyText(shareUrl);
-    showTemporaryNotice(t.shareCopied);
+    showTemporaryNotice(t.shareCopied, "success");
     trackEvent("share_link_copied");
   } catch {
-    showTemporaryNotice(t.shareFailed);
+    showTemporaryNotice(t.shareFailed, "fail");
   }
 });
 

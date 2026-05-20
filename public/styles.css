@@ -710,6 +710,18 @@ h1 {
   transform: translate(-50%, 0);
 }
 
+.temporary-notice[data-kind="success"] {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.temporary-notice[data-kind="fail"] {
+  border-color: #fecaca;
+  background: #fff;
+  color: #b42318;
+}
+
 .field-note {
   margin: 8px 0 0;
   color: var(--muted);
