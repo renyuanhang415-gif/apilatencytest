@@ -895,15 +895,41 @@ h1 {
   text-align: left;
 }
 
-.result-status-summary {
-  max-width: none;
-  width: 100%;
-  margin: 0;
-  padding-top: 2px;
-  color: #667085;
-  font-size: 12px;
-  line-height: 1.6;
-  text-align: left;
+.score-side-status {
+  display: grid;
+  gap: 8px;
+}
+
+.score-side-status span {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  border: 1px solid #e7e8f2;
+  background: #fff;
+  color: #344054;
+}
+
+.score-side-status span:nth-child(1) {
+  border-color: #dbe7ff;
+  background: linear-gradient(180deg, #f8fbff, #eef4ff);
+  color: #175cd3;
+}
+
+.score-side-status span:nth-child(2) {
+  border-color: #d8f3e5;
+  background: linear-gradient(180deg, #f5fffa, #e8f8ef);
+  color: #067647;
+}
+
+.score-side-status span:nth-child(3) {
+  border-color: #efe4ff;
+  background: linear-gradient(180deg, #fcfaff, #f4eeff);
+  color: #6e3bf3;
 }
 
 .result-panel ul {

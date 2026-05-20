@@ -241,9 +241,15 @@ function requestStatusText(label, result) {
   return `${label}: ${t.requestStatuses.missing}`;
 }
 
-function statusSummaryText(data) {
-  const prefix = locale === "zh" ? "状态码" : "Status";
-  return `${prefix}: ${requestStatusText(t.requestStatuses.models, data.results?.models)} · ${requestStatusText(t.requestStatuses.chat, data.results?.chat)} · ${requestStatusText(t.requestStatuses.stream, data.results?.streaming)}`;
+function renderStatusSummary(data) {
+  if (!resultStatusSummaryEl) return;
+  const lines = [
+    requestStatusText(t.requestStatuses.models, data.results?.models),
+    requestStatusText(t.requestStatuses.chat, data.results?.chat),
+    requestStatusText(t.requestStatuses.stream, data.results?.streaming),
+  ];
+  resultStatusSummaryEl.innerHTML = lines.map((line) => `<span>${line}</span>`).join("");
+  resultStatusSummaryEl.hidden = false;
 }
 
 function setModelStatus(message, kind = "") {
@@ -481,7 +487,7 @@ function renderRequestFailed(message = "") {
   }
   if (resultStatusSummaryEl) {
     resultStatusSummaryEl.hidden = true;
-    resultStatusSummaryEl.textContent = "";
+    resultStatusSummaryEl.innerHTML = "";
   }
 }
 
@@ -509,8 +515,7 @@ function renderTestResult(data, options = {}) {
     resultErrorEl.textContent = "";
   }
   if (resultStatusSummaryEl) {
-    resultStatusSummaryEl.hidden = false;
-    resultStatusSummaryEl.textContent = statusSummaryText(data);
+    renderStatusSummary(data);
   }
   testedTargetEl.textContent = t.tested(data.input.baseUrl, data.input.model);
 
@@ -603,7 +608,7 @@ function resetResults() {
   }
   if (resultStatusSummaryEl) {
     resultStatusSummaryEl.hidden = true;
-    resultStatusSummaryEl.textContent = "";
+    resultStatusSummaryEl.innerHTML = "";
   }
   if (testedTargetEl) testedTargetEl.textContent = "-";
 }
