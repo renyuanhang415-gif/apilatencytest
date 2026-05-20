@@ -19,6 +19,7 @@
 
 html,
 body {
+  min-height: 100%;
   margin: 0;
   padding: 0;
   background: var(--bg);
@@ -37,8 +38,11 @@ a {
 }
 
 .site-shell {
+  min-height: 100vh;
   width: min(1080px, calc(100% - 72px));
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .topbar {
@@ -1165,7 +1169,7 @@ h1 {
   justify-content: space-between;
   gap: 32px;
   width: 100vw;
-  margin: 8px calc(50% - 50vw) 0;
+  margin: auto calc(50% - 50vw) 0;
   padding: 18px max(36px, calc((100vw - 1080px) / 2));
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
