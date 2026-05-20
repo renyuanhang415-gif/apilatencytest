@@ -21,6 +21,7 @@ const verdictTextEl = document.querySelector("[data-verdict-text]");
 const resultErrorEl = document.querySelector("[data-result-error]");
 const resultStatusSummaryEl = document.querySelector("[data-result-status-summary]");
 const testedTargetEl = document.querySelector("[data-tested-target]");
+const shareLinkBtn = document.querySelector("[data-copy-share-link]");
 const resultLoadingEl = document.querySelector("[data-result-loading]");
 const resultDetailsEl = document.querySelector("[data-result-details]");
 const checksEl = document.querySelector("[data-checks]");
@@ -50,7 +51,8 @@ const defaultCommonModelId = "gpt-5.5";
 let selectedModelProfile = defaultCommonModelId;
 let selectedModelMode = "fixed";
 let selectedCommonModelKey = "gpt55";
-const debugMode = new URLSearchParams(window.location.search).get("debug") === "1";
+const queryParams = new URLSearchParams(window.location.search);
+const debugMode = queryParams.get("debug") === "1";
 
 const locale = (document.body.dataset.locale || document.documentElement.lang || "en").toLowerCase().startsWith("zh")
   ? "zh"
@@ -65,6 +67,8 @@ const text = {
     fetchingModels: "Fetching models...",
     loadingModels: "Loading model list...",
     demoReady: "Demo result loaded. Enter your endpoint when ready.",
+    shareCopied: "Share link copied.",
+    shareFailed: "Could not copy the share link.",
     noMatchingModels: "No matching models.",
     commonModels: "Common models",
     selectModel: "Select a model, then start the test.",
@@ -127,6 +131,8 @@ const text = {
     fetchingModels: "正在获取模型...",
     loadingModels: "正在加载模型列表...",
     demoReady: "已加载示例结果。准备好后可以输入自己的接口检测。",
+    shareCopied: "分享链接已复制。",
+    shareFailed: "无法复制分享链接。",
     noMatchingModels: "没有匹配的模型。",
     commonModels: "常用模型",
     selectModel: "选择一个目标模型，然后开始检测。",
@@ -189,6 +195,7 @@ const trackedInputSteps = new Set();
 let isTesting = false;
 let verificationModal = null;
 let noticeTimer = null;
+let lastShareInput = null;
 
 function demoResultData() {
   return {
@@ -380,6 +387,52 @@ function showTemporaryNotice(message) {
   noticeTimer = setTimeout(() => {
     notice.classList.remove("is-visible");
   }, 2200);
+}
+
+function buildShareLink(input = lastShareInput) {
+  if (!input?.baseUrl) return "";
+  const url = new URL(window.location.href);
+  url.hash = "";
+  url.search = "";
+  url.searchParams.set("baseUrl", input.baseUrl);
+  if (input.model) url.searchParams.set("model", input.model);
+  return url.toString();
+}
+
+async function copyText(textValue) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(textValue);
+    return;
+  }
+  const input = document.createElement("textarea");
+  input.value = textValue;
+  input.setAttribute("readonly", "");
+  input.style.position = "fixed";
+  input.style.left = "-9999px";
+  document.body.appendChild(input);
+  input.select();
+  document.execCommand("copy");
+  input.remove();
+}
+
+function updateShareLink(input) {
+  lastShareInput = input?.baseUrl ? { baseUrl: input.baseUrl, model: input.model || "" } : null;
+  if (!shareLinkBtn) return;
+  shareLinkBtn.hidden = !lastShareInput;
+  shareLinkBtn.dataset.shareUrl = lastShareInput ? buildShareLink(lastShareInput) : "";
+}
+
+function applySharedParams() {
+  const baseUrl = String(queryParams.get("baseUrl") || "").trim();
+  const model = String(queryParams.get("model") || "").trim();
+  if (baseUrlInput && baseUrl) baseUrlInput.value = baseUrl;
+  if (modelInput && model) {
+    modelInput.value = model;
+    selectedModelProfile = model;
+    selectedModelMode = "fixed";
+    selectedCommonModelKey = commonModels.find((item) => item.id === model)?.key || "";
+  }
+  return { baseUrl, model };
 }
 
 function fieldHasUserInput(input) {
@@ -623,6 +676,7 @@ function renderTestResult(data, options = {}) {
     renderStatusSummary(data);
   }
   testedTargetEl.textContent = t.tested(data.input.baseUrl, data.input.model);
+  updateShareLink(data.input);
 
   renderChecks(data.checks || []);
   if (showFinalScore) {
@@ -716,6 +770,7 @@ function resetResults() {
     resultStatusSummaryEl.innerHTML = "";
   }
   if (testedTargetEl) testedTargetEl.textContent = "-";
+  updateShareLink(null);
 }
 
 function resetFlow() {
@@ -958,13 +1013,18 @@ function refreshModelPicker() {
 }
 
 function initDefaultModelShortcuts() {
+  const shared = applySharedParams();
   if (modelInput && !modelInput.value) {
     modelInput.value = defaultCommonModelId;
     selectedModelProfile = defaultCommonModelId;
   }
   renderCommonModels(modelInput?.value || defaultCommonModelId);
   setModelStatus(
-    locale === "zh"
+    shared.baseUrl
+      ? locale === "zh"
+        ? `已从分享链接预填 ${shared.model || modelInput?.value || defaultCommonModelId}，可直接开始检测。`
+        : `Prefilled from a share link with ${shared.model || modelInput?.value || defaultCommonModelId}. Start the test when ready.`
+      : locale === "zh"
       ? `已默认选择 ${modelInput?.value || defaultCommonModelId}，可直接开始检测。`
       : `Defaulted to ${modelInput?.value || defaultCommonModelId}. Start the test when ready.`,
     "pass"
@@ -1221,6 +1281,18 @@ modelFilterBtns.forEach((button) => {
 });
 
 resetFlowBtn?.addEventListener("click", resetFlow);
+
+shareLinkBtn?.addEventListener("click", async () => {
+  const shareUrl = shareLinkBtn.dataset.shareUrl || buildShareLink();
+  if (!shareUrl) return;
+  try {
+    await copyText(shareUrl);
+    showTemporaryNotice(t.shareCopied);
+    trackEvent("share_link_copied");
+  } catch {
+    showTemporaryNotice(t.shareFailed);
+  }
+});
 
 demoTestBtn?.addEventListener("click", () => {
   if (isTesting) return;

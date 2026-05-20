@@ -783,6 +783,23 @@ h1 {
   gap: 8px;
 }
 
+.share-link-btn {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: #fff;
+  color: var(--accent-dark);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.share-link-btn:hover {
+  border-color: rgba(124, 58, 237, 0.28);
+  background: #f4f0ff;
+}
+
 .status-pill {
   display: inline-flex;
   align-items: center;
