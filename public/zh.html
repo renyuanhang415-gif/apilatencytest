@@ -120,14 +120,25 @@
           <div class="tested-meta">
             <span data-status>-</span>
             <small data-tested-target>-</small>
-            <button class="share-link-btn" type="button" data-copy-share-link hidden>复制分享链接</button>
           </div>
         </div>
 
         <div hidden data-result-details>
           <div class="result-board">
             <div class="result-panel model-score-panel">
-              <div class="label">模型整体评分</div>
+              <div class="model-score-head">
+                <div class="label">模型整体评分</div>
+                <button class="share-link-btn" type="button" data-copy-share-link hidden aria-label="复制分享链接">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <path d="M8.6 10.7 15.4 6.3"></path>
+                    <path d="M8.6 13.3 15.4 17.7"></path>
+                  </svg>
+                  <span>分享链接</span>
+                </button>
+              </div>
               <div class="score-ring">
                 <strong data-model-score>-</strong>
                 <span data-model-grade>-</span>
