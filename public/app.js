@@ -5,6 +5,7 @@ const modelInput = document.querySelector("#model");
 const resultWrap = document.querySelector("[data-results]");
 const fetchModelsBtn = document.querySelector("[data-fetch-models]");
 const runTestBtn = document.querySelector("[data-run-test]");
+const demoTestBtn = document.querySelector("[data-demo-test]");
 const resetFlowBtn = document.querySelector("[data-reset-flow]");
 const modelStep = document.querySelector("[data-model-step]");
 const commonModelsEl = document.querySelector("[data-common-models]");
@@ -63,6 +64,7 @@ const text = {
     hideKey: "Hide API key",
     fetchingModels: "Fetching models...",
     loadingModels: "Loading model list...",
+    demoReady: "Demo result loaded. Enter your endpoint when ready.",
     noMatchingModels: "No matching models.",
     commonModels: "Common models",
     selectModel: "Select a model, then start the test.",
@@ -124,6 +126,7 @@ const text = {
     hideKey: "隐藏 API Key",
     fetchingModels: "正在获取模型...",
     loadingModels: "正在加载模型列表...",
+    demoReady: "已加载示例结果。准备好后可以输入自己的接口检测。",
     noMatchingModels: "没有匹配的模型。",
     commonModels: "常用模型",
     selectModel: "选择一个目标模型，然后开始检测。",
@@ -186,6 +189,108 @@ const trackedInputSteps = new Set();
 let isTesting = false;
 let verificationModal = null;
 let noticeTimer = null;
+
+function demoResultData() {
+  return {
+    input: {
+      baseUrl: "https://demo.apilatencytest.com/v1",
+      model: "gpt-5.5",
+      targetModel: "gpt-5.5",
+      selectionMode: "fixed",
+    },
+    score: 94,
+    phase: "demo",
+    pendingSupplement: false,
+    compatibility: "pass",
+    verdict: {
+      level: "good",
+      title: "Demo result",
+      titleZh: "示例结果",
+      text: "This sample shows the checks you will see after testing your own OpenAI-compatible API endpoint.",
+      textZh: "这个示例展示了检测自己的 OpenAI 兼容接口后会看到的结果。",
+    },
+    checks: [
+      {
+        key: "knowledge",
+        label: "Knowledge QA",
+        labelZh: "知识问答校验",
+        status: "pass",
+        detail: "Knowledge QA pass rate 100%. Matched GPT question bank.",
+        detailZh: "知识问答通过率 100%，已匹配 GPT 题库。",
+      },
+      {
+        key: "model",
+        label: "Model availability",
+        labelZh: "模型存在校验",
+        status: "pass",
+        detail: "Selected model appears in /v1/models.",
+        detailZh: "所选模型出现在 /v1/models 中。",
+      },
+      {
+        key: "profile",
+        label: "Model profile",
+        labelZh: "模型特征校验",
+        status: "pass",
+        detail: "Requested model matches the selected target family.",
+        detailZh: "实际发送模型与所选目标模型家族一致。",
+      },
+      {
+        key: "protocol",
+        label: "Protocol consistency",
+        labelZh: "协议一致性",
+        status: "pass",
+        detail: "Chat completion returned a 2xx JSON response.",
+        detailZh: "聊天接口返回 2xx JSON 响应。",
+      },
+      {
+        key: "shape",
+        label: "Response structure",
+        labelZh: "响应结构",
+        status: "pass",
+        detail: "Response includes an OpenAI-style choices array.",
+        detailZh: "响应包含 OpenAI 风格的 choices 数组。",
+      },
+      {
+        key: "stream",
+        label: "Streaming quality",
+        labelZh: "流式质量",
+        status: "pass",
+        detail: "Streaming returned event-style chunks.",
+        detailZh: "流式接口返回了事件格式分片。",
+      },
+    ],
+    results: {
+      models: { ok: true, status: 200, timings: { firstByteMs: 310, totalMs: 420 } },
+      chat: { ok: true, status: 200, timings: { firstByteMs: 820, totalMs: 2400 } },
+      streaming: { ok: true, status: 200, stream: true, timings: { firstByteMs: 430, totalMs: 2800 } },
+    },
+    summary: {
+      latencyMs: {
+        models: 310,
+        chat: 820,
+        streamingFirstToken: 430,
+        streamingTotal: 2800,
+      },
+      qa: {
+        passed: 6,
+        total: 6,
+        rate: 100,
+        bankLabel: "GPT",
+        results: [{ latencyMs: 780 }, { latencyMs: 820 }, { latencyMs: 860 }],
+      },
+      tokens: {
+        input: 142,
+        output: 118,
+        perSecond: 42.1,
+      },
+      supported: {
+        modelsEndpoint: true,
+        chatCompletions: true,
+        streaming: true,
+      },
+    },
+  };
+}
 
 function fmtMs(ms) {
   if (ms === null || ms === undefined) return "-";
@@ -1116,6 +1221,16 @@ modelFilterBtns.forEach((button) => {
 });
 
 resetFlowBtn?.addEventListener("click", resetFlow);
+
+demoTestBtn?.addEventListener("click", () => {
+  if (isTesting) return;
+  resetResults();
+  if (resultWrap) resultWrap.hidden = false;
+  renderTestResult(demoResultData());
+  setModelStatus(t.demoReady, "pass");
+  resultWrap?.scrollIntoView({ behavior: "smooth", block: "start" });
+  trackEvent("demo_test_viewed");
+});
 
 baseUrlInput?.addEventListener("blur", () => {
   if (trackedInputSteps.has("base_url")) return;
