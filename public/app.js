@@ -18,6 +18,7 @@ const statusEl = document.querySelector("[data-status]");
 const verdictTitleEl = document.querySelector("[data-verdict-title]");
 const verdictTextEl = document.querySelector("[data-verdict-text]");
 const resultErrorEl = document.querySelector("[data-result-error]");
+const resultStatusSummaryEl = document.querySelector("[data-result-status-summary]");
 const testedTargetEl = document.querySelector("[data-tested-target]");
 const resultLoadingEl = document.querySelector("[data-result-loading]");
 const resultDetailsEl = document.querySelector("[data-result-details]");
@@ -221,6 +222,28 @@ function explainFailure(message) {
 
   const rawLog = raw ? ` ${t.rawLogPrefix}: ${raw}` : "";
   return `${t.failurePrefix}: ${reason}${rawLog}`;
+}
+
+function requestStatusText(label, result) {
+  if (!result) return `${label}: ${t.requestStatuses.missing}`;
+  if (Number.isFinite(result.status) && result.status > 0) {
+    let meaning = t.requestStatuses.serverError;
+    if (result.status >= 200 && result.status < 300) meaning = t.requestStatuses.ok;
+    else if (result.status === 400) meaning = t.requestStatuses.badRequest;
+    else if (result.status === 401) meaning = t.requestStatuses.unauthorized;
+    else if (result.status === 403) meaning = t.requestStatuses.forbidden;
+    else if (result.status === 404) meaning = t.requestStatuses.notFound;
+    else if (result.status === 429) meaning = t.requestStatuses.rateLimited;
+    const wrappedMeaning = locale === "zh" ? `（${meaning}）` : ` (${meaning})`;
+    return `${label}: HTTP ${result.status}${wrappedMeaning}`;
+  }
+  if (result.error || /aborted|timeout/i.test(String(result.text || ""))) return `${label}: ${t.requestStatuses.timeout}`;
+  return `${label}: ${t.requestStatuses.missing}`;
+}
+
+function statusSummaryText(data) {
+  const prefix = locale === "zh" ? "状态码" : "Status";
+  return `${prefix}: ${requestStatusText(t.requestStatuses.models, data.results?.models)} · ${requestStatusText(t.requestStatuses.chat, data.results?.chat)} · ${requestStatusText(t.requestStatuses.stream, data.results?.streaming)}`;
 }
 
 function setModelStatus(message, kind = "") {
@@ -456,6 +479,10 @@ function renderRequestFailed(message = "") {
     resultErrorEl.hidden = false;
     resultErrorEl.textContent = explainFailure(message);
   }
+  if (resultStatusSummaryEl) {
+    resultStatusSummaryEl.hidden = true;
+    resultStatusSummaryEl.textContent = "";
+  }
 }
 
 function renderTestResult(data, options = {}) {
@@ -480,6 +507,10 @@ function renderTestResult(data, options = {}) {
   if (resultErrorEl) {
     resultErrorEl.hidden = true;
     resultErrorEl.textContent = "";
+  }
+  if (resultStatusSummaryEl) {
+    resultStatusSummaryEl.hidden = false;
+    resultStatusSummaryEl.textContent = statusSummaryText(data);
   }
   testedTargetEl.textContent = t.tested(data.input.baseUrl, data.input.model);
 
@@ -569,6 +600,10 @@ function resetResults() {
   if (resultErrorEl) {
     resultErrorEl.hidden = true;
     resultErrorEl.textContent = "";
+  }
+  if (resultStatusSummaryEl) {
+    resultStatusSummaryEl.hidden = true;
+    resultStatusSummaryEl.textContent = "";
   }
   if (testedTargetEl) testedTargetEl.textContent = "-";
 }
