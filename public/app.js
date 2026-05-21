@@ -523,7 +523,7 @@ function renderChecks(checks) {
 }
 
 function modelGrade(score) {
-  if (score >= 90) return "excellent";
+  if (score >= 98) return "excellent";
   if (score >= 75) return "good";
   if (score >= 60) return "watch";
   return "poor";
@@ -531,7 +531,7 @@ function modelGrade(score) {
 
 function scoreRingTone(score) {
   if (score >= 100) return "perfect";
-  if (score >= 90) return "excellent";
+  if (score >= 98) return "excellent";
   if (score >= 75) return "good";
   if (score >= 60) return "watch";
   return "poor";
