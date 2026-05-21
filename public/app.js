@@ -38,6 +38,7 @@ const inputTokensEl = document.querySelector("[data-input-tokens]");
 const outputTokensEl = document.querySelector("[data-output-tokens]");
 const debugPanelEl = document.querySelector("[data-debug-panel]");
 const debugOutputEl = document.querySelector("[data-debug-output]");
+let speedScoreEl = null;
 const allModels = [];
 const commonModels = [
   { key: "opus47", name: "Opus 4.7", id: "claude-opus-4-7", profile: "claude-opus-4-7" },
@@ -308,6 +309,171 @@ function fmtMs(ms) {
 function fmtValue(value, suffix = "") {
   if (value === null || value === undefined) return "-";
   return `${value}${suffix}`;
+}
+
+function ensureSpeedScoreCard() {
+  if (speedScoreEl?.isConnected) return speedScoreEl;
+  const metricStrip = document.querySelector(".metric-strip");
+  if (!metricStrip) return null;
+  const card = document.createElement("div");
+  card.className = "speed-score-card";
+  card.dataset.tone = "pending";
+  metricStrip.parentNode.insertBefore(card, metricStrip);
+  speedScoreEl = card;
+  return card;
+}
+
+function injectSpeedScoreStyles() {
+  if (document.querySelector("[data-speed-score-styles]")) return;
+  const style = document.createElement("style");
+  style.dataset.speedScoreStyles = "";
+  style.textContent = `
+    .speed-score-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px 16px;
+      align-items: center;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      border: 1px solid #dbeafe;
+      border-radius: 18px;
+      background: #eff6ff;
+      color: #1e3a8a;
+    }
+    .speed-score-card strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+    .speed-score-card p {
+      margin: 0;
+      color: inherit;
+      opacity: .82;
+      line-height: 1.5;
+    }
+    .speed-score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 86px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .72);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .speed-score-card[data-tone="excellent"] {
+      border-color: #bbf7d0;
+      background: #ecfdf3;
+      color: #047857;
+    }
+    .speed-score-card[data-tone="good"] {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+    .speed-score-card[data-tone="watch"] {
+      border-color: #fde68a;
+      background: #fffbeb;
+      color: #b45309;
+    }
+    .speed-score-card[data-tone="poor"] {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+    @media (max-width: 720px) {
+      .speed-score-card {
+        grid-template-columns: 1fr;
+      }
+      .speed-score-badge {
+        justify-self: start;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function speedGrade(latencyMs, tokensPerSecond, streamingOk = true) {
+  const chat = latencyMs?.chat ?? 99999;
+  const ttft = latencyMs?.streamingFirstToken ?? 99999;
+  const total = latencyMs?.streamingTotal ?? 99999;
+  const speed = Number.isFinite(tokensPerSecond) ? tokensPerSecond : null;
+  if (!streamingOk) return "poor";
+  if (chat <= 2500 && ttft <= 1500 && total <= 5000 && (speed === null || speed >= 30)) return "excellent";
+  if (chat <= 6000 && ttft <= 3000 && total <= 12000 && (speed === null || speed >= 15)) return "good";
+  if (chat <= 10000 && ttft <= 6000 && total <= 20000 && (speed === null || speed >= 8)) return "watch";
+  return "poor";
+}
+
+function speedCopy(grade) {
+  const copy = {
+    en: {
+      excellent: {
+        badge: "Excellent",
+        title: "Speed score: Excellent",
+        detail: "Fast first token, short total streaming time, and strong output speed.",
+      },
+      good: {
+        badge: "Good",
+        title: "Speed score: Good",
+        detail: "Fast enough for most apps, with a small latency or throughput trade-off.",
+      },
+      watch: {
+        badge: "Watch",
+        title: "Speed score: Watch",
+        detail: "Usable, but users may notice slower first token, streaming, or output speed.",
+      },
+      poor: {
+        badge: "High risk",
+        title: "Speed score: High risk",
+        detail: "Too slow or unstable for a primary production endpoint in this run.",
+      },
+    },
+    zh: {
+      excellent: {
+        badge: "优秀",
+        title: "速度评分：优秀",
+        detail: "首 Token 快、流式总耗时短，输出速度也比较强。",
+      },
+      good: {
+        badge: "良好",
+        title: "速度评分：良好",
+        detail: "大多数场景够用，但首 Token、总耗时或输出速度有一点取舍。",
+      },
+      watch: {
+        badge: "需观察",
+        title: "速度评分：需观察",
+        detail: "可以跑通，但用户可能感受到首 Token、流式输出或吐字速度偏慢。",
+      },
+      poor: {
+        badge: "高风险",
+        title: "速度评分：高风险",
+        detail: "本次速度或稳定性不适合作为主要生产接口。",
+      },
+    },
+  };
+  return copy[locale][grade] || copy[locale].poor;
+}
+
+function renderSpeedScore(data) {
+  injectSpeedScoreStyles();
+  const card = ensureSpeedScoreCard();
+  if (!card) return;
+  const latencyMs = data.summary?.latencyMs || {};
+  const tokensPerSecond = data.summary?.tokens?.perSecond;
+  const streamingOk = data.summary?.supported?.streaming !== false;
+  const grade = speedGrade(latencyMs, tokensPerSecond, streamingOk);
+  const copy = speedCopy(grade);
+  card.dataset.tone = grade === "poor" ? "poor" : grade;
+  card.innerHTML = `
+    <div>
+      <strong>${copy.title}</strong>
+      <p>${copy.detail}</p>
+    </div>
+    <span class="speed-score-badge">${copy.badge}</span>
+  `;
 }
 
 function explainFailure(message) {
@@ -688,6 +854,7 @@ function renderRequestFailed(message = "") {
   if (modelScoreEl) modelScoreEl.textContent = "-";
   if (modelScoreNoteEl) modelScoreNoteEl.textContent = locale === "zh" ? "本次检测未完成" : "This test did not complete.";
   if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
+  if (speedScoreEl) speedScoreEl.remove();
   latencyChatEl.textContent = "-";
   latencyStreamEl.textContent = "-";
   streamTotalEl.textContent = "-";
@@ -740,6 +907,7 @@ function renderTestResult(data, options = {}) {
     renderModelScorePending();
   }
   renderDebug(data);
+  renderSpeedScore(data);
   latencyChatEl.textContent = fmtMs(data.summary.latencyMs.chat);
   latencyStreamEl.textContent = fmtMs(data.summary.latencyMs.streamingFirstToken);
   streamTotalEl.textContent = fmtMs(data.summary.latencyMs.streamingTotal);
@@ -807,6 +975,7 @@ function resetResults() {
   if (modelScoreEl) modelScoreEl.textContent = "-";
   if (modelScoreNoteEl) modelScoreNoteEl.textContent = "";
   if (modelScoreFactorsEl) modelScoreFactorsEl.innerHTML = "";
+  if (speedScoreEl) speedScoreEl.remove();
   if (debugPanelEl) debugPanelEl.hidden = true;
   if (debugOutputEl) debugOutputEl.textContent = "{}";
   if (scoreEl) scoreEl.textContent = "-";
