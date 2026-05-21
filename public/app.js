@@ -537,6 +537,60 @@ function scoreRingTone(score) {
   return "poor";
 }
 
+function responseLatencyScore(latencyMs) {
+  const chat = latencyMs?.chat ?? 99999;
+  const ttft = latencyMs?.streamingFirstToken ?? 99999;
+  if (chat <= 2500 && ttft <= 1500) return 10;
+  if (chat <= 6000 && ttft <= 3000) return 7;
+  if (chat <= 10000 && ttft <= 6000) return 4;
+  return 0;
+}
+
+function verdictFromChecks(checks, latencyMs) {
+  const failCount = checks.filter((item) => item.status === "fail").length;
+  const partialCount = checks.filter((item) => item.status === "partial").length;
+  const ttft = latencyMs?.streamingFirstToken;
+  const chat = latencyMs?.chat;
+
+  if (failCount >= 2) {
+    return {
+      level: "high-risk",
+      title: "High risk",
+      titleZh: "高风险",
+      text: "Multiple core checks failed. Do not rely on this endpoint before comparing another provider.",
+      textZh: "多个核心检测项失败。建议先换一个接口对比，不要直接长期使用。",
+    };
+  }
+
+  if (ttft > 10000 || chat > 15000) {
+    return {
+      level: "high-risk",
+      title: "High risk",
+      titleZh: "高风险",
+      text: "The endpoint responds, but the latency is too slow for production use. Compare another provider before relying on it.",
+      textZh: "接口能返回，但延迟已经不适合正式使用。建议先换一个接口对比，不要直接依赖。",
+    };
+  }
+
+  if (failCount || partialCount >= 2 || ttft > 3000 || chat > 6000) {
+    return {
+      level: "watch",
+      title: "Usable, but watch it",
+      titleZh: "可用，但要谨慎",
+      text: "The endpoint works, but speed or compatibility signals are not clean. Test again before production use.",
+      textZh: "接口能跑通，但速度或兼容性信号不够干净。正式使用前建议多测几次。",
+    };
+  }
+
+  return {
+    level: "good",
+    title: "Looks clean",
+    titleZh: "质量信号较好",
+    text: "Core compatibility, streaming, and latency signals look good in this single test.",
+    textZh: "本次测试里，核心兼容性、流式输出和延迟信号都比较好。",
+  };
+}
+
 function qaLatencyCap(qa) {
   const latencies = (qa?.results || [])
     .map((item) => item.latencyMs)
@@ -721,16 +775,11 @@ function mergeSupplementResult(baseData, supplementData) {
   const failedChecks = merged.checks.filter((item) => item.status === "fail").length;
   const partialChecks = merged.checks.filter((item) => item.status === "partial").length;
   const streamScore = streamOk ? 10 : 0;
-  const responseLatencyScore =
-    merged.summary.latencyMs.chat <= 2500 && (merged.summary.latencyMs.streamingFirstToken ?? 99999) <= 2500
-      ? 10
-      : merged.summary.latencyMs.chat <= 6000 && (merged.summary.latencyMs.streamingFirstToken ?? 99999) <= 6000
-        ? 5
-        : 0;
-  const latencyScore = Math.min(responseLatencyScore, qaLatencyCap(merged.summary.qa));
+  const latencyScore = Math.min(responseLatencyScore(merged.summary.latencyMs), qaLatencyCap(merged.summary.qa));
   const previousStreamPendingScore = 0;
   merged.score = Math.min(100, merged.score + streamScore + latencyScore - previousStreamPendingScore);
   merged.compatibility = failedChecks === 0 && partialChecks === 0 ? "pass" : failedChecks <= 1 ? "partial" : "fail";
+  merged.verdict = verdictFromChecks(merged.checks, merged.summary.latencyMs);
   return merged;
 }
 
