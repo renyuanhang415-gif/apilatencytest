@@ -483,7 +483,8 @@ function speedCopy(grade) {
 function hasNoOutput(data) {
   const outputTokens = data.summary?.tokens?.output;
   const qaResults = data.summary?.qa?.results || [];
-  const qaAllEmpty = qaResults.length > 0 && qaResults.every((item) => !String(item.answer || "").trim());
+  const qaAnswers = qaResults.filter((item) => Object.prototype.hasOwnProperty.call(item, "answer"));
+  const qaAllEmpty = qaAnswers.length > 0 && qaAnswers.every((item) => !String(item.answer || "").trim());
   return outputTokens === 0 || qaAllEmpty;
 }
 
