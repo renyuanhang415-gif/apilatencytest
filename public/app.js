@@ -480,7 +480,15 @@ function speedCopy(grade) {
   return copy[locale][grade] || copy[locale].poor;
 }
 
+function hasNoOutput(data) {
+  const outputTokens = data.summary?.tokens?.output;
+  const qaResults = data.summary?.qa?.results || [];
+  const qaAllEmpty = qaResults.length > 0 && qaResults.every((item) => !String(item.answer || "").trim());
+  return outputTokens === 0 || qaAllEmpty;
+}
+
 function speedGradeForData(data) {
+  if (hasNoOutput(data)) return "poor";
   const latencyMs = data.summary?.latencyMs || {};
   const tokensPerSecond = data.summary?.tokens?.perSecond;
   const streamingOk = data.summary?.supported?.streaming !== false;
@@ -495,6 +503,9 @@ function speedLimitReasons(data, grade) {
   const reasons = [];
   const add = (label, value, limit) => reasons.push({ label, value, limit });
 
+  if (hasNoOutput(data)) {
+    add("Output", "0 tokens", "no output tokens returned");
+  }
   if (!streamingOk) {
     add("Streaming", "not supported", "required");
   }
