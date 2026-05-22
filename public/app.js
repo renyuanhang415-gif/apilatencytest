@@ -457,14 +457,25 @@ function speedCopy(grade) {
   return copy[locale][grade] || copy[locale].poor;
 }
 
+function speedGradeForData(data) {
+  const latencyMs = data.summary?.latencyMs || {};
+  const tokensPerSecond = data.summary?.tokens?.perSecond;
+  const streamingOk = data.summary?.supported?.streaming !== false;
+  return speedGrade(latencyMs, tokensPerSecond, streamingOk);
+}
+
+function capScoreBySpeed(score, grade) {
+  if (grade === "excellent") return score;
+  if (grade === "good") return Math.min(score, 97);
+  if (grade === "watch") return Math.min(score, 74);
+  return Math.min(score, 59);
+}
+
 function renderSpeedScore(data) {
   injectSpeedScoreStyles();
   const card = ensureSpeedScoreCard();
   if (!card) return;
-  const latencyMs = data.summary?.latencyMs || {};
-  const tokensPerSecond = data.summary?.tokens?.perSecond;
-  const streamingOk = data.summary?.supported?.streaming !== false;
-  const grade = speedGrade(latencyMs, tokensPerSecond, streamingOk);
+  const grade = speedGradeForData(data);
   const copy = speedCopy(grade);
   card.dataset.tone = grade === "poor" ? "poor" : grade;
   card.innerHTML = `
@@ -874,6 +885,7 @@ function renderRequestFailed(message = "") {
 function renderTestResult(data, options = {}) {
   const forceFinished = Boolean(data.phase === "quick" && data.pendingSupplement);
   const showFinalScore = options.showFinalScore !== false && (!data.pendingSupplement || forceFinished);
+  data.score = capScoreBySpeed(Number(data.score || 0), speedGradeForData(data));
   if (forceFinished) {
     data.pendingSupplement = false;
     const streamCheck = data.checks?.find((item) => item.key === "stream");
