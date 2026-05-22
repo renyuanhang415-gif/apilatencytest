@@ -352,6 +352,29 @@ function injectSpeedScoreStyles() {
       opacity: .82;
       line-height: 1.5;
     }
+    .speed-score-reasons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .speed-score-reason {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .64);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .speed-score-reason-label {
+      opacity: .78;
+    }
+    .speed-score-reason-title {
+      opacity: .82;
+    }
     .speed-score-badge {
       display: inline-flex;
       align-items: center;
@@ -464,6 +487,32 @@ function speedGradeForData(data) {
   return speedGrade(latencyMs, tokensPerSecond, streamingOk);
 }
 
+function speedLimitReasons(data, grade) {
+  if (grade === "excellent") return [];
+  const latencyMs = data.summary?.latencyMs || {};
+  const tokensPerSecond = data.summary?.tokens?.perSecond;
+  const streamingOk = data.summary?.supported?.streaming !== false;
+  const reasons = [];
+  const add = (label, value, limit) => reasons.push({ label, value, limit });
+
+  if (!streamingOk) {
+    add("Streaming", "not supported", "required");
+  }
+  if ((latencyMs.chat ?? 99999) > 2500) {
+    add("Latency", fmtMs(latencyMs.chat), "needs 2.5s or less");
+  }
+  if ((latencyMs.streamingFirstToken ?? 99999) > 1500) {
+    add("TTFT", fmtMs(latencyMs.streamingFirstToken), "needs 1.5s or less");
+  }
+  if ((latencyMs.streamingTotal ?? 99999) > 5000) {
+    add("Streaming total", fmtMs(latencyMs.streamingTotal), "needs 5.0s or less");
+  }
+  if (Number.isFinite(tokensPerSecond) && tokensPerSecond < 30) {
+    add("Output speed", `${tokensPerSecond} tokens/sec`, "needs 30+ tokens/sec");
+  }
+  return reasons.slice(0, 3);
+}
+
 function capScoreBySpeed(score, grade) {
   if (grade === "excellent") return score;
   if (grade === "good") return Math.min(score, 97);
@@ -477,11 +526,21 @@ function renderSpeedScore(data) {
   if (!card) return;
   const grade = speedGradeForData(data);
   const copy = speedCopy(grade);
+  const reasons = speedLimitReasons(data, grade);
+  const reasonHtml = reasons.length
+    ? `<div class="speed-score-reasons" aria-label="Why not Excellent"><span class="speed-score-reason speed-score-reason-title">Why not Excellent</span>${reasons
+        .map(
+          (reason) =>
+            `<span class="speed-score-reason"><span class="speed-score-reason-label">${reason.label}</span>${reason.value} · ${reason.limit}</span>`
+        )
+        .join("")}</div>`
+    : "";
   card.dataset.tone = grade === "poor" ? "poor" : grade;
   card.innerHTML = `
     <div>
       <strong>${copy.title}</strong>
       <p>${copy.detail}</p>
+      ${reasonHtml}
     </div>
     <span class="speed-score-badge">${copy.badge}</span>
   `;
