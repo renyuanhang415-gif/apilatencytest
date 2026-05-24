@@ -35,6 +35,10 @@
     {
       "source": "/en/contact",
       "destination": "/contact-en.html"
+    },
+    {
+      "source": "/openai-api-latency-test",
+      "destination": "/openai-api-latency-test.html"
     }
   ],
   "functions": {

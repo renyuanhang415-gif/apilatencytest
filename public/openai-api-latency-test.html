@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenAI API Latency Test - Check TTFT, Streaming, and Output Speed</title>
+    <meta
+      name="description"
+      content="Test OpenAI-compatible API endpoints for latency, TTFT, streaming behavior, output speed, model access, empty output, and model mismatch before integration."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="canonical" href="https://apilatencytest.com/openai-api-latency-test" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WJSZRPQLHE');
+    </script>
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?d95cd812d8e048c3a71a6d6324b187d0";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="site-shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark"></span><span>AI API Latency Test</span></div>
+        <nav class="nav">
+          <a href="/">Tool</a>
+          <a href="/openai-api-validator">OpenAI API Validator</a>
+          <a href="/openai-compatible-api-checker">Compatible API Checker</a>
+          <a class="active" href="/openai-api-latency-test">API Latency Test</a>
+        </nav>
+      </header>
+      <section class="tool-map" aria-label="Tool types">
+        <a class="tool-map-item is-active" href="/openai-api-latency-test">
+          <strong>API Latency Test</strong>
+          <span>Checks if it feels fast.</span>
+        </a>
+        <a class="tool-map-item" href="/openai-api-validator">
+          <strong>API Validator</strong>
+          <span>Checks if it works.</span>
+        </a>
+        <a class="tool-map-item" href="/openai-compatible-api-checker">
+          <strong>Compatible Checker</strong>
+          <span>Checks if it looks like OpenAI.</span>
+        </a>
+      </section>
+      <section class="page-band">
+        <h2>OpenAI API Latency Test</h2>
+        <p>
+          HTTP 200 is not enough. Before integrating an OpenAI-compatible API endpoint, test whether it is fast,
+          streamable, usable, and actually returns the model behavior you expect.
+        </p>
+        <div class="page-cta">
+          <a class="btn btn-primary" href="/#test-tool">Run the API latency test</a>
+        </div>
+      </section>
+      <section class="page-band">
+        <h2>What This Test Checks</h2>
+        <p>
+          The test checks /v1/models, chat completions, streaming support, TTFT, total latency, tokens per second,
+          empty output, model access, and model mismatch signals.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>Why OpenAI API Latency Matters</h2>
+        <p>
+          A relay, gateway, or proxy can accept the request and still feel slow in a real chat app. Slow first tokens,
+          weak output speed, or unstable streaming can make a technically valid endpoint unusable for production.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>TTFT vs Total Latency</h2>
+        <p>
+          TTFT is the time to first token, which affects how quickly the user sees the answer begin. Total latency is
+          the full time to complete the response. For streaming LLM apps, both numbers matter.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>Common Problems This Can Catch</h2>
+        <p>
+          Some endpoints return HTTP 200 but produce empty output, stream very slowly, list a model that cannot be used,
+          or route a request to a different model family than the one selected.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>FAQ</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Is this only for the official OpenAI API?</summary>
+            <p>No. It is designed for OpenAI-compatible APIs, including relays, proxies, gateways, and provider endpoints that expose OpenAI-style paths.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What is a good TTFT?</summary>
+            <p>Lower is better. The right threshold depends on model size and use case, but a fast first token is important for interactive chat apps.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Why test streaming separately?</summary>
+            <p>Some APIs can complete a normal chat request but fail, delay, or format streaming chunks incorrectly.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can a fast endpoint still be risky?</summary>
+            <p>Yes. Fast empty output, model mismatch, or broken response shape is still a bad result, so the test looks beyond speed alone.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
