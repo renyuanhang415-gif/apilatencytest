@@ -9,6 +9,7 @@
       content="Check whether an API endpoint behaves like an OpenAI-compatible API by testing models, chat completions, and streaming chunks."
     />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/seo-landing.css" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
@@ -54,14 +55,51 @@
           <span>Checks if it looks like OpenAI.</span>
         </a>
       </section>
-      <section class="page-band">
-        <h2>OpenAI Compatible API Checker</h2>
-        <p>
-          Use this checker when an endpoint claims to be OpenAI-compatible and you want to verify the practical parts:
-          model listing, chat completions, response shape, and streaming behavior.
-        </p>
-        <div class="page-cta">
-          <a class="btn btn-primary" href="/#test-tool">Run the API test</a>
+      <section class="seo-hero">
+        <div>
+          <p class="seo-kicker">OpenAI-compatible API checker</p>
+          <h1>Check whether an endpoint really behaves like OpenAI.</h1>
+          <p class="seo-lede">
+            Verify the practical parts of OpenAI compatibility: model listing, chat completions, response shape,
+            streaming chunks, and whether a claimed model family behaves as expected.
+          </p>
+          <div class="seo-actions">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the API test</a>
+            <a class="btn btn-secondary btn-large" href="#example-result">See compatibility checks</a>
+          </div>
+          <div class="seo-proof-row" aria-label="Compatibility checks">
+            <span>OpenAI-style paths</span>
+            <span>Choices shape</span>
+            <span>SSE chunks</span>
+            <span>Model family</span>
+          </div>
+        </div>
+        <aside class="seo-preview-card is-screenshot" aria-label="Real OpenAI-compatible API check result screenshot">
+          <div class="seo-preview-top">
+            <div class="seo-preview-title">
+              <strong>Real compatibility result</strong>
+              <span>OpenAI-style checks with model and streaming signals</span>
+            </div>
+            <span class="seo-status seo-status-watch">Review</span>
+          </div>
+          <img class="seo-real-shot" src="/assets/seo/good-throughput-result.png" alt="OpenAI-compatible API checker result showing model availability, protocol consistency, response structure, streaming quality, and speed explanation." />
+          <div class="seo-shot-caption">The checker makes protocol, model profile, response shape, and streaming behavior visible.</div>
+        </aside>
+      </section>
+      <section class="page-band" id="example-result">
+        <div class="seo-section-grid">
+          <div>
+            <h2>Make compatibility visible</h2>
+            <p>
+              Some gateways accept OpenAI-style payloads but fail streaming, return odd chunks, or expose model names
+              that do not behave like the expected model family.
+            </p>
+          </div>
+          <div class="seo-screenshot-card" aria-label="Real OpenAI compatibility check screenshot">
+            <div class="seo-window-bar"><span></span><span></span><span></span></div>
+            <img class="seo-real-shot" src="/assets/seo/good-throughput-result.png" alt="OpenAI-compatible API checker result showing model availability, protocol consistency, response structure, streaming quality, and speed explanation." loading="lazy" />
+            <div class="seo-shot-caption">Compatibility checks look beyond endpoint status and show model, response, and streaming signals.</div>
+          </div>
         </div>
       </section>
       <section class="page-band">
@@ -106,6 +144,13 @@
             <p>Yes. Compatibility checks the API shape. Latency checks the user experience.</p>
           </details>
         </div>
+      </section>
+      <section class="seo-final-cta">
+        <div>
+          <h2>Check compatibility before switching providers.</h2>
+          <p>Test OpenAI-style paths, chat completions, streaming chunks, and model behavior in one place.</p>
+        </div>
+        <a class="btn btn-primary btn-large" href="/#test-tool">Check an endpoint</a>
       </section>
     </main>
   </body>

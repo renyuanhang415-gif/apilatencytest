@@ -9,6 +9,7 @@
       content="Test OpenAI-compatible API endpoints for latency, TTFT, streaming behavior, output speed, model access, empty output, and model mismatch before integration."
     />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/seo-landing.css" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
@@ -55,14 +56,51 @@
           <span>Checks if it looks like OpenAI.</span>
         </a>
       </section>
-      <section class="page-band">
-        <h2>OpenAI API Latency Test</h2>
-        <p>
-          HTTP 200 is not enough. Before integrating an OpenAI-compatible API endpoint, test whether it is fast,
-          streamable, usable, and actually returns the model behavior you expect.
-        </p>
-        <div class="page-cta">
-          <a class="btn btn-primary" href="/#test-tool">Run the API latency test</a>
+      <section class="seo-hero">
+        <div>
+          <p class="seo-kicker">OpenAI-compatible API latency test</p>
+          <h1>HTTP 200 is not enough.</h1>
+          <p class="seo-lede">
+            Before integrating an OpenAI-compatible API endpoint, test latency, TTFT, streaming behavior, output speed,
+            model access, empty output, and model mismatch signals in one run.
+          </p>
+          <div class="seo-actions">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the API latency test</a>
+            <a class="btn btn-secondary btn-large" href="#example-result">View example result</a>
+          </div>
+          <div class="seo-proof-row" aria-label="Checks included">
+            <span>/v1/models</span>
+            <span>Streaming</span>
+            <span>TTFT</span>
+            <span>Tokens/sec</span>
+          </div>
+        </div>
+        <aside class="seo-preview-card is-screenshot" aria-label="Real API latency result screenshot">
+          <div class="seo-preview-top">
+            <div class="seo-preview-title">
+              <strong>Real endpoint result</strong>
+              <span>100% score with fast TTFT and strong output speed</span>
+            </div>
+            <span class="seo-status">Excellent</span>
+          </div>
+          <img class="seo-real-shot" src="/assets/seo/excellent-result.png" alt="API latency test result showing a 100 percent excellent score, pass checks, 189 ms TTFT, and 123.4 tokens per second." />
+          <div class="seo-shot-caption">Models, chat, streaming, speed, and QA checks in one report.</div>
+        </aside>
+      </section>
+      <section class="page-band" id="example-result">
+        <div class="seo-section-grid">
+          <div>
+            <h2>See the kind of result you get</h2>
+            <p>
+              The report explains why an endpoint scored well or poorly, so you can share a screenshot with a clear
+              reason instead of just saying an API feels slow.
+            </p>
+          </div>
+          <div class="seo-screenshot-card" aria-label="Real API latency report screenshot">
+            <div class="seo-window-bar"><span></span><span></span><span></span></div>
+            <img class="seo-real-shot" src="/assets/seo/excellent-result.png" alt="API latency test result showing a 100 percent excellent score, pass checks, 189 ms TTFT, and 123.4 tokens per second." loading="lazy" />
+            <div class="seo-shot-caption">A real run with 100% score, fast TTFT, short streaming time, and strong output speed.</div>
+          </div>
         </div>
       </section>
       <section class="page-band">
@@ -113,6 +151,13 @@
             <p>Yes. Fast empty output, model mismatch, or broken response shape is still a bad result, so the test looks beyond speed alone.</p>
           </details>
         </div>
+      </section>
+      <section class="seo-final-cta">
+        <div>
+          <h2>Test your endpoint before you trust it.</h2>
+          <p>Run a quick check for latency, streaming, output speed, model access, and response quality.</p>
+        </div>
+        <a class="btn btn-primary btn-large" href="/#test-tool">Start testing</a>
       </section>
     </main>
   </body>

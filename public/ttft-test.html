@@ -9,6 +9,7 @@
       content="Measure TTFT for OpenAI-compatible APIs and compare first token latency with total latency, streaming behavior, output speed, and response quality."
     />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/seo-landing.css" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
@@ -55,14 +56,51 @@
           <span>Checks first-token speed.</span>
         </a>
       </section>
-      <section class="page-band">
-        <h2>TTFT Test for OpenAI-Compatible APIs</h2>
-        <p>
-          TTFT means time to first token. It measures how long a user waits before a streaming LLM response starts,
-          which can matter more than total completion time in chat, agent, and developer-tool experiences.
-        </p>
-        <div class="page-cta">
-          <a class="btn btn-primary" href="/#test-tool">Run the TTFT test</a>
+      <section class="seo-hero">
+        <div>
+          <p class="seo-kicker">TTFT test for streaming APIs</p>
+          <h1>Measure how fast the first token appears.</h1>
+          <p class="seo-lede">
+            TTFT means time to first token. It shows how long users wait before a streaming LLM response starts, which
+            often matters more than the final completion time.
+          </p>
+          <div class="seo-actions">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the TTFT test</a>
+            <a class="btn btn-secondary btn-large" href="#example-result">See TTFT example</a>
+          </div>
+          <div class="seo-proof-row" aria-label="TTFT related metrics">
+            <span>First token</span>
+            <span>Total latency</span>
+            <span>Streaming total</span>
+            <span>Tokens/sec</span>
+          </div>
+        </div>
+        <aside class="seo-preview-card is-screenshot" aria-label="Real TTFT and output speed result screenshot">
+          <div class="seo-preview-top">
+            <div class="seo-preview-title">
+              <strong>Real TTFT result</strong>
+              <span>183 ms first token, but output speed explains the score</span>
+            </div>
+            <span class="seo-status">Good</span>
+          </div>
+          <img class="seo-real-shot" src="/assets/seo/good-throughput-result.png" alt="TTFT test result showing 97 percent score, 183 ms TTFT, 3.8 seconds streaming total, and 21.6 tokens per second." />
+          <div class="seo-shot-caption">TTFT, streaming total, and tokens/sec are shown separately so the bottleneck is clear.</div>
+        </aside>
+      </section>
+      <section class="page-band" id="example-result">
+        <div class="seo-section-grid">
+          <div>
+            <h2>TTFT is only the beginning</h2>
+            <p>
+              A low first-token delay makes an app feel responsive, but users still care whether the rest of the answer
+              streams smoothly. The report separates first token latency from total response time.
+            </p>
+          </div>
+          <div class="seo-screenshot-card" aria-label="Real TTFT and output speed report screenshot">
+            <div class="seo-window-bar"><span></span><span></span><span></span></div>
+            <img class="seo-real-shot" src="/assets/seo/good-throughput-result.png" alt="TTFT test result showing 97 percent score, 183 ms TTFT, 3.8 seconds streaming total, and 21.6 tokens per second." loading="lazy" />
+            <div class="seo-shot-caption">A fast first token can still be limited by output speed, which is why the report explains the score.</div>
+          </div>
         </div>
       </section>
       <section class="page-band">
@@ -106,6 +144,13 @@
             <p>Yes, but compare similar model sizes and providers. Larger reasoning models often have naturally higher first-token latency.</p>
           </details>
         </div>
+      </section>
+      <section class="seo-final-cta">
+        <div>
+          <h2>Check first-token speed before users notice it.</h2>
+          <p>Measure TTFT alongside streaming total time and output speed in one quick test.</p>
+        </div>
+        <a class="btn btn-primary btn-large" href="/#test-tool">Measure TTFT now</a>
       </section>
     </main>
   </body>

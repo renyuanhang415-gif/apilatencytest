@@ -9,6 +9,7 @@
       content="Test an OpenAI-compatible API relay for model access, chat completions, streaming, TTFT, latency, output speed, empty output, and model mismatch risks."
     />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/seo-landing.css" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
@@ -55,14 +56,51 @@
           <span>Checks first-token speed.</span>
         </a>
       </section>
-      <section class="page-band">
-        <h2>API Relay Test</h2>
-        <p>
-          HTTP 200 does not prove an API relay is production-ready. Test whether an OpenAI-compatible relay can list
-          models, complete chat requests, stream correctly, return usable output, and keep latency under control.
-        </p>
-        <div class="page-cta">
-          <a class="btn btn-primary" href="/#test-tool">Run the API relay test</a>
+      <section class="seo-hero">
+        <div>
+          <p class="seo-kicker">API relay quality test</p>
+          <h1>Find risky API relays before they reach production.</h1>
+          <p class="seo-lede">
+            Test whether an OpenAI-compatible relay can list models, complete chat requests, stream correctly, return
+            usable output, and route to the model family you expected.
+          </p>
+          <div class="seo-actions">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the API relay test</a>
+            <a class="btn btn-secondary btn-large" href="#example-result">View risk example</a>
+          </div>
+          <div class="seo-proof-row" aria-label="Relay risks checked">
+            <span>Empty output</span>
+            <span>Model mismatch</span>
+            <span>Slow streaming</span>
+            <span>Unavailable models</span>
+          </div>
+        </div>
+        <aside class="seo-preview-card is-screenshot" aria-label="Real API relay watch result screenshot">
+          <div class="seo-preview-top">
+            <div class="seo-preview-title">
+              <strong>Real relay watch result</strong>
+              <span>HTTP 200 passed, but speed still needs review</span>
+            </div>
+            <span class="seo-status seo-status-watch">Watch</span>
+          </div>
+          <img class="seo-real-shot" src="/assets/seo/watch-result.png" alt="API relay test result showing a 74 percent watch score with HTTP 200 checks but slower latency, TTFT, and output speed." />
+          <div class="seo-shot-caption">A relay can pass protocol checks and still be slow enough to deserve caution.</div>
+        </aside>
+      </section>
+      <section class="page-band" id="example-result">
+        <div class="seo-section-grid">
+          <div>
+            <h2>Catch the problems HTTP checks miss</h2>
+            <p>
+              A relay can return HTTP 200 while producing empty output, broken stream chunks, or answers from a
+              different model family. The result view makes those failures visible.
+            </p>
+          </div>
+          <div class="seo-screenshot-card" aria-label="Real API relay watch result screenshot">
+            <div class="seo-window-bar"><span></span><span></span><span></span></div>
+            <img class="seo-real-shot" src="/assets/seo/watch-result.png" alt="API relay test result showing a 74 percent watch score with HTTP 200 checks but slower latency, TTFT, and output speed." loading="lazy" />
+            <div class="seo-shot-caption">HTTP 200 passed, but the score still warns about slower latency, TTFT, and output speed.</div>
+          </div>
         </div>
       </section>
       <section class="page-band">
@@ -106,6 +144,13 @@
             <p>Yes. Some relays handle normal chat completions but break or delay streaming responses.</p>
           </details>
         </div>
+      </section>
+      <section class="seo-final-cta">
+        <div>
+          <h2>Do not buy relay credits blind.</h2>
+          <p>Run a quick relay check before switching a real app or sharing an endpoint with your team.</p>
+        </div>
+        <a class="btn btn-primary btn-large" href="/#test-tool">Test a relay now</a>
       </section>
     </main>
   </body>

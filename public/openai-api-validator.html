@@ -9,6 +9,7 @@
       content="Validate an OpenAI or OpenAI-compatible API key, base URL, models endpoint, chat completions endpoint, and streaming support."
     />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/seo-landing.css" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
@@ -54,15 +55,51 @@
           <span>Checks if it looks like OpenAI.</span>
         </a>
       </section>
-      <section class="page-band">
-        <h2>OpenAI API Validator</h2>
-        <p>
-          Use this page when you want to confirm that an OpenAI API key, relay key, or compatible endpoint can make the
-          basic requests a real application needs. The goal is simple: find out whether the endpoint works before you
-          spend time debugging your own app.
-        </p>
-        <div class="page-cta">
-          <a class="btn btn-primary" href="/#test-tool">Run the API test</a>
+      <section class="seo-hero">
+        <div>
+          <p class="seo-kicker">OpenAI API validator</p>
+          <h1>Validate the API before debugging your app.</h1>
+          <p class="seo-lede">
+            Check whether an OpenAI API key, relay key, or compatible endpoint can make the basic requests a real app
+            needs: models, chat completions, streaming, and response shape.
+          </p>
+          <div class="seo-actions">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the API test</a>
+            <a class="btn btn-secondary btn-large" href="#example-result">View validation result</a>
+          </div>
+          <div class="seo-proof-row" aria-label="Validation checks">
+            <span>API key</span>
+            <span>Base URL</span>
+            <span>/v1/models</span>
+            <span>Chat completions</span>
+          </div>
+        </div>
+        <aside class="seo-preview-card is-screenshot" aria-label="Real API validation result screenshot">
+          <div class="seo-preview-top">
+            <div class="seo-preview-title">
+              <strong>Real validation result</strong>
+              <span>Models, chat, response structure, and streaming all pass</span>
+            </div>
+            <span class="seo-status">Valid</span>
+          </div>
+          <img class="seo-real-shot" src="/assets/seo/excellent-result.png" alt="API validator result showing model availability, protocol consistency, response structure, and streaming quality all passing." />
+          <div class="seo-shot-caption">A valid endpoint should pass model access, chat, response shape, and streaming checks.</div>
+        </aside>
+      </section>
+      <section class="page-band" id="example-result">
+        <div class="seo-section-grid">
+          <div>
+            <h2>Know whether the endpoint works at all</h2>
+            <p>
+              The validator separates connection and compatibility problems from app bugs, so you can tell whether the
+              issue is your code, your key, or the provider endpoint.
+            </p>
+          </div>
+          <div class="seo-screenshot-card" aria-label="Real API validation screenshot">
+            <div class="seo-window-bar"><span></span><span></span><span></span></div>
+            <img class="seo-real-shot" src="/assets/seo/excellent-result.png" alt="API validator result showing model availability, protocol consistency, response structure, and streaming quality all passing." loading="lazy" />
+            <div class="seo-shot-caption">The tool checks model availability, protocol consistency, response structure, and streaming quality.</div>
+          </div>
         </div>
       </section>
       <section class="page-band">
@@ -106,6 +143,13 @@
             <p>No. The tool uses the key for the live request and does not save it.</p>
           </details>
         </div>
+      </section>
+      <section class="seo-final-cta">
+        <div>
+          <h2>Start with validation, then test quality.</h2>
+          <p>Confirm the API works before checking latency, streaming, and output speed.</p>
+        </div>
+        <a class="btn btn-primary btn-large" href="/#test-tool">Validate an API</a>
       </section>
     </main>
   </body>
