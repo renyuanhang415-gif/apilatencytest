@@ -25,6 +25,8 @@ const pages = {
   "/openai-api-validator": "openai-api-validator.html",
   "/openai-compatible-api-checker": "openai-compatible-api-checker.html",
   "/openai-api-latency-test": "openai-api-latency-test.html",
+  "/api-relay-test": "api-relay-test.html",
+  "/ttft-test": "ttft-test.html",
 };
 
 const contentTypes = {

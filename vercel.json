@@ -39,6 +39,14 @@
     {
       "source": "/openai-api-latency-test",
       "destination": "/openai-api-latency-test.html"
+    },
+    {
+      "source": "/api-relay-test",
+      "destination": "/api-relay-test.html"
+    },
+    {
+      "source": "/ttft-test",
+      "destination": "/ttft-test.html"
     }
   ],
   "functions": {

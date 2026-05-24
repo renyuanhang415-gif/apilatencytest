@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TTFT Test for OpenAI-Compatible APIs - Measure First Token Latency</title>
+    <meta
+      name="description"
+      content="Measure TTFT for OpenAI-compatible APIs and compare first token latency with total latency, streaming behavior, output speed, and response quality."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="canonical" href="https://apilatencytest.com/ttft-test" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WJSZRPQLHE');
+    </script>
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?d95cd812d8e048c3a71a6d6324b187d0";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="site-shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark"></span><span>AI API Latency Test</span></div>
+        <nav class="nav">
+          <a href="/">Tool</a>
+          <a href="/openai-api-latency-test">API Latency Test</a>
+          <a href="/api-relay-test">API Relay Test</a>
+          <a class="active" href="/ttft-test">TTFT Test</a>
+        </nav>
+      </header>
+      <section class="tool-map" aria-label="Tool types">
+        <a class="tool-map-item" href="/openai-api-latency-test">
+          <strong>API Latency Test</strong>
+          <span>Checks if it feels fast.</span>
+        </a>
+        <a class="tool-map-item" href="/api-relay-test">
+          <strong>API Relay Test</strong>
+          <span>Checks if a relay is usable.</span>
+        </a>
+        <a class="tool-map-item is-active" href="/ttft-test">
+          <strong>TTFT Test</strong>
+          <span>Checks first-token speed.</span>
+        </a>
+      </section>
+      <section class="page-band">
+        <h2>TTFT Test for OpenAI-Compatible APIs</h2>
+        <p>
+          TTFT means time to first token. It measures how long a user waits before a streaming LLM response starts,
+          which can matter more than total completion time in chat, agent, and developer-tool experiences.
+        </p>
+        <div class="page-cta">
+          <a class="btn btn-primary" href="/#test-tool">Run the TTFT test</a>
+        </div>
+      </section>
+      <section class="page-band">
+        <h2>What TTFT Measures</h2>
+        <p>
+          TTFT captures the delay between sending a chat completion request and receiving the first streamed content
+          token. It includes routing, queueing, upstream model startup, and network delay.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>TTFT vs Latency vs Tokens per Second</h2>
+        <p>
+          TTFT is about when the answer begins. Total latency is about when the answer finishes. Tokens per second is
+          about how quickly the answer continues after it starts.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>Why First Token Latency Matters</h2>
+        <p>
+          A low TTFT makes an API feel responsive. A high TTFT can make users think a chat app is stuck, even if the
+          final answer eventually arrives at a reasonable speed.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>FAQ</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Is TTFT the same as full response time?</summary>
+            <p>No. TTFT measures the first token. Full response time measures the whole completion.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Does TTFT only matter for streaming?</summary>
+            <p>It matters most for streaming, because users can see the response begin before the full answer is done.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can an API have good TTFT but poor output speed?</summary>
+            <p>Yes. An endpoint can start quickly but generate the rest of the answer slowly, so both metrics matter.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Should I compare TTFT across models?</summary>
+            <p>Yes, but compare similar model sizes and providers. Larger reasoning models often have naturally higher first-token latency.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

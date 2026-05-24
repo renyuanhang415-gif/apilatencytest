@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>API Relay Test - Check OpenAI-Compatible Relay Quality</title>
+    <meta
+      name="description"
+      content="Test an OpenAI-compatible API relay for model access, chat completions, streaming, TTFT, latency, output speed, empty output, and model mismatch risks."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="canonical" href="https://apilatencytest.com/api-relay-test" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WJSZRPQLHE');
+    </script>
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?d95cd812d8e048c3a71a6d6324b187d0";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="site-shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark"></span><span>AI API Latency Test</span></div>
+        <nav class="nav">
+          <a href="/">Tool</a>
+          <a href="/openai-api-latency-test">API Latency Test</a>
+          <a class="active" href="/api-relay-test">API Relay Test</a>
+          <a href="/ttft-test">TTFT Test</a>
+        </nav>
+      </header>
+      <section class="tool-map" aria-label="Tool types">
+        <a class="tool-map-item" href="/openai-api-latency-test">
+          <strong>API Latency Test</strong>
+          <span>Checks if it feels fast.</span>
+        </a>
+        <a class="tool-map-item is-active" href="/api-relay-test">
+          <strong>API Relay Test</strong>
+          <span>Checks if a relay is usable.</span>
+        </a>
+        <a class="tool-map-item" href="/ttft-test">
+          <strong>TTFT Test</strong>
+          <span>Checks first-token speed.</span>
+        </a>
+      </section>
+      <section class="page-band">
+        <h2>API Relay Test</h2>
+        <p>
+          HTTP 200 does not prove an API relay is production-ready. Test whether an OpenAI-compatible relay can list
+          models, complete chat requests, stream correctly, return usable output, and keep latency under control.
+        </p>
+        <div class="page-cta">
+          <a class="btn btn-primary" href="/#test-tool">Run the API relay test</a>
+        </div>
+      </section>
+      <section class="page-band">
+        <h2>What Relay Quality Means</h2>
+        <p>
+          A good relay should expose OpenAI-style endpoints, route requests to the expected model family, support
+          streaming chunks, avoid empty output, and keep TTFT and output speed within a usable range.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>Relay Problems This Test Looks For</h2>
+        <p>
+          The test can surface relays that list unavailable models, return HTTP 200 with no useful answer, stream too
+          slowly, fail /v1/models, or route a claimed Gemini, Claude, GPT, or DeepSeek model to another family.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>Who Should Use It</h2>
+        <p>
+          Use it before buying relay credits, switching a production app to a new gateway, comparing proxy providers,
+          or sharing an OpenAI-compatible endpoint with a team.
+        </p>
+      </section>
+      <section class="page-band">
+        <h2>FAQ</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Is an API relay the same as an official model provider?</summary>
+            <p>No. A relay usually forwards requests to one or more upstream model providers through an OpenAI-compatible interface.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Why can a relay pass HTTP checks but fail quality checks?</summary>
+            <p>HTTP status only shows that the server responded. It does not prove streaming, output speed, model routing, or response content quality.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can this test prove a model is fake?</summary>
+            <p>No single prompt can prove that absolutely, but mismatched model-family answers are useful risk signals for further checking.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Should I test both streaming and non-streaming requests?</summary>
+            <p>Yes. Some relays handle normal chat completions but break or delay streaming responses.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
