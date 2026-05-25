@@ -54,6 +54,9 @@ let selectedModelMode = "fixed";
 let selectedCommonModelKey = "gpt55";
 const queryParams = new URLSearchParams(window.location.search);
 const debugMode = queryParams.get("debug") === "1";
+if (!debugMode && debugPanelEl) {
+  debugPanelEl.remove();
+}
 
 const locale = (document.body.dataset.locale || document.documentElement.lang || "en").toLowerCase().startsWith("zh")
   ? "zh"
