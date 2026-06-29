@@ -1136,6 +1136,93 @@ h1 {
   border-top: 1px solid var(--line);
 }
 
+.guide-page {
+  display: grid;
+  gap: 22px;
+  padding: 24px 0 32px;
+}
+
+.guide-hero {
+  max-width: 820px;
+}
+
+.guide-section {
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+
+.guide-section h2 {
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.guide-section p {
+  max-width: 820px;
+  color: var(--muted);
+}
+
+.guide-steps {
+  display: grid;
+  gap: 10px;
+  max-width: 860px;
+  margin: 0;
+  padding-left: 22px;
+}
+
+.guide-steps li {
+  color: var(--muted);
+}
+
+.guide-steps strong {
+  color: var(--text);
+}
+
+.guide-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.guide-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.guide-table th,
+.guide-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.guide-table th {
+  background: #f8f9fb;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.guide-table td {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.guide-table code,
+.guide-steps code {
+  border-radius: 6px;
+  padding: 2px 5px;
+  background: var(--soft);
+  color: var(--text);
+}
+
+.guide-demo {
+  padding: 22px;
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #faf8ff, #ffffff);
+}
+
 .faq-list {
   display: grid;
   gap: 0;

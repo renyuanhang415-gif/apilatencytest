@@ -1,0 +1,187 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How to Test an OpenAI-Compatible API - Models, Chat, Streaming</title>
+    <meta
+      name="description"
+      content="Learn how to test an OpenAI-compatible API endpoint for model access, chat completions, streaming support, latency, and response shape."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" href="/favicon.ico" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="canonical" href="https://apilatencytest.com/guides/test-openai-compatible-api" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WJSZRPQLHE');
+    </script>
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?d95cd812d8e048c3a71a6d6324b187d0";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="header-actions">
+          <nav class="nav">
+            <a href="/">Quality Test</a>
+            <a href="/en/pricing">Pricing</a>
+            <a class="header-cta" href="/en/contact">Contact</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switch">
+            <a class="active" href="/en">EN</a>
+            <a href="/zh">涓枃</a>
+          </div>
+        </div>
+      </header>
+
+      <article class="guide-page">
+        <header class="guide-hero">
+          <p class="eyebrow">OpenAI-compatible API guide</p>
+          <h1>How to Test an OpenAI-Compatible API</h1>
+          <p class="lede">
+            To test an OpenAI-compatible API, check whether it supports model listing, chat completions, streaming
+            responses, OpenAI-style payloads, and acceptable latency before you use it in an app or buy credits.
+          </p>
+          <div class="page-cta">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the checker</a>
+            <a class="btn btn-secondary btn-large" href="/?baseUrl=https%3A%2F%2Fapi.example.com%2Fv1&model=gpt-5.5">Try a prefilled link</a>
+          </div>
+        </header>
+
+        <section class="guide-section">
+          <h2>Why This Check Matters</h2>
+          <p>
+            Many relays, gateways, and proxy services say they are OpenAI-compatible. In practice, compatibility can be
+            partial: a normal chat request may work while streaming fails, the model list may be missing, or the
+            response shape may not match what OpenAI client libraries expect.
+          </p>
+          <p>
+            A quick health check helps you find these issues before you connect the endpoint to a product, agent
+            workflow, or long-running script.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2>Steps to Test an Endpoint</h2>
+          <ol class="guide-steps">
+            <li><strong>Confirm the base URL.</strong> Use the API root, such as <code>https://api.example.com/v1</code>, not a dashboard or register page.</li>
+            <li><strong>Check <code>/v1/models</code>.</strong> Make sure the endpoint can return a model list or at least accept the selected model id.</li>
+            <li><strong>Send a chat completion.</strong> Verify that a normal request returns a 2xx JSON response with a <code>choices</code> array.</li>
+            <li><strong>Test streaming.</strong> Send the same request with <code>stream: true</code> and look for server-sent event chunks.</li>
+            <li><strong>Measure latency and TTFT.</strong> Compare normal response latency with time to first streamed token.</li>
+            <li><strong>Inspect model behavior.</strong> Use a few control questions to catch obvious route or model-family mismatches.</li>
+          </ol>
+        </section>
+
+        <section class="guide-section">
+          <h2>What the Checker Looks For</h2>
+          <div class="guide-table-wrap">
+            <table class="guide-table">
+              <thead>
+                <tr>
+                  <th>Check</th>
+                  <th>What it means</th>
+                  <th>Good result</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Models endpoint</td>
+                  <td>Can the API list available models or accept the selected model?</td>
+                  <td>HTTP 200 and an OpenAI-style model payload</td>
+                </tr>
+                <tr>
+                  <td>Chat completion</td>
+                  <td>Can it answer a normal request?</td>
+                  <td>A JSON response with <code>choices[0].message.content</code></td>
+                </tr>
+                <tr>
+                  <td>Streaming</td>
+                  <td>Does <code>stream: true</code> return event-style chunks?</td>
+                  <td>Chunks that arrive as <code>data:</code> events</td>
+                </tr>
+                <tr>
+                  <td>Latency</td>
+                  <td>How long does the first normal response take?</td>
+                  <td>Lower is better and repeated tests should be stable</td>
+                </tr>
+                <tr>
+                  <td>TTFT</td>
+                  <td>How long until the first streamed token appears?</td>
+                  <td>Fast first-token time without proxy buffering</td>
+                </tr>
+                <tr>
+                  <td>Response shape</td>
+                  <td>Will OpenAI SDK-style code understand the response?</td>
+                  <td>Expected fields such as <code>choices</code>, <code>message</code>, and usage tokens</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="guide-section guide-demo">
+          <h2>Run the Check</h2>
+          <p>
+            Paste your API base URL, enter a low-scope test key, choose a model, then run the checker. The tool does not
+            store your API key; it is used only for the live request in your current test.
+          </p>
+          <div class="page-cta">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the checker</a>
+            <a class="btn btn-secondary btn-large" href="/openai-compatible-api-checker">Read about compatibility</a>
+          </div>
+        </section>
+
+        <section class="guide-section">
+          <h2>FAQ</h2>
+          <div class="faq-list">
+            <details class="faq-item" open>
+              <summary>What is an OpenAI-compatible API?</summary>
+              <p>It is an API that follows common OpenAI endpoint paths and payload shapes, so OpenAI client libraries can often connect to it with a custom base URL.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Is OpenAI-compatible the same as official OpenAI?</summary>
+              <p>No. A relay, proxy, or gateway can be compatible with OpenAI request formats without being an official OpenAI service.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Why does streaming fail even when chat works?</summary>
+              <p>Some providers implement normal chat completions but do not correctly support server-sent event streaming, or a proxy buffers the stream until the full response is ready.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Do I need an API key to test it?</summary>
+              <p>For a real endpoint test, yes. You can use a temporary or low-scope test key. You can also try the demo mode first to see what the result looks like.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Can this prove a provider is reliable?</summary>
+              <p>No single test can prove long-term reliability. Use it as a technical health check, then repeat tests over time before relying on a provider.</p>
+            </details>
+          </div>
+        </section>
+      </article>
+
+      <footer class="footer authority-footer">
+        <a class="footer-brand" href="/en"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="footer-links">
+          <a href="/">Checker</a>
+          <a href="/guides/test-openai-compatible-api">Guide</a>
+          <a href="/en/pricing">Pricing</a>
+          <a href="/en/contact">Contact</a>
+          <span>漏 2026</span>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
