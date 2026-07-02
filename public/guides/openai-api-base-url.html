@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>What Is an OpenAI API Base URL? How to Find and Test It</title>
+    <meta
+      name="description"
+      content="Learn what an OpenAI API base URL is, how it differs from a dashboard URL, and how to test a custom OpenAI-compatible endpoint before integration."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/seo-landing.css" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" href="/favicon.ico" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="canonical" href="https://apilatencytest.com/guides/openai-api-base-url" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WJSZRPQLHE');
+    </script>
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?d95cd812d8e048c3a71a6d6324b187d0";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="header-actions">
+          <nav class="nav">
+            <a href="/">Quality Test</a>
+            <a href="/en/pricing">Pricing</a>
+            <a class="header-cta" href="/en/contact">Contact</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switch">
+            <a class="active" href="/en">EN</a>
+            <a href="/zh">ZH</a>
+          </div>
+        </div>
+      </header>
+
+      <article class="guide-page">
+        <header class="guide-hero">
+          <p class="eyebrow">OpenAI-compatible API guide</p>
+          <h1>What Is an OpenAI API Base URL?</h1>
+          <p class="lede">
+            An OpenAI API base URL is the root endpoint your client sends API requests to, usually ending in
+            <code>/v1</code>. For OpenAI-compatible relays and gateways, the base URL replaces the official OpenAI API
+            host while keeping familiar paths such as <code>/v1/models</code> and <code>/v1/chat/completions</code>.
+          </p>
+          <div class="page-cta">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the checker</a>
+            <a class="btn btn-secondary btn-large" href="/?baseUrl=https%3A%2F%2Fapi.example.com%2Fv1&model=gpt-4o-mini">Try a prefilled base URL</a>
+          </div>
+        </header>
+
+        <section class="guide-section">
+          <h2>Base URL vs Dashboard URL</h2>
+          <p>
+            A dashboard URL is where you log in, manage credits, or create API keys. A base URL is the machine-readable
+            API root that SDKs and HTTP clients call. If you paste a dashboard page into an OpenAI client, requests will
+            usually fail because the client will append API paths to the wrong host.
+          </p>
+          <div class="guide-table-wrap">
+            <table class="guide-table">
+              <thead>
+                <tr>
+                  <th>URL type</th>
+                  <th>Example</th>
+                  <th>Use it in code?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Official OpenAI base URL</td>
+                  <td><code>https://api.openai.com/v1</code></td>
+                  <td>Yes, for official OpenAI requests</td>
+                </tr>
+                <tr>
+                  <td>Relay or gateway base URL</td>
+                  <td><code>https://api.example.com/v1</code></td>
+                  <td>Yes, if the provider is OpenAI-compatible</td>
+                </tr>
+                <tr>
+                  <td>Dashboard or billing page</td>
+                  <td><code>https://example.com/dashboard</code></td>
+                  <td>No, this is not an API endpoint</td>
+                </tr>
+                <tr>
+                  <td>Documentation page</td>
+                  <td><code>https://example.com/docs</code></td>
+                  <td>No, use it only to find the real base URL</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="guide-section">
+          <h2>Why Base URL Problems Happen</h2>
+          <p>
+            Base URL mistakes are common because every provider labels it differently. Some call it an API endpoint,
+            proxy URL, relay URL, compatible endpoint, gateway host, or server URL. The safest check is to test the
+            final path your client will call, not just whether the provider's website opens in a browser.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2>How to Check a Base URL</h2>
+          <ol class="guide-steps">
+            <li><strong>Find the API root.</strong> Look for a URL that ends in <code>/v1</code> or is documented as an OpenAI-compatible endpoint.</li>
+            <li><strong>Open the models path.</strong> The checker will try <code>/v1/models</code> to confirm the endpoint can expose or accept model access.</li>
+            <li><strong>Run a chat request.</strong> A valid base URL should work with an OpenAI-style chat completions payload.</li>
+            <li><strong>Test streaming.</strong> A relay can accept normal chat but still fail when <code>stream: true</code> is used.</li>
+            <li><strong>Save a share link.</strong> Share only the base URL and model, never the API key.</li>
+          </ol>
+        </section>
+
+        <section class="guide-section" id="example-result">
+          <h2>Example Result</h2>
+          <p>
+            A good base URL should pass model access, chat, streaming, and response-shape checks. Speed can still vary,
+            so test more than once before connecting a production app.
+          </p>
+          <div class="seo-screenshot-card" aria-label="OpenAI-compatible API base URL check example">
+            <div class="seo-window-bar"><span></span><span></span><span></span></div>
+            <img class="seo-real-shot" src="/assets/seo/good-throughput-result.png" alt="OpenAI-compatible API check result showing model access, streaming behavior, and response performance." loading="lazy" />
+            <div class="seo-shot-caption">Example report for an OpenAI-compatible endpoint with working streaming and response checks.</div>
+          </div>
+        </section>
+
+        <section class="guide-section guide-demo">
+          <h2>Run the Check</h2>
+          <p>
+            Paste the base URL, choose a model, and run a live compatibility check. You can also use demo mode first if
+            you do not want to enter an API key.
+          </p>
+          <div class="page-cta">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the checker</a>
+            <a class="btn btn-secondary btn-large" href="/guides/test-openai-compatible-api">Read the full testing guide</a>
+          </div>
+        </section>
+
+        <section class="guide-section">
+          <h2>FAQ</h2>
+          <div class="faq-list">
+            <details class="faq-item" open>
+              <summary>Does the base URL always end in /v1?</summary>
+              <p>For OpenAI-compatible APIs, it commonly ends in <code>/v1</code>. Some providers hide that detail in SDK examples, so follow the provider's API documentation and test the final endpoint.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Can I use a provider homepage as the base URL?</summary>
+              <p>No. A homepage or dashboard URL is meant for humans. Your app needs the API root that accepts OpenAI-style HTTP requests.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Why does /v1/models fail but chat works?</summary>
+              <p>Some relays do not expose model listing even though they accept a known model id. In that case, test chat and streaming with the exact model you plan to use.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Should I include my API key in a share link?</summary>
+              <p>No. Share links should include only safe values such as the base URL and model name. Never put an API key in a URL.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Is a working base URL enough for production?</summary>
+              <p>No. A working base URL proves the endpoint shape is usable, but you should still check latency, TTFT, streaming stability, and provider reliability over time.</p>
+            </details>
+          </div>
+        </section>
+      </article>
+
+      <footer class="footer authority-footer">
+        <a class="footer-brand" href="/en"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="footer-links">
+          <a href="/">Checker</a>
+          <a href="/guides/test-openai-compatible-api">Testing Guide</a>
+          <a href="/guides/openai-api-base-url">Base URL Guide</a>
+          <a href="/en/pricing">Pricing</a>
+          <a href="/en/contact">Contact</a>
+          <span>2026</span>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>

@@ -22,6 +22,7 @@ const pages = {
   "/zh/contact": "contact.html",
   "/en/contact": "contact-en.html",
   "/guides/test-openai-compatible-api": "guides/test-openai-compatible-api.html",
+  "/guides/openai-api-base-url": "guides/openai-api-base-url.html",
   "/openai-api-validator": "openai-api-validator.html",
   "/openai-compatible-api-checker": "openai-compatible-api-checker.html",
   "/openai-api-latency-test": "openai-api-latency-test.html",
