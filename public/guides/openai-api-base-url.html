@@ -14,6 +14,55 @@
     <link rel="icon" href="/favicon.ico" sizes="96x96" />
     <link rel="apple-touch-icon" href="/favicon.png" />
     <link rel="canonical" href="https://apilatencytest.com/guides/openai-api-base-url" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "What Is an OpenAI API Base URL?",
+        "description": "Learn what an OpenAI API base URL is, how it differs from a dashboard URL, and how to test a custom OpenAI-compatible endpoint before integration.",
+        "mainEntityOfPage": "https://apilatencytest.com/guides/openai-api-base-url"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Does the base URL always end in /v1?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "For OpenAI-compatible APIs, it commonly ends in /v1. Some providers hide that detail in SDK examples, so follow the provider's API documentation and test the final endpoint."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use a provider homepage as the base URL?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. A homepage or dashboard URL is meant for humans. Your app needs the API root that accepts OpenAI-style HTTP requests."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why does /v1/models fail but chat works?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Some relays do not expose model listing even though they accept a known model id. In that case, test chat and streaming with the exact model you plan to use."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Should I include my API key in a share link?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Share links should include only safe values such as the base URL and model name. Never put an API key in a URL."
+            }
+          }
+        ]
+      }
+    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -183,6 +232,7 @@
           <a href="/">Checker</a>
           <a href="/guides/test-openai-compatible-api">Testing Guide</a>
           <a href="/guides/openai-api-base-url">Base URL Guide</a>
+          <a href="/guides/openai-streaming-not-working">Streaming Guide</a>
           <a href="/en/pricing">Pricing</a>
           <a href="/en/contact">Contact</a>
           <span>2026</span>

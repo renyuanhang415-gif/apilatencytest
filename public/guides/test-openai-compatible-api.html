@@ -13,6 +13,55 @@
     <link rel="icon" href="/favicon.ico" sizes="96x96" />
     <link rel="apple-touch-icon" href="/favicon.png" />
     <link rel="canonical" href="https://apilatencytest.com/guides/test-openai-compatible-api" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "How to Test an OpenAI-Compatible API",
+        "description": "Learn how to test an OpenAI-compatible API endpoint for model access, chat completions, streaming support, latency, and response shape.",
+        "mainEntityOfPage": "https://apilatencytest.com/guides/test-openai-compatible-api"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is an OpenAI-compatible API?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It is an API that follows common OpenAI endpoint paths and payload shapes, so OpenAI client libraries can often connect to it with a custom base URL."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is OpenAI-compatible the same as official OpenAI?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. A relay, proxy, or gateway can be compatible with OpenAI request formats without being an official OpenAI service."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why does streaming fail even when chat works?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Some providers implement normal chat completions but do not correctly support server-sent event streaming, or a proxy buffers the stream until the full response is ready."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need an API key to test it?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "For a real endpoint test, yes. You can use a temporary or low-scope test key. You can also try the demo mode first to see what the result looks like."
+            }
+          }
+        ]
+      }
+    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -178,6 +227,7 @@
           <a href="/">Checker</a>
           <a href="/guides/test-openai-compatible-api">Testing Guide</a>
           <a href="/guides/openai-api-base-url">Base URL Guide</a>
+          <a href="/guides/openai-streaming-not-working">Streaming Guide</a>
           <a href="/en/pricing">Pricing</a>
           <a href="/en/contact">Contact</a>
           <span>漏 2026</span>

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenAI Streaming Not Working? How to Debug API Streaming</title>
+    <meta
+      name="description"
+      content="Debug OpenAI-compatible API streaming problems, including stream true failures, proxy buffering, missing SSE chunks, slow TTFT, and wrong base URLs."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/seo-landing.css" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" href="/favicon.ico" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="canonical" href="https://apilatencytest.com/guides/openai-streaming-not-working" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "OpenAI Streaming Not Working? How to Debug API Streaming",
+        "description": "Debug OpenAI-compatible API streaming problems, including stream true failures, proxy buffering, missing SSE chunks, slow TTFT, and wrong base URLs.",
+        "mainEntityOfPage": "https://apilatencytest.com/guides/openai-streaming-not-working"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why does streaming fail when normal chat works?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Some providers support normal chat completions but do not correctly implement server-sent event streaming, or a proxy buffers the stream until the full response is ready."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What should a streaming response look like?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A working OpenAI-style stream returns event chunks, usually as data lines, before the final done marker."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can a CDN or gateway break streaming?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Some proxies and gateways buffer responses, which makes streaming appear to arrive only after the full answer is complete."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is slow TTFT the same as broken streaming?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Slow time to first token means streaming eventually starts, while broken streaming means chunks are missing, buffered, malformed, or never delivered."
+            }
+          }
+        ]
+      }
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJSZRPQLHE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WJSZRPQLHE');
+    </script>
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?d95cd812d8e048c3a71a6d6324b187d0";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="header-actions">
+          <nav class="nav">
+            <a href="/">Quality Test</a>
+            <a href="/en/pricing">Pricing</a>
+            <a class="header-cta" href="/en/contact">Contact</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switch">
+            <a class="active" href="/en">EN</a>
+            <a href="/zh">ZH</a>
+          </div>
+        </div>
+      </header>
+
+      <article class="guide-page">
+        <header class="guide-hero">
+          <p class="eyebrow">OpenAI-compatible API guide</p>
+          <h1>OpenAI Streaming Not Working?</h1>
+          <p class="lede">
+            If OpenAI-style streaming is not working, first confirm that normal chat completions work, then test whether
+            <code>stream: true</code> returns real server-sent event chunks instead of a buffered full response.
+          </p>
+          <div class="page-cta">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the checker</a>
+            <a class="btn btn-secondary btn-large" href="/?baseUrl=https%3A%2F%2Fapi.example.com%2Fv1&model=gpt-4o-mini">Try a prefilled endpoint</a>
+          </div>
+        </header>
+
+        <section class="guide-section">
+          <h2>Why Streaming Breaks</h2>
+          <p>
+            Streaming can fail even when the same endpoint answers normal chat requests. The provider may not implement
+            server-sent events, a proxy may buffer chunks, the selected model may not support streaming through that
+            route, or the client may be parsing the stream incorrectly.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h2>Steps to Debug Streaming</h2>
+          <ol class="guide-steps">
+            <li><strong>Verify the base URL.</strong> Use the API root, such as <code>https://api.example.com/v1</code>, not a dashboard URL.</li>
+            <li><strong>Run a normal chat request.</strong> Confirm the endpoint can return a valid non-streaming answer first.</li>
+            <li><strong>Enable <code>stream: true</code>.</strong> Check whether chunks arrive before the full answer is complete.</li>
+            <li><strong>Inspect the stream format.</strong> Look for event-style <code>data:</code> chunks and a final done marker.</li>
+            <li><strong>Measure TTFT.</strong> A high time to first token usually means buffering, slow routing, or overloaded upstreams.</li>
+            <li><strong>Compare another model or route.</strong> If one model fails but another streams, the issue may be provider routing rather than your code.</li>
+          </ol>
+        </section>
+
+        <section class="guide-section">
+          <h2>Common Streaming Symptoms</h2>
+          <div class="guide-table-wrap">
+            <table class="guide-table">
+              <thead>
+                <tr>
+                  <th>Symptom</th>
+                  <th>Likely cause</th>
+                  <th>What to test</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Normal chat works, streaming fails</td>
+                  <td>Streaming is not implemented or not enabled for the route</td>
+                  <td>Run the same model with and without <code>stream: true</code></td>
+                </tr>
+                <tr>
+                  <td>All text arrives at once</td>
+                  <td>Proxy or CDN buffering</td>
+                  <td>Check TTFT and whether chunks arrive before completion</td>
+                </tr>
+                <tr>
+                  <td>Client throws a parse error</td>
+                  <td>Malformed SSE chunks or non-OpenAI response shape</td>
+                  <td>Inspect raw chunks and response headers</td>
+                </tr>
+                <tr>
+                  <td>Very slow first token</td>
+                  <td>Slow upstream, overloaded relay, or distant region</td>
+                  <td>Repeat the test and compare TTFT across providers</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="guide-section" id="example-result">
+          <h2>Example Result</h2>
+          <p>
+            A streaming check should show whether chunks arrive, how long the first token takes, and whether the
+            endpoint behaves like an OpenAI-compatible API.
+          </p>
+          <div class="seo-screenshot-card" aria-label="OpenAI-compatible streaming check example">
+            <div class="seo-window-bar"><span></span><span></span><span></span></div>
+            <img class="seo-real-shot" src="/assets/seo/watch-result.png" alt="API relay test result showing slower latency, TTFT, and output speed signals." loading="lazy" />
+            <div class="seo-shot-caption">Example report showing latency, TTFT, streaming total, and output speed signals.</div>
+          </div>
+        </section>
+
+        <section class="guide-section guide-demo">
+          <h2>Run the Check</h2>
+          <p>
+            Use the checker to test normal chat, streaming, TTFT, and response shape in one run. Demo mode is available
+            if you want to see the report before entering an API key.
+          </p>
+          <div class="page-cta">
+            <a class="btn btn-primary btn-large" href="/#test-tool">Run the checker</a>
+            <a class="btn btn-secondary btn-large" href="/guides/openai-api-base-url">Check your base URL first</a>
+          </div>
+        </section>
+
+        <section class="guide-section">
+          <h2>FAQ</h2>
+          <div class="faq-list">
+            <details class="faq-item" open>
+              <summary>Why does streaming fail when normal chat works?</summary>
+              <p>Some providers support normal chat completions but do not correctly implement server-sent event streaming, or a proxy buffers the stream until the full response is ready.</p>
+            </details>
+            <details class="faq-item">
+              <summary>What should a streaming response look like?</summary>
+              <p>A working OpenAI-style stream returns event chunks, usually as <code>data:</code> lines, before the final done marker.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Can a CDN or gateway break streaming?</summary>
+              <p>Yes. Some proxies and gateways buffer responses, which makes streaming appear to arrive only after the full answer is complete.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Is slow TTFT the same as broken streaming?</summary>
+              <p>No. Slow time to first token means streaming eventually starts, while broken streaming means chunks are missing, buffered, malformed, or never delivered.</p>
+            </details>
+          </div>
+        </section>
+      </article>
+
+      <footer class="footer authority-footer">
+        <a class="footer-brand" href="/en"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="footer-links">
+          <a href="/">Checker</a>
+          <a href="/guides/test-openai-compatible-api">Testing Guide</a>
+          <a href="/guides/openai-api-base-url">Base URL Guide</a>
+          <a href="/guides/openai-streaming-not-working">Streaming Guide</a>
+          <a href="/en/pricing">Pricing</a>
+          <a href="/en/contact">Contact</a>
+          <span>2026</span>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
