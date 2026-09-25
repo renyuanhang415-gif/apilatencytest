@@ -19,7 +19,7 @@ const pages = {
   "/zh/pricing": "pricing.html",
   "/en/pricing": "pricing-en.html",
   "/leaderboard": "leaderboard.html",
-  "/en/leaderboard": "leaderboard-en.html",
+  "/leaderboard-en": "leaderboard-en.html",
   "/contact": "contact.html",
   "/zh/contact": "contact.html",
   "/en/contact": "contact-en.html",

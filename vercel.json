@@ -29,10 +29,6 @@
       "destination": "/leaderboard.html"
     },
     {
-      "source": "/en/leaderboard",
-      "destination": "/leaderboard-en.html"
-    },
-    {
       "source": "/contact",
       "destination": "/contact.html"
     },

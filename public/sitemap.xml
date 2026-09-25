@@ -16,7 +16,7 @@
     <loc>https://apilatencytest.com/leaderboard</loc>
   </url>
   <url>
-    <loc>https://apilatencytest.com/en/leaderboard</loc>
+    <loc>https://apilatencytest.com/leaderboard-en</loc>
   </url>
   <url>
     <loc>https://apilatencytest.com/guides/test-openai-compatible-api</loc>
