@@ -102,6 +102,8 @@ const text = {
     fail: "Fail",
     unavailable: "Unavailable",
     requestFailed: "Request failed.",
+    serverFunctionUnavailable: (status) => `The API service is temporarily unavailable (HTTP ${status}).`,
+    invalidServerResponse: (status) => `The server returned a non-JSON response (HTTP ${status}).`,
     missingCredentials: "API Base URL or API Key is empty. Please enter it first.",
     rawNoStream: "No stream response body.",
     failurePrefix: "Possible reason",
@@ -166,6 +168,8 @@ const text = {
     fail: "失败",
     unavailable: "不可用",
     requestFailed: "请求失败。",
+    serverFunctionUnavailable: (status) => `检测服务暂时不可用（HTTP ${status}）。`,
+    invalidServerResponse: (status) => `服务器返回了非 JSON 响应（HTTP ${status}）。`,
     missingCredentials: "API 接口地址或 API Key 为空，请先输入。",
     rawNoStream: "没有流式响应正文。",
     failurePrefix: "可能原因",
@@ -205,6 +209,19 @@ const text = {
 };
 
 const t = text[locale];
+
+async function readApiJson(response) {
+  const body = await response.text();
+  try {
+    return JSON.parse(body);
+  } catch {
+    const message = body.includes("FUNCTION_INVOCATION_FAILED")
+      ? t.serverFunctionUnavailable(response.status)
+      : t.invalidServerResponse(response.status);
+    throw new Error(message);
+  }
+}
+
 let activeModelFilter = "";
 const trackedInputSteps = new Set();
 let isTesting = false;
@@ -1539,7 +1556,7 @@ async function runTestSubmission() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    const quickData = await quickRes.json();
+    const quickData = await readApiJson(quickRes);
     if (!quickRes.ok) throw new Error(quickData.error || t.requestFailed);
 
     renderTestResult(quickData);
@@ -1653,7 +1670,7 @@ fetchModelsBtn?.addEventListener("click", async () => {
         apiKey: apiKeyInput.value,
       }),
     });
-    const data = await res.json();
+    const data = await readApiJson(res);
     if (!res.ok) throw new Error(data.error || "Failed to fetch models.");
 
     allModels.length = 0;
