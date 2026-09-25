@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI API Relay Public Leaderboard Snapshot - API Latency Test</title>
+    <meta name="description" content="Browse a source-attributed snapshot of public AI API relay rankings, uptime, latency, and input prices. Source: Hvoy AI; not independently tested by this site." />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="canonical" href="https://apilatencytest.com/en/leaderboard" />
+  </head>
+  <body data-locale="en">
+    <main class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/en"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="header-actions">
+          <nav class="nav">
+            <a href="/en">Quality Test</a>
+            <a href="/en/pricing">Pricing</a>
+            <a class="active" href="/en/leaderboard">Model leaderboard</a>
+            <a class="header-cta" href="/en/contact">Contact</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switch">
+            <a class="active" href="/en/leaderboard">EN</a>
+            <a href="/leaderboard">中文</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="pricing-hero">
+        <p class="eyebrow">External public snapshot</p>
+        <h1>AI API relay leaderboard reference</h1>
+        <p class="lede">Browse a public ranking snapshot by model as an initial shortlist. This is a source-attributed third-party snapshot, not a test or endorsement by this site.</p>
+      </section>
+
+      <section class="leaderboard-source" aria-label="Data source and limitations">
+        <div>
+          <strong>Source: Hvoy AI public leaderboard</strong>
+          <p>Page snapshot date: <time datetime="2026-09-25">2026-09-25</time>. We have not independently retested uptime, latency, prices, or model routing. The source page does not disclose its full observation window or ranking formula. Data may have changed; verify with providers and run a small test using your own API key before buying or integrating.</p>
+        </div>
+        <a class="btn btn-secondary btn-small" href="https://www.hvoyai.com/leaderboard/" target="_blank" rel="noopener noreferrer">View source</a>
+      </section>
+
+      <section class="pricing-toolbar leaderboard-toolbar" aria-label="Model filter">
+        <div>
+          <div class="toolbar-label">Choose a model</div>
+          <div class="pricing-tabs" data-leaderboard-models></div>
+        </div>
+      </section>
+
+      <section class="price-summary" aria-label="Selected model details">
+        <div class="price-stat">
+          <span>Model</span>
+          <strong class="leaderboard-model-name" data-model-name>-</strong>
+          <small data-model-id>-</small>
+        </div>
+        <div class="price-stat">
+          <span>Source entries</span>
+          <strong data-result-count>-</strong>
+          <small>from source page summary</small>
+        </div>
+        <div class="price-stat">
+          <span>Snapshot date</span>
+          <strong>2026-09-25</strong>
+          <small>not live data</small>
+        </div>
+        <div class="price-stat">
+          <span>Test support</span>
+          <strong data-test-support>-</strong>
+          <small data-test-support-note>-</small>
+        </div>
+      </section>
+
+      <section class="leaderboard-note" data-model-note hidden></section>
+
+      <section class="price-table-panel">
+        <div class="price-table-head">
+          <div>
+            <h2 data-table-title>Leaderboard snapshot</h2>
+            <p>Ranking order follows the source page. Only input prices are shown, in CNY per million tokens.</p>
+          </div>
+          <a class="btn btn-primary btn-small" data-test-link href="/zh?model=gpt-6-astra#test-tool">Test this chat model</a>
+          <span class="hint" data-no-test hidden>Image/video generation models are not supported by this site's text-chat API test.</span>
+        </div>
+        <div class="price-table-wrap">
+          <table class="price-table leaderboard-table">
+            <thead>
+              <tr>
+                <th>Source rank</th>
+                <th>Provider</th>
+                <th>Uptime</th>
+                <th>Latency</th>
+                <th>Input price</th>
+              </tr>
+            </thead>
+            <tbody data-leaderboard-rows></tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="footer authority-footer">
+        <a class="footer-brand" href="/en"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="footer-links">
+          <a href="/en">Quality Test</a>
+          <a href="/en/pricing">Pricing</a>
+          <a href="/leaderboard">中文</a>
+          <span>© 2026</span>
+        </div>
+      </footer>
+    </main>
+    <script type="module" src="/leaderboard.js"></script>
+  </body>
+</html>

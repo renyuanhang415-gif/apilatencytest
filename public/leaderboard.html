@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI API 中转服务商公开榜单参考 - API Latency Test</title>
+    <meta name="description" content="按模型查看来源已注明的 AI API 中转服务商榜单快照，包括公开排名、在线率、延迟与输入价格。数据来自 Hvoy AI，非本站独立实测。" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="canonical" href="https://apilatencytest.com/leaderboard" />
+  </head>
+  <body data-locale="zh">
+    <main class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/zh"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="header-actions">
+          <nav class="nav">
+            <a href="/zh">质量检测</a>
+            <a href="/pricing">价格对比</a>
+            <a class="active" href="/leaderboard">模型实测榜单</a>
+            <a class="header-cta" href="/contact">联系我们</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switch">
+            <a href="/en/leaderboard">EN</a>
+            <a class="active" href="/leaderboard">中文</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="pricing-hero">
+        <p class="eyebrow">External public snapshot</p>
+        <h1>AI API 中转服务商榜单参考</h1>
+        <p class="lede">按模型查看公开榜单摘要，作为候选服务商的初步筛选参考；页面展示的是带来源标注的第三方快照，不代表本站测试或背书。</p>
+      </section>
+
+      <section class="leaderboard-source" aria-label="数据来源与说明">
+        <div>
+          <strong>来源：Hvoy AI 公开榜单</strong>
+          <p>页面采样日期：<time datetime="2026-09-25">2026-09-25</time>。本站未独立复测在线率、延迟、价格或模型路由；原页面未公开完整观测窗口和排名公式。数据可能已变化，购买或接入前请核对服务商页面，并用自己的 API Key 小额测试。</p>
+        </div>
+        <a class="btn btn-secondary btn-small" href="https://www.hvoyai.com/leaderboard/" target="_blank" rel="noopener noreferrer">查看原始榜单</a>
+      </section>
+
+      <section class="pricing-toolbar leaderboard-toolbar" aria-label="模型筛选">
+        <div>
+          <div class="toolbar-label">选择模型</div>
+          <div class="pricing-tabs" data-leaderboard-models></div>
+        </div>
+      </section>
+
+      <section class="price-summary" aria-label="当前模型说明">
+        <div class="price-stat">
+          <span>榜单模型</span>
+          <strong class="leaderboard-model-name" data-model-name>-</strong>
+          <small data-model-id>-</small>
+        </div>
+        <div class="price-stat">
+          <span>来源排名条目</span>
+          <strong data-result-count>-</strong>
+          <small>来自原页面摘要</small>
+        </div>
+        <div class="price-stat">
+          <span>采样日期</span>
+          <strong>2026-09-25</strong>
+          <small>非实时数据</small>
+        </div>
+        <div class="price-stat">
+          <span>检测支持</span>
+          <strong data-test-support>-</strong>
+          <small data-test-support-note>-</small>
+        </div>
+      </section>
+
+      <section class="leaderboard-note" data-model-note hidden></section>
+
+      <section class="price-table-panel">
+        <div class="price-table-head">
+          <div>
+            <h2 data-table-title>榜单快照</h2>
+            <p>排名顺序沿用来源页面；价格仅显示输入价，单位为人民币 / 百万 tokens。</p>
+          </div>
+          <a class="btn btn-primary btn-small" data-test-link href="/zh?model=gpt-6-astra#test-tool">检测这个聊天模型</a>
+          <span class="hint" data-no-test hidden>图片/视频生成模型不适用于本站的文本聊天接口检测。</span>
+        </div>
+        <div class="price-table-wrap">
+          <table class="price-table leaderboard-table">
+            <thead>
+              <tr>
+                <th>来源名次</th>
+                <th>服务商</th>
+                <th>在线率</th>
+                <th>延迟</th>
+                <th>输入价格</th>
+              </tr>
+            </thead>
+            <tbody data-leaderboard-rows></tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="footer authority-footer">
+        <a class="footer-brand" href="/zh"><span class="brand-mark"></span><span>API Latency Test</span></a>
+        <div class="footer-links">
+          <a href="/zh">质量检测</a>
+          <a href="/pricing">价格对比</a>
+          <a href="/en/leaderboard">English</a>
+          <span>© 2026</span>
+        </div>
+      </footer>
+    </main>
+    <script type="module" src="/leaderboard.js"></script>
+  </body>
+</html>

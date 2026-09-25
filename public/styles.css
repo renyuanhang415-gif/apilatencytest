@@ -318,6 +318,18 @@ h1 {
   margin-bottom: 12px;
 }
 
+.model-source-note {
+  margin: -4px 0 12px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.model-source-note a {
+  color: var(--accent-dark);
+  font-weight: 800;
+}
+
 .common-models-heading {
   margin-bottom: 8px;
   color: var(--muted);
@@ -1497,6 +1509,64 @@ h1 {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.leaderboard-source {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 10px 0 16px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: 16px;
+  padding: 16px 18px;
+  background: #fff;
+}
+
+.leaderboard-source strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.leaderboard-source p {
+  max-width: 920px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.leaderboard-model-name {
+  font-size: 20px !important;
+  line-height: 1.2 !important;
+}
+
+.leaderboard-note {
+  margin-bottom: 16px;
+  border: 1px solid #fcd34d;
+  border-radius: 14px;
+  padding: 13px 16px;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.leaderboard-table {
+  min-width: 720px;
+}
+
+.leaderboard-domain {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.leaderboard-table td:first-child {
+  width: 100px;
+  font-weight: 900;
+}
+
+.leaderboard-table td:nth-child(2) {
+  min-width: 220px;
 }
 
 .price-summary {

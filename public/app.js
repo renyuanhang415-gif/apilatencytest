@@ -41,6 +41,17 @@ const debugOutputEl = document.querySelector("[data-debug-output]");
 let speedScoreEl = null;
 const allModels = [];
 const commonModels = [
+  { key: "gpt6astra", name: "GPT 6 Astra", id: "gpt-6-astra", profile: "gpt-6-astra" },
+  { key: "gpt6sol", name: "GPT 6 Sol", id: "gpt-6-sol", profile: "gpt-6-sol" },
+  { key: "gpt56sol", name: "GPT 5.6 Sol", id: "gpt-5.6-sol", profile: "gpt-5.6-sol" },
+  { key: "deepseekv41flash", name: "DeepSeek V4.1 Flash", id: "deepseek-v4.1-flash", profile: "deepseek-v4.1-flash" },
+  { key: "opus55", name: "Opus 5.5", id: "claude-opus-5-5", profile: "claude-opus-5-5" },
+  { key: "fable51", name: "Fable 5.1", id: "claude-fable-5-1", profile: "claude-fable-5-1" },
+  { key: "gemini38flash", name: "Gemini 3.8 Flash", id: "gemini-3.8-flash", profile: "gemini-3.8-flash" },
+  { key: "grok47", name: "Grok 4.7", id: "grok-4.7", profile: "grok-4.7" },
+  { key: "gpt56terra", name: "GPT 5.6 Terra", id: "gpt-5.6-terra", profile: "gpt-5.6-terra" },
+  { key: "kimiK3", name: "Kimi K3", id: "kimi-k3", profile: "kimi-k3" },
+  { key: "glm53", name: "GLM 5.3", id: "glm-5.3", profile: "glm-5.3" },
   { key: "opus47", name: "Opus 4.7", id: "claude-opus-4-7", profile: "claude-opus-4-7" },
   { key: "opus46", name: "Opus 4.6", id: "claude-opus-4-5", profile: "claude-opus-4-5" },
   { key: "sonnet46", name: "Sonnet 4.6", id: "claude-sonnet-4-6", profile: "claude-sonnet-4-6" },
