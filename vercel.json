@@ -5,6 +5,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/en"
+    },
+    {
       "source": "/v1/models",
       "destination": "/api/demo-models"
     },

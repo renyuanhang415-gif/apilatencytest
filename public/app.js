@@ -41,7 +41,7 @@ const debugOutputEl = document.querySelector("[data-debug-output]");
 let speedScoreEl = null;
 const allModels = [];
 const commonModels = [
-  { key: "gpt6astra", name: "GPT 6 Astra", id: "gpt-6-astra", profile: "gpt-6-astra" },
+  { key: "gpt6astra", name: "GPT 6 Astra", id: "gpt-6-astra", profile: "gpt-6-astra", badge: "NEW" },
   { key: "gpt6sol", name: "GPT 6 Sol", id: "gpt-6-sol", profile: "gpt-6-sol" },
   { key: "gpt56sol", name: "GPT 5.6 Sol", id: "gpt-5.6-sol", profile: "gpt-5.6-sol" },
   { key: "deepseekv41flash", name: "DeepSeek V4.1 Flash", id: "deepseek-v4.1-flash", profile: "deepseek-v4.1-flash" },
@@ -57,7 +57,7 @@ const commonModels = [
   { key: "sonnet46", name: "Sonnet 4.6", id: "claude-sonnet-4-6", profile: "claude-sonnet-4-6" },
   { key: "gemini31pro", name: "Gemini 3.1 Pro", id: "gemini-3.1-pro", profile: "gemini-3.1-pro" },
   { key: "gpt54", name: "GPT 5.4", id: "gpt-5.4", profile: "gpt-5.4" },
-  { key: "gpt55", name: "GPT 5.5", id: "gpt-5.5", profile: "gpt-5.5", badge: "NEW" },
+  { key: "gpt55", name: "GPT 5.5", id: "gpt-5.5", profile: "gpt-5.5" },
 ];
 const defaultCommonModelId = "gpt-5.5";
 let selectedModelProfile = defaultCommonModelId;
