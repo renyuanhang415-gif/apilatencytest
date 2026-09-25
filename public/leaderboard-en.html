@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AI API Relay Public Leaderboard Snapshot - API Latency Test</title>
-    <meta name="description" content="Browse a source-attributed snapshot of public AI API relay rankings, uptime, latency, and input prices. Source: Hvoy AI; not independently tested by this site." />
+    <meta name="description" content="Browse a public snapshot of AI API relay rankings, uptime, latency, and input prices. Data is for reference only and has not been independently tested by this site." />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="canonical" href="https://apilatencytest.com/leaderboard-en" />
@@ -30,15 +30,14 @@
       <section class="pricing-hero">
         <p class="eyebrow">External public snapshot</p>
         <h1>AI API relay leaderboard reference</h1>
-        <p class="lede">Browse a public ranking snapshot by model as an initial shortlist. This is a source-attributed third-party snapshot, not a test or endorsement by this site.</p>
+        <p class="lede">Browse a third-party public ranking snapshot by model as an initial shortlist. It is not a test or endorsement by this site.</p>
       </section>
 
-      <section class="leaderboard-source" aria-label="Data source and limitations">
+      <section class="leaderboard-source" aria-label="Data notes">
         <div>
-          <strong>Source: Hvoy AI public leaderboard</strong>
-          <p>Page snapshot date: <time datetime="2026-09-25">2026-09-25</time>. We have not independently retested uptime, latency, prices, or model routing. The source page does not disclose its full observation window or ranking formula. Data may have changed; verify with providers and run a small test using your own API key before buying or integrating.</p>
+          <strong>Third-party public data snapshot — for reference only</strong>
+          <p>Page snapshot date: <time datetime="2026-09-25">2026-09-25</time>. We have not independently retested uptime, latency, prices, or model routing. The available data does not include a full observation window or ranking methodology. Data may have changed; verify with providers and run a small test using your own API key before buying or integrating.</p>
         </div>
-        <a class="btn btn-secondary btn-small" href="https://www.hvoyai.com/leaderboard/" target="_blank" rel="noopener noreferrer">View source</a>
       </section>
 
       <section class="pricing-toolbar leaderboard-toolbar" aria-label="Model filter">
@@ -55,9 +54,9 @@
           <small data-model-id>-</small>
         </div>
         <div class="price-stat">
-          <span>Source entries</span>
+          <span>Listed entries</span>
           <strong data-result-count>-</strong>
-          <small>from source page summary</small>
+          <small>in this public snapshot</small>
         </div>
         <div class="price-stat">
           <span>Snapshot date</span>
@@ -77,7 +76,7 @@
         <div class="price-table-head">
           <div>
             <h2 data-table-title>Leaderboard snapshot</h2>
-            <p>Ranking order follows the source page. Only input prices are shown, in CNY per million tokens.</p>
+            <p>Ranking order follows the public data snapshot. Only input prices are shown, in CNY per million tokens.</p>
           </div>
           <a class="btn btn-primary btn-small" data-test-link href="/zh?model=gpt-6-astra#test-tool">Test this chat model</a>
           <span class="hint" data-no-test hidden>Image/video generation models are not supported by this site's text-chat API test.</span>
@@ -86,7 +85,7 @@
           <table class="price-table leaderboard-table">
             <thead>
               <tr>
-                <th>Source rank</th>
+                <th>Rank</th>
                 <th>Provider</th>
                 <th>Uptime</th>
                 <th>Latency</th>

@@ -78,8 +78,8 @@ const boards = [
   },
   {
     name: "Seedance 2.5", modelId: "doubao-seedance-2.5", kind: "video",
-    note: "来源页面注明仅有 4 条有效公开结果；该摘要中 4 家在线率均为 0%，且没有延迟数据。",
-    noteEn: "The source page says only four valid public results were available. All four show 0% uptime and no latency in that snapshot.",
+    note: "该模型仅有 4 条有效公开结果；快照中 4 家在线率均为 0%，且没有延迟数据。",
+    noteEn: "Only four valid public results are included for this model. All four show 0% uptime and no latency in the snapshot.",
     rows: [
       ["Modelflare", "origin.modelflare.dev", "0%", "—", "97.245"],
       ["河图", "hetune.top", "0%", "—", "0.6"],

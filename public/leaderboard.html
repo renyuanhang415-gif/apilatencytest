@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AI API 中转服务商公开榜单参考 - API Latency Test</title>
-    <meta name="description" content="按模型查看来源已注明的 AI API 中转服务商榜单快照，包括公开排名、在线率、延迟与输入价格。数据来自 Hvoy AI，非本站独立实测。" />
+    <meta name="description" content="按模型查看 AI API 中转服务商公开榜单快照，包括排名、在线率、延迟与输入价格。数据仅供参考，非本站独立实测。" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="canonical" href="https://apilatencytest.com/leaderboard" />
@@ -30,15 +30,14 @@
       <section class="pricing-hero">
         <p class="eyebrow">External public snapshot</p>
         <h1>AI API 中转服务商榜单参考</h1>
-        <p class="lede">按模型查看公开榜单摘要，作为候选服务商的初步筛选参考；页面展示的是带来源标注的第三方快照，不代表本站测试或背书。</p>
+        <p class="lede">按模型查看第三方公开榜单快照，作为候选服务商的初步筛选参考；数据不代表本站测试或背书。</p>
       </section>
 
-      <section class="leaderboard-source" aria-label="数据来源与说明">
+      <section class="leaderboard-source" aria-label="数据说明">
         <div>
-          <strong>来源：Hvoy AI 公开榜单</strong>
-          <p>页面采样日期：<time datetime="2026-09-25">2026-09-25</time>。本站未独立复测在线率、延迟、价格或模型路由；原页面未公开完整观测窗口和排名公式。数据可能已变化，购买或接入前请核对服务商页面，并用自己的 API Key 小额测试。</p>
+          <strong>第三方公开数据快照，仅供参考</strong>
+          <p>页面采样日期：<time datetime="2026-09-25">2026-09-25</time>。本站未独立复测在线率、延迟、价格或模型路由；现有数据未提供完整观测窗口和排名方法。数据可能已变化，购买或接入前请核对服务商页面，并用自己的 API Key 小额测试。</p>
         </div>
-        <a class="btn btn-secondary btn-small" href="https://www.hvoyai.com/leaderboard/" target="_blank" rel="noopener noreferrer">查看原始榜单</a>
       </section>
 
       <section class="pricing-toolbar leaderboard-toolbar" aria-label="模型筛选">
@@ -55,7 +54,7 @@
           <small data-model-id>-</small>
         </div>
         <div class="price-stat">
-          <span>来源排名条目</span>
+          <span>榜单条目</span>
           <strong data-result-count>-</strong>
           <small>来自原页面摘要</small>
         </div>
@@ -77,7 +76,7 @@
         <div class="price-table-head">
           <div>
             <h2 data-table-title>榜单快照</h2>
-            <p>排名顺序沿用来源页面；价格仅显示输入价，单位为人民币 / 百万 tokens。</p>
+            <p>排名顺序按公开数据快照展示；价格仅显示输入价，单位为人民币 / 百万 tokens。</p>
           </div>
           <a class="btn btn-primary btn-small" data-test-link href="/zh?model=gpt-6-astra#test-tool">检测这个聊天模型</a>
           <span class="hint" data-no-test hidden>图片/视频生成模型不适用于本站的文本聊天接口检测。</span>
@@ -86,7 +85,7 @@
           <table class="price-table leaderboard-table">
             <thead>
               <tr>
-                <th>来源名次</th>
+                <th>名次</th>
                 <th>服务商</th>
                 <th>在线率</th>
                 <th>延迟</th>
